@@ -8,14 +8,20 @@ TICKER = ("★ NeurIPS 2026 accepted ★ ICLR 2027 + CVPR 2027 under review ★ 
           "best viewed with a cursor ★")
 
 NAV = [("index.html", "home"), ("research.html", "research"), ("blog.html", "blog"),
-       ("Trevor_Chen_Resume.pdf", "cv.pdf")]
+       ("Trevor_Chen_Resume.pdf", "cv")]
+
+STATS = [("ML", 92), ("SCIENCE", 85), ("SYSTEMS", 80), ("INTERP", 84), ("SHIP IT", 88)]
 
 
 def page(path, title, body, current):
     root = "../" * path.count("/")
     nav = "\n".join(
-        f'        <a href="{root}{href}"{" aria-current=\"page\"" if href == current else ""}>{label}</a>'
-        for href, label in NAV)
+        f'          <a href="{root}{href}"{" aria-current=\"page\"" if href == current else ""}>'
+        f'<span class="cur">▶</span><span class="key">{i}</span>{label}</a>'
+        for i, (href, label) in enumerate(NAV, 1))
+    stats = "\n".join(
+        f'          <div class="stat"><span>{name}</span><div class="bar-meter"><i style="width:{v}%"></i></div></div>'
+        for name, v in STATS)
     html = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -23,44 +29,59 @@ def page(path, title, body, current):
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{title}</title>
   <meta name="description" content="Trevor Chen — Caltech researcher and founder. Generative models, AI for science, interpretability.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230c0a1d'/><circle cx='50' cy='50' r='30' fill='none' stroke='%23ff2e88' stroke-width='8'/><circle cx='50' cy='50' r='20' fill='black'/></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a0818'/><circle cx='50' cy='50' r='30' fill='none' stroke='%23ff2e88' stroke-width='8'/><circle cx='50' cy='50' r='20' fill='black'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{root}style.css">
 </head>
-<body>
+<body data-root="{root}">
+  <div class="floor" aria-hidden="true"></div>
+
+  <div class="hud" aria-hidden="true">
+    <div class="p1">1UP<b>Trevor</b></div>
+    <div class="hi">Hi-score<b>58× combo</b></div>
+    <div class="cr">Credits<b>99</b></div>
+  </div>
+
   <header class="banner">
     <p class="logo"><a href="{root}index.html">TREVOR CHEN</a></p>
-    <p class="subtitle">generative models // ai for science // interpretability</p>
+    <div class="press">
+      <span class="start blink">▶ Press start</span>
+      <span class="tags">generative models · ai for science · interpretability</span>
+    </div>
     <div class="ticker" aria-label="news"><div class="track"><span>{TICKER}</span><span aria-hidden="true">{TICKER}</span></div></div>
   </header>
 
   <div class="site">
     <aside>
       <nav class="panel pink" aria-label="site">
-        <div class="bar"><span>nav.exe</span><span class="dots">■■■</span></div>
+        <span class="label">Stage select</span>
         <div class="body nav">
 {nav}
         </div>
       </nav>
 
       <div class="panel cyan">
-        <div class="bar"><span>black_hole.cam</span><span class="dots">● REC</span></div>
+        <span class="label">Bonus stage</span>
         <canvas id="cam" aria-label="Animated black hole bending starlight"></canvas>
-        <div class="cam-caption">hover me. live gravitational lensing.</div>
+        <div class="cam-caption"><span>Boss: black hole</span><span class="hp"><i></i><i></i><i></i><i></i><i></i></span></div>
       </div>
 
-      <div class="panel">
-        <div class="bar"><span>status.txt</span><span class="dots">■■■</span></div>
-        <dl class="body status">
-          <dt>building</dt><dd>closed-loop discovery @ ETH Zurich + Arnold Lab</dd>
-          <dt>studying</dt><dd>applied + computational math @ Caltech</dd>
-          <dt>shipping</dt><dd>formally verified infra @ Ascade</dd>
-          <dt>links</dt>
-          <dd><a href="mailto:trevorbchen@gmail.com">email</a> · <a href="https://github.com/trevorbchen">github</a> · <a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a> · <a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></dd>
-          <dt>you've visited</dt><dd><span class="counter" id="visits">000001</span> times</dd>
-        </dl>
+      <div class="panel gold">
+        <span class="label">Player 1</span>
+        <div class="body player">
+          <p class="name">TREVOR CHEN</p>
+          <p class="cls">class: researcher / founder<br>guild: caltech '29</p>
+{stats}
+          <ul class="controls">
+            <li><a href="mailto:trevorbchen@gmail.com">email</a></li>
+            <li><a href="https://github.com/trevorbchen">github</a></li>
+            <li><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a></li>
+            <li><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></li>
+          </ul>
+          <p class="plays">plays<span class="counter" id="visits">000001</span></p>
+        </div>
       </div>
     </aside>
 
@@ -70,16 +91,11 @@ def page(path, title, body, current):
   </div>
 
   <footer>
-    <div class="badges" aria-hidden="true">
-      <span class="badge b1">cuda<br>inside</span>
-      <span class="badge b2">no photos<br>allowed</span>
-      <span class="badge b3">hand-coded<br>html</span>
-      <span class="badge b4">best viewed<br>w/ cursor</span>
-      <span class="badge b5">lensing<br>enabled</span>
-    </div>
-    <p>© 2026 trevor chen · last updated oct 2026 · no frameworks were harmed</p>
+    <p class="coin blink">Insert coin to continue</p>
+    <p>© 2026 trevor chen · press 1–4 to jump stages · no photos, ever</p>
   </footer>
 
+  <div class="toast" id="toast" aria-live="polite"></div>
   <script src="{root}site.js"></script>
 </body>
 </html>
@@ -92,7 +108,7 @@ def page(path, title, body, current):
 def panel(name, inner, color=""):
     cls = f"panel {color}".strip()
     return f"""      <section class="{cls}">
-        <div class="bar"><span>{name}</span><span class="dots">■■■</span></div>
+        <span class="label">{name}</span>
         <div class="body">
 {inner}
         </div>
@@ -101,7 +117,7 @@ def panel(name, inner, color=""):
 
 # ---------------- home ----------------
 home = "\n\n".join([
-    panel("hello.txt", """          <h2>hi, i'm trevor.</h2>
+    panel("Stage 1 · hello", """          <h2>hi, i'm trevor.</h2>
           <p class="lede">I'm an undergrad at Caltech building learning systems that discover things.</p>
           <p>I work with <a href="https://las.inf.ethz.ch/">Andreas Krause</a> (ETH Zurich) and
           <a href="https://cheme.caltech.edu/groups/fha/">Frances Arnold</a> on closed-loop, LLM-guided scientific
@@ -110,7 +126,7 @@ home = "\n\n".join([
           <p>I also founded <a href="https://ascade.co/">Ascade</a> (accepted to YC F25), where we build formally
           verified infrastructure for AI agents. Before all that I spent years in optics labs and supercomputer
           clusters, which is why there are laser gratings in my <a href="research.html#pubs">publication list</a>.</p>""", "gold"),
-    panel("now.log", """          <ul class="log">
+    panel("News feed", """          <ul class="log">
             <li><time>2026</time>started closed-loop discovery with ETH Zurich (Krause group) and the Arnold Lab</li>
             <li><time>2026</time><span class="pill gold">NeurIPS</span> design space of online adaptation for molecular diffusion models — accepted</li>
             <li><time>2026</time><span class="pill">ICLR</span><span class="pill pink">CVPR</span> memorization + sparse autoencoder papers under review</li>
@@ -119,7 +135,7 @@ home = "\n\n".join([
             <li><time>Jun 2026</time>SURF fellowship in the Perona Vision Lab</li>
             <li><time>2025</time>Ascade accepted to Y Combinator F25</li>
           </ul>""", "pink"),
-    panel("highlights", """          <div class="grid grid-3">
+    panel("High scores", """          <div class="grid grid-3">
             <a class="comic" href="research.html">
               <span class="pow">58×!</span>
               <span class="pill gold">NeurIPS 2026</span>
@@ -176,7 +192,7 @@ pub_items = "\n".join(
     for t, w, v, soon in pubs)
 
 research = "\n\n".join([
-    panel("research.dir", """          <h2>research</h2>
+    panel("Stage 2 · research", """          <h2>research</h2>
           <p>I like problems where a model has to <em>find</em> something — a molecule, an enzyme, a feature, a failure
           mode — with as few expensive questions as possible.</p>
           <div class="grid">
@@ -207,7 +223,7 @@ research = "\n\n".join([
             </article>
           </div>""", "gold"),
     f"""      <section class="panel cyan" id="pubs">
-        <div class="bar"><span>publications.bib</span><span class="dots">■■■</span></div>
+        <span class="label">Leaderboard · publications</span>
         <div class="body">
           <h2>publications</h2>
           <p style="font-size:13px;color:var(--muted)">* equal contribution · also on <a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">google scholar</a> · full <a href="Trevor_Chen_Resume.pdf">cv</a></p>
@@ -220,14 +236,14 @@ research = "\n\n".join([
 page("research.html", "research — Trevor Chen", research, "research.html")
 
 # ---------------- blog index ----------------
-blog = panel("blog/", """          <h2>blog</h2>
+blog = panel("Stage 3 · dev log", """          <h2>dev log</h2>
           <p>Projects, write-ups, and things I broke.</p>
           <ul class="posts">
-            <li><time>2026-08-03</time><a href="posts/pangram.html">I broke an AI-image detector (both ways)</a>
+            <li><span class="lvl">LVL 3 · 2026-08-03</span><a href="posts/pangram.html">I broke an AI-image detector (both ways)</a>
               <p>Red-teaming Pangram: real photos flagged as AI, AI images passing as human, and why I'm not releasing the code.</p></li>
-            <li><time>2026-06-12</time><a href="posts/black-hole.html">Rendering a black hole on the GPU</a>
+            <li><span class="lvl">LVL 2 · 2026-06-12</span><a href="posts/black-hole.html">Rendering a black hole on the GPU</a>
               <p>A real-time CUDA ray tracer that bends light through Schwarzschild spacetime, plus a physics test suite to keep it honest.</p></li>
-            <li><time>2025-08-30</time><a href="posts/prediction-markets.html">Trading binary prediction markets with RL</a>
+            <li><span class="lvl">LVL 1 · 2025-08-30</span><a href="posts/prediction-markets.html">Trading binary prediction markets with RL</a>
               <p>A summer of inventory management, slippage, and sentiment signals.</p></li>
           </ul>""", "pink")
 page("blog.html", "blog — Trevor Chen", blog, "blog.html")
@@ -235,9 +251,9 @@ page("blog.html", "blog — Trevor Chen", blog, "blog.html")
 
 def post(slug, title, date, tags, inner, color):
     body = f"""      <article class="panel {color} post">
-        <div class="bar"><span>posts/{slug}.html</span><span class="dots">■■■</span></div>
+        <span class="label">Dev log · {slug}</span>
         <div class="body">
-          <p class="back"><a href="../blog.html">← all posts</a></p>
+          <p class="back"><a href="../blog.html">◀ back to dev log</a></p>
           <h1>{title}</h1>
           <p class="meta">{date} · {tags}</p>
 {inner}

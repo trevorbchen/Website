@@ -5,53 +5,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>research — Trevor Chen</title>
   <meta name="description" content="Trevor Chen — Caltech researcher and founder. Generative models, AI for science, interpretability.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230c0a1d'/><circle cx='50' cy='50' r='30' fill='none' stroke='%23ff2e88' stroke-width='8'/><circle cx='50' cy='50' r='20' fill='black'/></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a0818'/><circle cx='50' cy='50' r='30' fill='none' stroke='%23ff2e88' stroke-width='8'/><circle cx='50' cy='50' r='20' fill='black'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-root="">
+  <div class="floor" aria-hidden="true"></div>
+
+  <div class="hud" aria-hidden="true">
+    <div class="p1">1UP<b>Trevor</b></div>
+    <div class="hi">Hi-score<b>58× combo</b></div>
+    <div class="cr">Credits<b>99</b></div>
+  </div>
+
   <header class="banner">
     <p class="logo"><a href="index.html">TREVOR CHEN</a></p>
-    <p class="subtitle">generative models // ai for science // interpretability</p>
+    <div class="press">
+      <span class="start blink">▶ Press start</span>
+      <span class="tags">generative models · ai for science · interpretability</span>
+    </div>
     <div class="ticker" aria-label="news"><div class="track"><span>★ NeurIPS 2026 accepted ★ ICLR 2027 + CVPR 2027 under review ★ now: closed-loop LLM-guided discovery with ETH Zurich + the Arnold Lab ★ Ascade accepted to YC F25 ★ this site contains zero photos and always will ★ best viewed with a cursor ★</span><span aria-hidden="true">★ NeurIPS 2026 accepted ★ ICLR 2027 + CVPR 2027 under review ★ now: closed-loop LLM-guided discovery with ETH Zurich + the Arnold Lab ★ Ascade accepted to YC F25 ★ this site contains zero photos and always will ★ best viewed with a cursor ★</span></div></div>
   </header>
 
   <div class="site">
     <aside>
       <nav class="panel pink" aria-label="site">
-        <div class="bar"><span>nav.exe</span><span class="dots">■■■</span></div>
+        <span class="label">Stage select</span>
         <div class="body nav">
-        <a href="index.html">home</a>
-        <a href="research.html" aria-current="page">research</a>
-        <a href="blog.html">blog</a>
-        <a href="Trevor_Chen_Resume.pdf">cv.pdf</a>
+          <a href="index.html"><span class="cur">▶</span><span class="key">1</span>home</a>
+          <a href="research.html" aria-current="page"><span class="cur">▶</span><span class="key">2</span>research</a>
+          <a href="blog.html"><span class="cur">▶</span><span class="key">3</span>blog</a>
+          <a href="Trevor_Chen_Resume.pdf"><span class="cur">▶</span><span class="key">4</span>cv</a>
         </div>
       </nav>
 
       <div class="panel cyan">
-        <div class="bar"><span>black_hole.cam</span><span class="dots">● REC</span></div>
+        <span class="label">Bonus stage</span>
         <canvas id="cam" aria-label="Animated black hole bending starlight"></canvas>
-        <div class="cam-caption">hover me. live gravitational lensing.</div>
+        <div class="cam-caption"><span>Boss: black hole</span><span class="hp"><i></i><i></i><i></i><i></i><i></i></span></div>
       </div>
 
-      <div class="panel">
-        <div class="bar"><span>status.txt</span><span class="dots">■■■</span></div>
-        <dl class="body status">
-          <dt>building</dt><dd>closed-loop discovery @ ETH Zurich + Arnold Lab</dd>
-          <dt>studying</dt><dd>applied + computational math @ Caltech</dd>
-          <dt>shipping</dt><dd>formally verified infra @ Ascade</dd>
-          <dt>links</dt>
-          <dd><a href="mailto:trevorbchen@gmail.com">email</a> · <a href="https://github.com/trevorbchen">github</a> · <a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a> · <a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></dd>
-          <dt>you've visited</dt><dd><span class="counter" id="visits">000001</span> times</dd>
-        </dl>
+      <div class="panel gold">
+        <span class="label">Player 1</span>
+        <div class="body player">
+          <p class="name">TREVOR CHEN</p>
+          <p class="cls">class: researcher / founder<br>guild: caltech '29</p>
+          <div class="stat"><span>ML</span><div class="bar-meter"><i style="width:92%"></i></div></div>
+          <div class="stat"><span>SCIENCE</span><div class="bar-meter"><i style="width:85%"></i></div></div>
+          <div class="stat"><span>SYSTEMS</span><div class="bar-meter"><i style="width:80%"></i></div></div>
+          <div class="stat"><span>INTERP</span><div class="bar-meter"><i style="width:84%"></i></div></div>
+          <div class="stat"><span>SHIP IT</span><div class="bar-meter"><i style="width:88%"></i></div></div>
+          <ul class="controls">
+            <li><a href="mailto:trevorbchen@gmail.com">email</a></li>
+            <li><a href="https://github.com/trevorbchen">github</a></li>
+            <li><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a></li>
+            <li><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></li>
+          </ul>
+          <p class="plays">plays<span class="counter" id="visits">000001</span></p>
+        </div>
       </div>
     </aside>
 
     <main>
       <section class="panel gold">
-        <div class="bar"><span>research.dir</span><span class="dots">■■■</span></div>
+        <span class="label">Stage 2 · research</span>
         <div class="body">
           <h2>research</h2>
           <p>I like problems where a model has to <em>find</em> something — a molecule, an enzyme, a feature, a failure
@@ -87,7 +106,7 @@
       </section>
 
       <section class="panel cyan" id="pubs">
-        <div class="bar"><span>publications.bib</span><span class="dots">■■■</span></div>
+        <span class="label">Leaderboard · publications</span>
         <div class="body">
           <h2>publications</h2>
           <p style="font-size:13px;color:var(--muted)">* equal contribution · also on <a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">google scholar</a> · full <a href="Trevor_Chen_Resume.pdf">cv</a></p>
@@ -112,16 +131,11 @@
   </div>
 
   <footer>
-    <div class="badges" aria-hidden="true">
-      <span class="badge b1">cuda<br>inside</span>
-      <span class="badge b2">no photos<br>allowed</span>
-      <span class="badge b3">hand-coded<br>html</span>
-      <span class="badge b4">best viewed<br>w/ cursor</span>
-      <span class="badge b5">lensing<br>enabled</span>
-    </div>
-    <p>© 2026 trevor chen · last updated oct 2026 · no frameworks were harmed</p>
+    <p class="coin blink">Insert coin to continue</p>
+    <p>© 2026 trevor chen · press 1–4 to jump stages · no photos, ever</p>
   </footer>
 
+  <div class="toast" id="toast" aria-live="polite"></div>
   <script src="site.js"></script>
 </body>
 </html>

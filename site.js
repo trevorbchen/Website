@@ -168,3 +168,38 @@
   }
   requestAnimationFrame(frame);
 })();
+
+// ---------- arcade controls: 1–4 jump stages, konami code = turbo ----------
+(() => {
+  const root = document.body.dataset.root || "";
+  const stages = ["index.html", "research.html", "blog.html", "Trevor_Chen_Resume.pdf"];
+  const konami = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+  const toast = document.getElementById("toast");
+  let progress = 0;
+
+  function flash(msg) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 1400);
+  }
+
+  window.addEventListener("keydown", (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName)) return;
+
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    progress = key === konami[progress] ? progress + 1 : (key === konami[0] ? 1 : 0);
+    if (progress === konami.length) {
+      progress = 0;
+      const on = document.body.classList.toggle("turbo");
+      flash(on ? "TURBO MODE!" : "TURBO OFF");
+      return;
+    }
+
+    const n = Number(e.key);
+    if (n >= 1 && n <= stages.length && progress === 0) {
+      window.location.href = root + stages[n - 1];
+    }
+  });
+})();
