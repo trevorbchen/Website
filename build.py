@@ -186,25 +186,21 @@ def build_home():
           </ul>""", "pink")
     show = panel("start here", """          <div class="grid grid-3">
             <a class="comic" href="posts/pangram.html">
-              <span class="pow">BOTH WAYS</span>
               <span class="pill pink">AI safety</span>
               <h3>I broke an AI-image detector</h3>
               <p>Real photos flagged as AI, AI images passing as real, and what the company's co-founder said back.</p>
             </a>
             <a class="comic" href="posts/ddamo.html">
-              <span class="pow">58x</span>
               <span class="pill gold">NeurIPS 2026</span>
               <h3>Better molecules, fewer experiments</h3>
               <p>What it took to steer a molecule generator with a handful of expensive measurements, and the one ingredient everything else depended on.</p>
             </a>
             <a class="comic" href="posts/interpretability.html">
-              <span class="pow">TRY IT</span>
               <span class="pill">interpretability</span>
               <h3>Looking inside a model</h3>
               <p>Logit lens, attention, head ablation and a sparse autoencoder that trains in your browser.</p>
             </a>
             <div class="comic soon">
-              <span class="pow">SOON</span>
               <span class="pill violet">theory</span>
               <h3>A theory of reasoning</h3>
               <p>In progress. Check back.</p>
