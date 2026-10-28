@@ -327,7 +327,7 @@ def build_blog(posts):
     body = panel("blog", f"""          <h2>blog</h2>
           <p>Write-ups of my research, projects, and a few opinions. Filter:
             <button class="filter on" data-f="">all</button><button class="filter" data-f="research">research</button><button class="filter" data-f="project">projects</button><button class="filter" data-f="essay">essays</button>
-            <a class="pill pink" href="renderer.html">tool: black hole renderer</a></p>
+           </p>
           <ul class="posts">
 {chr(10).join(items)}
           </ul>""", "pink")
@@ -352,7 +352,7 @@ def build_hobbies():
     body = panel("blog", f"""          <h2>blog</h2>
           <p>Write-ups of my research, projects, and a few opinions. Filter:
             <button class="filter on" data-f="">all</button><button class="filter" data-f="research">research</button><button class="filter" data-f="project">projects</button><button class="filter" data-f="essay">essays</button>
-            <a class="pill pink" href="renderer.html">tool: black hole renderer</a></p>
+           </p>
           <ul class="posts">
 {chr(10).join(items)}
           </ul>""", "pink")
