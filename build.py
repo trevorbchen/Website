@@ -347,6 +347,31 @@ def build_hobbies():
     def hob(slug, name, inner=""):
         return f'          <li class="hob" id="{slug}"><h3>{name}</h3>{inner}</li>'
 
+    items = []
+    for p in sorted(posts, key=key):
+        star = ' <span class="pill gold">featured</span>' if p.get("featured") == "yes" else ""
+        items.append(
+            f'            <li data-kind="{p.get("kind", "")}"><span class="lvl">{p["date"]} &middot; {p.get("kind", "")}</span>'
+            f'<a href="posts/{p["slug"]}.html">{html.escape(p["title"])}</a>{star}<p>{p.get("blurb", "")}</p></li>')
+    body = panel("blog", f"""          <h2>blog</h2>
+          <p>Write-ups of my research, projects, and a few opinions. Filter:
+            <button class="filter on" data-f="">all</button><button class="filter" data-f="research">research</button><button class="filter" data-f="project">projects</button><button class="filter" data-f="essay">essays</button>
+            <a class="pill pink" href="renderer.html">tool: black hole renderer</a></p>
+          <ul class="posts">
+{chr(10).join(items)}
+          </ul>""", "pink")
+    page("blog.html", "blog | Trevor Chen", body, "blog.html")
+
+
+# ---------------------------------------------------------------- hobbies
+def shelf(items):
+    return '<ul class="shelf">' + "".join(f"<li>{i}</li>" for i in items) + "</ul>"
+
+
+def build_hobbies():
+    def hob(slug, name, inner=""):
+        return f'          <li class="hob" id="{slug}"><h3>{name}</h3>{inner}</li>'
+
     takes = [
         ("Inception", "A clever premise and a great score. I never cared about anyone inside the dream."),
         ("Interstellar", "The ideas are bigger than the people, and the film stops to tell you that love is a physical force."),
@@ -361,9 +386,8 @@ def build_hobbies():
             {shelf(["<b>Spider-Man: Into the Spider-Verse</b> (and Across)", "<b>Arcane</b> (show)", "<b>12 Angry Men</b>", "<b>The Truman Show</b>",
                     "<b>Avatar: The Last Airbender</b> (show)", "<b>A Clockwork Orange</b>", "<b>Fight Club</b>", "<b>The Battle of Algiers</b>",
                     "<b>Eternal Sunshine of the Spotless Mind</b>"])}
-            <p>Most of my favorites are about how people think, or how a system shapes them: a jury room, a town built around one man, a dystopia, an occupation, a relationship erased from memory.</p>
             <p class="k">unpopular opinions</p>
-            {takes_html}"""),
+            {shelf(["<b>Inception</b>", "<b>Interstellar</b>", "<b>The Godfather</b>", "<b>Mission: Impossible</b>", "<b>The Avengers films</b>"])}"""),
         hob("anime", "Anime, manga &amp; light novels", f"""
             <p>I don't believe in real books.</p>
             <p class="k">anime / manga</p>
@@ -376,7 +400,7 @@ def build_hobbies():
             <p class="k">currently learning</p>
             {shelf(["<b>Let Her Go</b> &middot; Passenger", "<b>Stitches</b> &middot; Shawn Mendes"])}
             <p class="k">songs I can play</p>
-            {shelf(["<b>Blackbird</b> &middot; The Beatles", "<b>Wonderwall</b> &middot; Oasis", "<b>Riptide</b> &middot; Vance Joy", "a few <b>Lana Del Rey</b> songs"])}"""),
+            {shelf(["<b>Blackbird</b> &middot; The Beatles", "<b>Say Yes to Heaven</b> &middot; Lana Del Rey", "<b>Riptide</b> &middot; Vance Joy", "<b>Wonderwall</b> &middot; Oasis", "<b>Hey There Delilah</b> &middot; Plain White T's", "<b>Count on Me</b> &middot; Bruno Mars"])}"""),
         hob("crochet", "Crochet", "<p>I crochet amigurumi. Currently learning stitches, and hoping to freehand dolls and design my own.</p>"),
         hob("figure-skating", "Figure skating", "<p>I used to figure skate, not competitively. I can do an axel.</p>"),
         hob("skateboarding", "Skateboarding"),
