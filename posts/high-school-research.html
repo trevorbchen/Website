@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doing research in high school was a mistake (mostly) | Trevor Chen</title>
+  <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body data-root="../">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="boil"><feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="0"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+    <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
+  </svg>
+  <canvas id="dots" aria-hidden="true"></canvas>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="../hobbies/crochet.html" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:3%;top:15%;width:64px;height:55px" aria-label="crochet"></a><a class="hole" href="../hobbies/guitar.html" data-label="guitar" data-tip="currently learning Let Her Go." style="left:1.5%;top:37%;width:36px;height:31px" aria-label="guitar"></a><a class="hole" href="../hobbies/skateboarding.html" data-label="skateboarding" data-tip="falling is part of the curriculum." style="left:4%;top:60%;width:52px;height:45px" aria-label="skateboarding"></a><a class="hole" href="../hobbies/movies.html" data-label="movies" data-tip="Spider-Verse, 12 Angry Men, unpopular opinions." style="left:2%;top:82%;width:42px;height:36px" aria-label="movies"></a><a class="hole" href="../hobbies/badminton.html" data-label="badminton" data-tip="ask me for a game." style="left:95%;top:20%;width:58px;height:50px" aria-label="badminton"></a><a class="hole" href="../hobbies/figure-skating.html" data-label="figure skating" data-tip="not competitive. I can do an axel." style="left:97%;top:48%;width:34px;height:29px" aria-label="figure skating"></a><a class="hole" href="../hobbies/anime.html" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:94%;top:74%;width:70px;height:60px" aria-label="anime / manga / LN"></a></div>
+  <div id="tip" class="tip" role="tooltip"></div>
+
+  <header class="top">
+    <div>
+      <p class="logo"><a href="../index.html">TREVOR CHEN</a></p>
+      <p class="tagline">diffusion / ai for science / interpretability</p>
+    </div>
+    <nav class="nav" aria-label="site">
+      <a href="../index.html">home</a>
+      <a href="../research.html">research</a>
+      <a href="../blog.html" aria-current="page">blog</a>
+      <a href="../Trevor_Chen_Resume.pdf">cv</a>
+    </nav>
+  </header>
+  <div class="ticker" aria-hidden="true"><div class="track"><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span></div></div>
+
+  <main>
+      <article class="panel post">
+        <span class="caption">essay</span>
+        <p class="back"><a href="../blog.html">&larr; all posts</a></p>
+        <h1>Doing research in high school was a mistake (mostly)</h1>
+        <p class="meta">2026-10 &middot; <span class="pill gold">advice</span> <span class="pill gold">learning</span> <span class="pill gold">research</span></p>
+<p>I did serious research for most of high school. By the end I had a handful of publications in optics and computational biology, and I'm grateful for it. I also think it was a mistake, and I'd tell any high schooler thinking about it to do something else.</p>
+<h2>The case against</h2>
+<p><strong>It's hyperspecialization, far too early.</strong> I can tell you a lot about cell biology and how proteins work. I can't tell you basic organic chemistry. I can tell you a lot about lasers and optics and how to model diffraction. I'm not confident I could be dropped into a high-level E&amp;M class and pass. That's a strange place to be: deep expertise in a couple of narrow corners with holes in the foundations underneath.</p>
+<p>There's very little the research gave me that a broader education wouldn't have. If I could go back, I'd rather have spent that time <strong>learning broadly and building things</strong>. And I'd do <strong>olympiads</strong>: they're better training. They force you to learn a wide base, to think fast, and to be wrong constantly in a setting where it's cheap.</p>
+<h2>The case for (the one thing)</h2>
+<p>Here's what research <em>did</em> give me, and it's real. Starting in 8th grade I had basically no structured academic path. I had to figure out how to learn on my own: find papers, find the actual question, get unstuck with nobody to ask. That turns out to be the transferable skill, much more than any specific result.</p>
+<p>In 12th grade, after college applications were done, I was bored. So I decided to learn machine learning. I knew essentially none. About a year later I had a NeurIPS paper. The papers in optics and biology had taught me <em>how to learn a field from scratch</em>, and ML was just the next field.</p>
+<p>Two years in, I have strong intuition for ideas in diffusion, RL and AI for science, and I'm comfortable in LLMs, interpretability, evals and distributed computing: I can read the papers and sometimes have something interesting to say. That's not a boast so much as evidence that you can get up to speed far faster than people think.</p>
+<h2>What research is actually about</h2>
+<p>I'd rewrite my own idea of it, too. Research isn't knowing everything. There's always more to learn and always someone ahead of you, and having people around who are better than you is a gift. What makes you a useful researcher is <strong>a strong intuition for why new ideas work, and the habit of asking the right questions.</strong> That's learnable, and it doesn't require starting at fourteen.</p>
+<p>I met one of my closest friends doing this stuff, someone who was well ahead of me in ML at the time and who I later co-founded a company with. A good lab or a good collaborator is worth more than any single result.</p>
+<h2>So what would I change?</h2>
+<p>Not much about the outcome, honestly. I'd change the order: build more, specialize later, take the olympiad route, learn organic chemistry on purpose. I don't regret any of it, and I'd still want the learning-to-learn part. I'd just want everything underneath it.</p>
+      </article>
+  </main>
+
+  <footer>
+    <div class="holes-row"><span class="holes-label">the holes</span><a class="hole-mini" href="../hobbies/crochet.html"><span class="blob"></span>crochet</a><a class="hole-mini" href="../hobbies/guitar.html"><span class="blob"></span>guitar</a><a class="hole-mini" href="../hobbies/skateboarding.html"><span class="blob"></span>skateboarding</a><a class="hole-mini" href="../hobbies/movies.html"><span class="blob"></span>movies</a><a class="hole-mini" href="../hobbies/badminton.html"><span class="blob"></span>badminton</a><a class="hole-mini" href="../hobbies/figure-skating.html"><span class="blob"></span>figure skating</a><a class="hole-mini" href="../hobbies/anime.html"><span class="blob"></span>anime / manga / LN</a></div>
+    <div class="plush-stage" id="plush-stage">
+      <canvas id="plush" aria-label="Two plush toys, a penguin and a panda. Drag them around."></canvas>
+      <div class="bubble" id="bubble"></div>
+      <p class="plush-hint">drag the plushes. poke them.</p>
+    </div>
+    <div class="foot-line">
+      <span class="tag">2026 &middot; trevorbchen</span>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    </div>
+  </footer>
+
+  <div id="portal" aria-hidden="true"></div>
+  <script src="../site.js"></script>
+  <script src="../fx.js"></script>
+  <script src="../plush.js"></script>
+  <script src="../demos.js"></script>
+</body>
+</html>

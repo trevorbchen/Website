@@ -3,24 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>blog — Trevor Chen</title>
-  <meta name="description" content="Trevor Chen — Caltech researcher and founder. Generative models, AI for science, interpretability.">
+  <title>blog | Trevor Chen</title>
+  <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-root="">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <filter id="boil"><feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="0"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+    <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
   </svg>
-  <div class="spots" aria-hidden="true"><span class="spot" style="left:4%;top:18%;width:46px;height:40px"></span><span class="spot" style="left:93%;top:12%;width:30px;height:26px"></span><span class="spot" style="left:88%;top:56%;width:70px;height:60px"></span><span class="spot" style="left:2%;top:72%;width:26px;height:22px"></span><span class="spot" style="left:47%;top:94%;width:38px;height:33px"></span><span class="spot" style="left:70%;top:33%;width:16px;height:14px"></span><span class="spot" style="left:20%;top:46%;width:14px;height:12px"></span><span class="spot" style="left:96%;top:86%;width:22px;height:19px"></span></div>
+  <canvas id="dots" aria-hidden="true"></canvas>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="hobbies/crochet.html" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:3%;top:15%;width:64px;height:55px" aria-label="crochet"></a><a class="hole" href="hobbies/guitar.html" data-label="guitar" data-tip="currently learning Let Her Go." style="left:1.5%;top:37%;width:36px;height:31px" aria-label="guitar"></a><a class="hole" href="hobbies/skateboarding.html" data-label="skateboarding" data-tip="falling is part of the curriculum." style="left:4%;top:60%;width:52px;height:45px" aria-label="skateboarding"></a><a class="hole" href="hobbies/movies.html" data-label="movies" data-tip="Spider-Verse, 12 Angry Men, unpopular opinions." style="left:2%;top:82%;width:42px;height:36px" aria-label="movies"></a><a class="hole" href="hobbies/badminton.html" data-label="badminton" data-tip="ask me for a game." style="left:95%;top:20%;width:58px;height:50px" aria-label="badminton"></a><a class="hole" href="hobbies/figure-skating.html" data-label="figure skating" data-tip="not competitive. I can do an axel." style="left:97%;top:48%;width:34px;height:29px" aria-label="figure skating"></a><a class="hole" href="hobbies/anime.html" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:94%;top:74%;width:70px;height:60px" aria-label="anime / manga / LN"></a></div>
+  <div id="tip" class="tip" role="tooltip"></div>
 
   <header class="top">
     <div>
       <p class="logo"><a href="index.html">TREVOR CHEN</a></p>
-      <p class="tagline">generative models / ai for science / interpretability</p>
+      <p class="tagline">diffusion / ai for science / interpretability</p>
     </div>
     <nav class="nav" aria-label="site">
       <a href="index.html">home</a>
@@ -29,29 +32,49 @@
       <a href="Trevor_Chen_Resume.pdf">cv</a>
     </nav>
   </header>
+  <div class="ticker" aria-hidden="true"><div class="track"><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span></div></div>
 
   <main>
       <section class="panel pink">
-        <span class="caption">Blog</span>
+        <span class="caption">blog</span>
           <h2>blog</h2>
-          <p>Projects, write-ups, and things I broke.</p>
+          <p>Write-ups of my research, projects, and a few opinions. Filter:
+            <button class="filter on" data-f="">all</button><button class="filter" data-f="research">research</button><button class="filter" data-f="project">projects</button><button class="filter" data-f="essay">essays</button>
+            <a class="pill" href="explorer.html">tool: interpretability explorer</a> <a class="pill pink" href="renderer.html">tool: black hole renderer</a></p>
           <ul class="posts">
-            <li><span class="lvl">2026-08-03</span><a href="posts/pangram.html">I broke an AI-image detector (both ways)</a>
-              <p>Red-teaming Pangram: real photos flagged as AI, AI images passing as human, and why I'm not releasing the code.</p></li>
-            <li><span class="lvl">2026-06-12</span><a href="posts/black-hole.html">Rendering a black hole on the GPU</a>
-              <p>A real-time CUDA ray tracer that bends light through Schwarzschild spacetime, plus a physics test suite to keep it honest.</p></li>
-            <li><span class="lvl">2025-08-30</span><a href="posts/prediction-markets.html">Trading binary prediction markets with RL</a>
-              <p>A summer of inventory management, slippage, and sentiment signals.</p></li>
+            <li data-kind="research"><span class="lvl">2026-07 &middot; research</span><a href="posts/ddamo.html">Steering Discrete Diffusion: Design Choices for Feedback-Efficient Molecular Optimization</a> <span class="pill gold">featured</span><p>Four design decisions in a test-time adaptation loop for molecular diffusion models, and the one component the others were waiting on. NeurIPS 2026, with Genesis Molecular AI and ETH Zurich.</p></li>
+            <li data-kind="essay"><span class="lvl">2026-10 &middot; essay</span><a href="posts/connect4.html">I learned to beat a Connect 4 bot, then lost to my roommate</a><p>A small story about distribution shift, catastrophic forgetting, and why distilling ideas from a teacher beats copying its moves.</p></li>
+            <li data-kind="essay"><span class="lvl">2026-10 &middot; essay</span><a href="posts/high-school-research.html">Doing research in high school was a mistake (mostly)</a><p>I don't regret any of it, but I'd tell my younger self to do olympiads and build things instead. Hyperspecializing early is overrated.</p></li>
+            <li data-kind="essay"><span class="lvl">2026-10 &middot; essay</span><a href="posts/leaving-startups.html">Why I stepped back from startups to do research</a><p>The surprising part is that my co-founder is still one of my closest friends. Here's how I figured out I'm a researcher.</p></li>
+            <li data-kind="research"><span class="lvl">2026-10 &middot; research</span><a href="posts/sae-families.html">The same data has many valid dictionaries. Can the loss pick one?</a><p>A family of sparse-autoencoder training objectives that steer which features a model learns, instead of leaving it to the random seed. With Ilona Demler and Pietro Perona. CVPR 2027, under review.</p></li>
+            <li data-kind="research"><span class="lvl">2026-09 &middot; research</span><a href="posts/memorization.html">Why giving a diffusion model extra room delays memorization</a><p>Extra latent dimensions act like a spectral buffer. A model has to absorb them before it can start copying its training set. ICML HiLD 2026, with an extended version under review at ICLR 2027.</p></li>
+            <li data-kind="project"><span class="lvl">2026-08 &middot; project</span><a href="posts/pangram.html">I broke an AI-image detector, in both directions</a><p>What I tried, why it worked, how Pangram's co-founder responded, and what I actually think about AI detection. I'm not releasing the code. Here's why.</p></li>
+            <li data-kind="project"><span class="lvl">2026-06 &middot; project</span><a href="posts/black-hole.html">Rendering a black hole on the GPU</a><p>A real-time CUDA ray tracer that bends light through Schwarzschild spacetime, built with Kevin Peng. It started because I'd just met Kip Thorne.</p></li>
+            <li data-kind="essay"><span class="lvl">2025-10 &middot; essay</span><a href="posts/diffusion-gaussians.html">A theory of diffusion models that turned out to be wrong, and why I&#x27;m glad I wrote it down</a><p>After reading Yang Song's diffusion work I got a clean theory in my head and tested it with seven small experiments. It was wrong in an instructive way.</p></li>
+            <li data-kind="project"><span class="lvl">2025-08 &middot; project</span><a href="posts/prediction-markets.html">I over-engineered an arbitrage machine, and simple methods still won</a><p>Binary prediction markets in the early days: fragmented, thin, and full of degenerate gamblers. Notes on what worked and what was embarrassing.</p></li>
+            <li data-kind="research"><span class="lvl">2024-05 &middot; research</span><a href="posts/optics.html">Bending light for a living (kind of): mid-IR gratings and a borescope</a><p>Years of optics research before I touched ML. Laser diffraction gratings now used at national labs, and a thermal camera that survives a flame.</p></li>
+            <li data-kind="research"><span class="lvl">2023-08 &middot; research</span><a href="posts/bio.html">Drug discovery before I knew what machine learning was</a><p>Screening 50,000+ compounds on a supercomputer for HIV and diabetic-cataract drugs, plus a literature review on viruses and cancer.</p></li>
           </ul>
       </section>
   </main>
 
   <footer>
-    <span>© 2026 trevor chen · no photos, only spots</span>
-    <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    <div class="holes-row"><span class="holes-label">the holes</span><a class="hole-mini" href="hobbies/crochet.html"><span class="blob"></span>crochet</a><a class="hole-mini" href="hobbies/guitar.html"><span class="blob"></span>guitar</a><a class="hole-mini" href="hobbies/skateboarding.html"><span class="blob"></span>skateboarding</a><a class="hole-mini" href="hobbies/movies.html"><span class="blob"></span>movies</a><a class="hole-mini" href="hobbies/badminton.html"><span class="blob"></span>badminton</a><a class="hole-mini" href="hobbies/figure-skating.html"><span class="blob"></span>figure skating</a><a class="hole-mini" href="hobbies/anime.html"><span class="blob"></span>anime / manga / LN</a></div>
+    <div class="plush-stage" id="plush-stage">
+      <canvas id="plush" aria-label="Two plush toys, a penguin and a panda. Drag them around."></canvas>
+      <div class="bubble" id="bubble"></div>
+      <p class="plush-hint">drag the plushes. poke them.</p>
+    </div>
+    <div class="foot-line">
+      <span class="tag">2026 &middot; trevorbchen</span>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    </div>
   </footer>
 
   <div id="portal" aria-hidden="true"></div>
   <script src="site.js"></script>
+  <script src="fx.js"></script>
+  <script src="plush.js"></script>
+  <script src="demos.js"></script>
 </body>
 </html>

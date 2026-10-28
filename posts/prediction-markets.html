@@ -3,24 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Trading binary prediction markets with RL — Trevor Chen</title>
-  <meta name="description" content="Trevor Chen — Caltech researcher and founder. Generative models, AI for science, interpretability.">
+  <title>I over-engineered an arbitrage machine, and simple methods still won | Trevor Chen</title>
+  <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style.css">
 </head>
-<body>
+<body data-root="../">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <filter id="boil"><feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="0"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+    <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
   </svg>
-  <div class="spots" aria-hidden="true"><span class="spot" style="left:4%;top:18%;width:46px;height:40px"></span><span class="spot" style="left:93%;top:12%;width:30px;height:26px"></span><span class="spot" style="left:88%;top:56%;width:70px;height:60px"></span><span class="spot" style="left:2%;top:72%;width:26px;height:22px"></span><span class="spot" style="left:47%;top:94%;width:38px;height:33px"></span><span class="spot" style="left:70%;top:33%;width:16px;height:14px"></span><span class="spot" style="left:20%;top:46%;width:14px;height:12px"></span><span class="spot" style="left:96%;top:86%;width:22px;height:19px"></span></div>
+  <canvas id="dots" aria-hidden="true"></canvas>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="../hobbies/crochet.html" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:3%;top:15%;width:64px;height:55px" aria-label="crochet"></a><a class="hole" href="../hobbies/guitar.html" data-label="guitar" data-tip="currently learning Let Her Go." style="left:1.5%;top:37%;width:36px;height:31px" aria-label="guitar"></a><a class="hole" href="../hobbies/skateboarding.html" data-label="skateboarding" data-tip="falling is part of the curriculum." style="left:4%;top:60%;width:52px;height:45px" aria-label="skateboarding"></a><a class="hole" href="../hobbies/movies.html" data-label="movies" data-tip="Spider-Verse, 12 Angry Men, unpopular opinions." style="left:2%;top:82%;width:42px;height:36px" aria-label="movies"></a><a class="hole" href="../hobbies/badminton.html" data-label="badminton" data-tip="ask me for a game." style="left:95%;top:20%;width:58px;height:50px" aria-label="badminton"></a><a class="hole" href="../hobbies/figure-skating.html" data-label="figure skating" data-tip="not competitive. I can do an axel." style="left:97%;top:48%;width:34px;height:29px" aria-label="figure skating"></a><a class="hole" href="../hobbies/anime.html" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:94%;top:74%;width:70px;height:60px" aria-label="anime / manga / LN"></a></div>
+  <div id="tip" class="tip" role="tooltip"></div>
 
   <header class="top">
     <div>
       <p class="logo"><a href="../index.html">TREVOR CHEN</a></p>
-      <p class="tagline">generative models / ai for science / interpretability</p>
+      <p class="tagline">diffusion / ai for science / interpretability</p>
     </div>
     <nav class="nav" aria-label="site">
       <a href="../index.html">home</a>
@@ -29,39 +32,56 @@
       <a href="../Trevor_Chen_Resume.pdf">cv</a>
     </nav>
   </header>
+  <div class="ticker" aria-hidden="true"><div class="track"><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span></div></div>
 
   <main>
-      <article class="panel gold post">
-        <span class="caption">Blog</span>
-        <div class="body">
-          <p class="back"><a href="../blog.html">← all posts</a></p>
-          <h1>Trading binary prediction markets with RL</h1>
-          <p class="meta">2025-08-30 · <span class="pill violet">RL</span><span class="pill gold">markets</span></p>
-          <p>Over summer 2025 I built a medium-frequency trading system for binary prediction markets — the kind
-          where every contract settles at 0 or 1.</p>
-          <h3>What I built</h3>
-          <ul>
-            <li><b>Inventory management with reinforcement learning.</b> Holding too much of one side is the main risk, and
-            naive execution leaks money to slippage. An RL policy that managed inventory and hedging cut execution
-            slippage by about 30%.</li>
-            <li><b>Signals.</b> Sentiment analysis combined with arbitrage and hedging strategies across related markets;
-            over a 3-month window this returned a consistent ~8% per week.</li>
-            <li><b>Execution.</b> A secure execution API with local cryptographic signing that made the trading loop about
-            6× faster.</li>
-          </ul>
-          <p>Short-window returns like that say more about a market's inefficiencies than about any lasting edge,
-          and they shrink as markets mature. The most durable thing I took away was how much of trading is
-          engineering: latency, inventory, and not losing money on the way in and out.</p>
-        </div>
+      <article class="panel post">
+        <span class="caption">project</span>
+        <p class="back"><a href="../blog.html">&larr; all posts</a></p>
+        <h1>I over-engineered an arbitrage machine, and simple methods still won</h1>
+        <p class="meta">2025-08 &middot; <span class="pill pink">markets</span> <span class="pill pink">reinforcement learning</span> <span class="pill pink">trading</span></p>
+<p>In the summer of 2025 I built a trading system for binary prediction markets. These are markets where a contract pays $1 if something happens and $0 if it doesn't, so its price is supposed to be a probability.</p>
+<h2>The setup</h2>
+<p>Back then these markets had no central venue doing the job of keeping prices coherent. They were fragmented, thin, and full of related contracts whose prices didn't agree with each other. And a large share of the people betting were, to put it kindly, <strong>degenerate gamblers</strong>: betting on feel, on a headline, on their team. My starting thesis was blunt: <em>the average participant is dumb, so basic techniques should be enough to win.</em></p>
+<p>It turned out to be true.</p>
+<h2>What I built first (too much)</h2>
+<p>I did what engineers do and built an absurdly elaborate machine:</p>
+<ul>
+<li>A <strong>reinforcement-learning inventory manager</strong>: holding too much of one side is the main risk, and naive execution leaks money to slippage. The RL policy cut execution slippage by about 30%.</li>
+<li><strong>Sentiment signals</strong> from text, to get ahead of news.</li>
+<li><strong>Arbitrage and hedging</strong> across related markets.</li>
+<li>A secure execution API with local signing, which made the trading loop about 6× faster.</li>
+</ul>
+<p>Over a three-month stretch this made money consistently, on the order of 8% a week. That was a small experiment and I wouldn't extrapolate it.</p>
+<h2>What actually worked</h2>
+<p>The embarrassing finding: <strong>the simple methods beat the over-engineered ones.</strong> When two related contracts implied inconsistent probabilities, or a price sat far from any sensible estimate of the expected payoff, the mispricings were so large that you didn't need a clever model. Buy the obviously cheap side, hedge when you could, don't get fancy. The RL and sentiment stack added complexity and latency for a thin sliver of extra return, because the pricing errors were so big that a rule fit on a napkin captured most of the edge.</p>
+<h2>What I took from it</h2>
+<ul>
+<li><strong>Find where the market is dumb before you build anything smart.</strong> All the cleverness in the world is wasted if the inefficiency is simple.</li>
+<li><strong>Fancy ML earns its keep when the easy edge is gone</strong>, and in a young, fragmented market the easy edge is everywhere.</li>
+<li>Execution and inventory are most of trading. The signal is the easy part.</li>
+</ul>
+<p>It stayed a summer project, and I'm happy to have it as a lesson in not over-building.</p>
       </article>
   </main>
 
   <footer>
-    <span>© 2026 trevor chen · no photos, only spots</span>
-    <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    <div class="holes-row"><span class="holes-label">the holes</span><a class="hole-mini" href="../hobbies/crochet.html"><span class="blob"></span>crochet</a><a class="hole-mini" href="../hobbies/guitar.html"><span class="blob"></span>guitar</a><a class="hole-mini" href="../hobbies/skateboarding.html"><span class="blob"></span>skateboarding</a><a class="hole-mini" href="../hobbies/movies.html"><span class="blob"></span>movies</a><a class="hole-mini" href="../hobbies/badminton.html"><span class="blob"></span>badminton</a><a class="hole-mini" href="../hobbies/figure-skating.html"><span class="blob"></span>figure skating</a><a class="hole-mini" href="../hobbies/anime.html"><span class="blob"></span>anime / manga / LN</a></div>
+    <div class="plush-stage" id="plush-stage">
+      <canvas id="plush" aria-label="Two plush toys, a penguin and a panda. Drag them around."></canvas>
+      <div class="bubble" id="bubble"></div>
+      <p class="plush-hint">drag the plushes. poke them.</p>
+    </div>
+    <div class="foot-line">
+      <span class="tag">2026 &middot; trevorbchen</span>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    </div>
   </footer>
 
   <div id="portal" aria-hidden="true"></div>
   <script src="../site.js"></script>
+  <script src="../fx.js"></script>
+  <script src="../plush.js"></script>
+  <script src="../demos.js"></script>
 </body>
 </html>

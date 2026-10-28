@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bending light for a living (kind of): mid-IR gratings and a borescope | Trevor Chen</title>
+  <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body data-root="../">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="boil"><feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="0"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+    <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
+  </svg>
+  <canvas id="dots" aria-hidden="true"></canvas>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="../hobbies/crochet.html" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:3%;top:15%;width:64px;height:55px" aria-label="crochet"></a><a class="hole" href="../hobbies/guitar.html" data-label="guitar" data-tip="currently learning Let Her Go." style="left:1.5%;top:37%;width:36px;height:31px" aria-label="guitar"></a><a class="hole" href="../hobbies/skateboarding.html" data-label="skateboarding" data-tip="falling is part of the curriculum." style="left:4%;top:60%;width:52px;height:45px" aria-label="skateboarding"></a><a class="hole" href="../hobbies/movies.html" data-label="movies" data-tip="Spider-Verse, 12 Angry Men, unpopular opinions." style="left:2%;top:82%;width:42px;height:36px" aria-label="movies"></a><a class="hole" href="../hobbies/badminton.html" data-label="badminton" data-tip="ask me for a game." style="left:95%;top:20%;width:58px;height:50px" aria-label="badminton"></a><a class="hole" href="../hobbies/figure-skating.html" data-label="figure skating" data-tip="not competitive. I can do an axel." style="left:97%;top:48%;width:34px;height:29px" aria-label="figure skating"></a><a class="hole" href="../hobbies/anime.html" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:94%;top:74%;width:70px;height:60px" aria-label="anime / manga / LN"></a></div>
+  <div id="tip" class="tip" role="tooltip"></div>
+
+  <header class="top">
+    <div>
+      <p class="logo"><a href="../index.html">TREVOR CHEN</a></p>
+      <p class="tagline">diffusion / ai for science / interpretability</p>
+    </div>
+    <nav class="nav" aria-label="site">
+      <a href="../index.html">home</a>
+      <a href="../research.html">research</a>
+      <a href="../blog.html" aria-current="page">blog</a>
+      <a href="../Trevor_Chen_Resume.pdf">cv</a>
+    </nav>
+  </header>
+  <div class="ticker" aria-hidden="true"><div class="track"><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span></div></div>
+
+  <main>
+      <article class="panel post">
+        <span class="caption">research</span>
+        <p class="back"><a href="../blog.html">&larr; all posts</a></p>
+        <h1>Bending light for a living (kind of): mid-IR gratings and a borescope</h1>
+        <p class="meta">2024-05 &middot; <span class="pill cyan">physics</span> <span class="pill cyan">optics</span> <span class="pill cyan">nanofabrication</span></p>
+<p>My first real research was in physics, in optics, and I did it for years, so it deserves a proper write-up. Two projects.</p>
+<h2>1. Gratings for ultrafast lasers</h2>
+<p>High-energy ultrafast lasers stretch a pulse in time before amplifying it and compress it again afterward, so the amplifier doesn't burn itself. The workhorse inside the stretcher and compressor is a <strong>diffraction grating</strong>, and a bad grating costs you energy on every bounce. You want one that is efficient across a <em>broad</em> range of wavelengths, in the <strong>mid-infrared</strong>, which is where conventional mechanical ruling and holographic recording struggle to make accurate blazed grooves.</p>
+<p>Grating physics fits in one line. Light of wavelength λ hitting a grating of period d at angle θᵢ leaves in order m at</p>
+<blockquote>
+<p>sin θₘ = mλ/d − sin θᵢ</p>
+</blockquote>
+<p>Play with it:</p>
+<div class="demo" data-demo="grating"></div>
+
+<p><em>Drag the sliders. The orders that can propagate are the ones where sin θ stays between −1 and 1. A blazed grating shapes the grooves so most of the energy lands in a single order. Getting the groove profile right is the whole game.</em></p>
+<p>What we did (this was at Spectral Energies, with the Penn State nanofabrication lab):</p>
+<ul>
+<li>Used <strong>electron-beam lithography with anisotropic wet etching</strong> to make near-perfect blazed grooves, instead of ruling or holography.</li>
+<li>Ran <strong>global optimization</strong> on the design for greater than <strong>90% efficiency across 3.6 to 6.6 µm</strong>, with a hybrid metal–dielectric coating (gold plus alumina) tuned to minimize absorption and raise the laser-induced damage threshold.</li>
+<li>Tested prototypes at 4.3 µm: the best sample hit <strong>92% diffraction efficiency against a theoretical 94.2%</strong>.</li>
+<li>Found, in simulation, a "<strong>double-blazing</strong>" groove feature that widened bandwidth by about 50% and raised efficiency by about 20%.</li>
+<li>Folded fabrication constraints directly into the simulation, which cut manufacturing error dramatically and cut prototype iterations from <strong>7 to 2</strong>.</li>
+</ul>
+<p>The result was 10 gratings in use at 5+ national labs, supporting over $1.3M of R&amp;D contracts. This was published in <em>Optical Materials Express</em> and as an SPIE proceeding.</p>
+<h2>2. A thermal camera that lives inside a jet engine</h2>
+<p>Measuring the surface temperature of turbine parts is hard because the flame around them lights up everything in the visible and near-infrared. Working in the <strong>long-wave infrared (8 to 14 µm)</strong> sidesteps most of that interference.</p>
+<p>With Paul Hsu and Tim Lieuwen's group, I worked on a compact LWIR borescope: a probe a couple of centimeters across in a water-cooled housing designed to survive flame temperatures up to about 2400 K at 50 bar. We demonstrated it by imaging a V-gutter bluff body cooled with nitrogen in a lab testbed, where it measured surface temperature accurately with little background noise and tracked the transient cooling. My part was the optimization that designed the sensing system and the calibration against a blackbody. It produced a journal paper (<em>Measurement Science and Technology</em>) and three conference papers.</p>
+<h2>What I took from it</h2>
+<p>Optics taught me to distrust my own simulations: a design that looks perfect on screen meets the limits of fabrication on the first prototype, so you learn to put the constraints <em>into</em> the model. I think the same instinct is why I like AI-for-science work now. The oracle is expensive and the real world is the final judge.</p>
+      </article>
+  </main>
+
+  <footer>
+    <div class="holes-row"><span class="holes-label">the holes</span><a class="hole-mini" href="../hobbies/crochet.html"><span class="blob"></span>crochet</a><a class="hole-mini" href="../hobbies/guitar.html"><span class="blob"></span>guitar</a><a class="hole-mini" href="../hobbies/skateboarding.html"><span class="blob"></span>skateboarding</a><a class="hole-mini" href="../hobbies/movies.html"><span class="blob"></span>movies</a><a class="hole-mini" href="../hobbies/badminton.html"><span class="blob"></span>badminton</a><a class="hole-mini" href="../hobbies/figure-skating.html"><span class="blob"></span>figure skating</a><a class="hole-mini" href="../hobbies/anime.html"><span class="blob"></span>anime / manga / LN</a></div>
+    <div class="plush-stage" id="plush-stage">
+      <canvas id="plush" aria-label="Two plush toys, a penguin and a panda. Drag them around."></canvas>
+      <div class="bubble" id="bubble"></div>
+      <p class="plush-hint">drag the plushes. poke them.</p>
+    </div>
+    <div class="foot-line">
+      <span class="tag">2026 &middot; trevorbchen</span>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    </div>
+  </footer>
+
+  <div id="portal" aria-hidden="true"></div>
+  <script src="../site.js"></script>
+  <script src="../fx.js"></script>
+  <script src="../plush.js"></script>
+  <script src="../demos.js"></script>
+</body>
+</html>

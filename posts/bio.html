@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drug discovery before I knew what machine learning was | Trevor Chen</title>
+  <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body data-root="../">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="boil"><feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="0"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+    <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
+  </svg>
+  <canvas id="dots" aria-hidden="true"></canvas>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="../hobbies/crochet.html" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:3%;top:15%;width:64px;height:55px" aria-label="crochet"></a><a class="hole" href="../hobbies/guitar.html" data-label="guitar" data-tip="currently learning Let Her Go." style="left:1.5%;top:37%;width:36px;height:31px" aria-label="guitar"></a><a class="hole" href="../hobbies/skateboarding.html" data-label="skateboarding" data-tip="falling is part of the curriculum." style="left:4%;top:60%;width:52px;height:45px" aria-label="skateboarding"></a><a class="hole" href="../hobbies/movies.html" data-label="movies" data-tip="Spider-Verse, 12 Angry Men, unpopular opinions." style="left:2%;top:82%;width:42px;height:36px" aria-label="movies"></a><a class="hole" href="../hobbies/badminton.html" data-label="badminton" data-tip="ask me for a game." style="left:95%;top:20%;width:58px;height:50px" aria-label="badminton"></a><a class="hole" href="../hobbies/figure-skating.html" data-label="figure skating" data-tip="not competitive. I can do an axel." style="left:97%;top:48%;width:34px;height:29px" aria-label="figure skating"></a><a class="hole" href="../hobbies/anime.html" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:94%;top:74%;width:70px;height:60px" aria-label="anime / manga / LN"></a></div>
+  <div id="tip" class="tip" role="tooltip"></div>
+
+  <header class="top">
+    <div>
+      <p class="logo"><a href="../index.html">TREVOR CHEN</a></p>
+      <p class="tagline">diffusion / ai for science / interpretability</p>
+    </div>
+    <nav class="nav" aria-label="site">
+      <a href="../index.html">home</a>
+      <a href="../research.html">research</a>
+      <a href="../blog.html" aria-current="page">blog</a>
+      <a href="../Trevor_Chen_Resume.pdf">cv</a>
+    </nav>
+  </header>
+  <div class="ticker" aria-hidden="true"><div class="track"><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span></div></div>
+
+  <main>
+      <article class="panel post">
+        <span class="caption">research</span>
+        <p class="back"><a href="../blog.html">&larr; all posts</a></p>
+        <h1>Drug discovery before I knew what machine learning was</h1>
+        <p class="meta">2023-08 &middot; <span class="pill cyan">biology</span> <span class="pill cyan">drug discovery</span> <span class="pill cyan">docking</span></p>
+<p>I started working in computational biology at the San Diego Supercomputer Center as a student and stayed for years. This was my first time doing ML on something that mattered to someone besides me.</p>
+<h2>Two disease targets</h2>
+<p><strong>Aldose reductase and diabetic cataracts.</strong> In people with diabetes, the enzyme aldose reductase turns excess sugar into a product that builds up in the lens of the eye and clouds it. Block the enzyme, slow the cataract. We built ML models to predict which small molecules inhibit it and screened candidates for it.</p>
+<p><strong>HIV-1 protease.</strong> This enzyme cuts viral proteins into functional pieces, and it's a classic drug target. We combined ML-based virtual screening with ligand docking to flag potent inhibitors.</p>
+<p>Across the projects I ran large-scale screening of <strong>50,000+ compounds</strong> on the center's HPC clusters, built models that hit about <strong>87% accuracy</strong> at the binary "does it bind" question, and used docking simulations to augment misclassified examples, which improved predicted binding accuracy by about <strong>20%</strong>. I also supported three other student interns by running docking on their datasets to check that their ML models were learning something real, and taught them the tooling along the way.</p>
+<p>The two screening projects became papers (<em>Advances in Ophthalmology Practice and Research</em>; <em>Artificial Intelligence Chemistry</em>), and I contributed to a third: a literature review on <strong>anelloviruses and cancer</strong>, in the <em>Journal of Infectious Diseases</em>, about a family of viruses found in almost everyone and the mixed evidence on whether they influence cancer.</p>
+<h2>What this was really good for</h2>
+<p>Looking back, this is where I first ran into the problem I still work on: the expensive oracle. Docking and screening are cheap compared with a wet lab, and the wet lab is the only thing that is actually true. Everything between "the model says it binds" and "it works" is hope. When I later worked on <a href="ddamo.html">sample-efficient molecule design</a> and on closing the loop with wet-lab experiments, I was working on the same problem from a better angle.</p>
+<p>I also learned something about specialization that I wrote up <a href="high-school-research.html">separately</a>.</p>
+      </article>
+  </main>
+
+  <footer>
+    <div class="holes-row"><span class="holes-label">the holes</span><a class="hole-mini" href="../hobbies/crochet.html"><span class="blob"></span>crochet</a><a class="hole-mini" href="../hobbies/guitar.html"><span class="blob"></span>guitar</a><a class="hole-mini" href="../hobbies/skateboarding.html"><span class="blob"></span>skateboarding</a><a class="hole-mini" href="../hobbies/movies.html"><span class="blob"></span>movies</a><a class="hole-mini" href="../hobbies/badminton.html"><span class="blob"></span>badminton</a><a class="hole-mini" href="../hobbies/figure-skating.html"><span class="blob"></span>figure skating</a><a class="hole-mini" href="../hobbies/anime.html"><span class="blob"></span>anime / manga / LN</a></div>
+    <div class="plush-stage" id="plush-stage">
+      <canvas id="plush" aria-label="Two plush toys, a penguin and a panda. Drag them around."></canvas>
+      <div class="bubble" id="bubble"></div>
+      <p class="plush-hint">drag the plushes. poke them.</p>
+    </div>
+    <div class="foot-line">
+      <span class="tag">2026 &middot; trevorbchen</span>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    </div>
+  </footer>
+
+  <div id="portal" aria-hidden="true"></div>
+  <script src="../site.js"></script>
+  <script src="../fx.js"></script>
+  <script src="../plush.js"></script>
+  <script src="../demos.js"></script>
+</body>
+</html>

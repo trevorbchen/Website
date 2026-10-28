@@ -3,24 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>I broke an AI-image detector (both ways) — Trevor Chen</title>
-  <meta name="description" content="Trevor Chen — Caltech researcher and founder. Generative models, AI for science, interpretability.">
+  <title>I broke an AI-image detector, in both directions | Trevor Chen</title>
+  <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style.css">
 </head>
-<body>
+<body data-root="../">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <filter id="boil"><feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="0"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+    <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
   </svg>
-  <div class="spots" aria-hidden="true"><span class="spot" style="left:4%;top:18%;width:46px;height:40px"></span><span class="spot" style="left:93%;top:12%;width:30px;height:26px"></span><span class="spot" style="left:88%;top:56%;width:70px;height:60px"></span><span class="spot" style="left:2%;top:72%;width:26px;height:22px"></span><span class="spot" style="left:47%;top:94%;width:38px;height:33px"></span><span class="spot" style="left:70%;top:33%;width:16px;height:14px"></span><span class="spot" style="left:20%;top:46%;width:14px;height:12px"></span><span class="spot" style="left:96%;top:86%;width:22px;height:19px"></span></div>
+  <canvas id="dots" aria-hidden="true"></canvas>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="../hobbies/crochet.html" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:3%;top:15%;width:64px;height:55px" aria-label="crochet"></a><a class="hole" href="../hobbies/guitar.html" data-label="guitar" data-tip="currently learning Let Her Go." style="left:1.5%;top:37%;width:36px;height:31px" aria-label="guitar"></a><a class="hole" href="../hobbies/skateboarding.html" data-label="skateboarding" data-tip="falling is part of the curriculum." style="left:4%;top:60%;width:52px;height:45px" aria-label="skateboarding"></a><a class="hole" href="../hobbies/movies.html" data-label="movies" data-tip="Spider-Verse, 12 Angry Men, unpopular opinions." style="left:2%;top:82%;width:42px;height:36px" aria-label="movies"></a><a class="hole" href="../hobbies/badminton.html" data-label="badminton" data-tip="ask me for a game." style="left:95%;top:20%;width:58px;height:50px" aria-label="badminton"></a><a class="hole" href="../hobbies/figure-skating.html" data-label="figure skating" data-tip="not competitive. I can do an axel." style="left:97%;top:48%;width:34px;height:29px" aria-label="figure skating"></a><a class="hole" href="../hobbies/anime.html" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:94%;top:74%;width:70px;height:60px" aria-label="anime / manga / LN"></a></div>
+  <div id="tip" class="tip" role="tooltip"></div>
 
   <header class="top">
     <div>
       <p class="logo"><a href="../index.html">TREVOR CHEN</a></p>
-      <p class="tagline">generative models / ai for science / interpretability</p>
+      <p class="tagline">diffusion / ai for science / interpretability</p>
     </div>
     <nav class="nav" aria-label="site">
       <a href="../index.html">home</a>
@@ -29,51 +32,63 @@
       <a href="../Trevor_Chen_Resume.pdf">cv</a>
     </nav>
   </header>
+  <div class="ticker" aria-hidden="true"><div class="track"><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span></div></div>
 
   <main>
-      <article class="panel pink post">
-        <span class="caption">Blog</span>
-        <div class="body">
-          <p class="back"><a href="../blog.html">← all posts</a></p>
-          <h1>I broke an AI-image detector (both ways)</h1>
-          <p class="meta">2026-08-03 · <span class="pill pink">AI safety</span><span class="pill">red-teaming</span></p>
-          <p>Pangram is one of the most popular AI-content detectors, and a lot of people online treat its verdict as
-          final. I wanted to know how much weight that verdict can actually carry, so I spent some time poking at
-          the image detector.</p>
-
-          <h3>1. Ordinary upscaling looks "AI"</h3>
-          <p>Upsampling a real image from 128×128 to 512×512 consistently got it flagged as AI-generated. That isn't
-          an extreme transformation; plenty of everyday image pipelines upscale without the user ever knowing. My
-          worry is less about this one setting and more about honest people getting flagged for using normal tools.</p>
-
-          <h3>2. It can be pushed in both directions</h3>
-          <p>Using out-of-distribution loss functions, I trained a VAE that makes <em>real</em> photos get flagged as AI,
-          and a GAN-VAE that makes <em>AI-generated</em> images pass as human. Same family of models, opposite failure
-          modes — which means a verdict alone can't be treated as proof either way.</p>
-
-          <div class="callout">I'm not releasing the code or the training details. A turnkey "make AI images undetectable" tool
-          is a misuse risk, and the point was to show the gap, not to widen it. I shared details with Pangram directly.</div>
-
-          <h3>3. Where the line should be</h3>
-          <p>Pangram's co-founder replied to my thread with a fair question: if heavy upscaling hallucinates new
-          detail, should that count as AI? I think there's a real taxonomy problem here — "AI-generated", "AI-edited",
-          and "touched by a standard upscaler" probably shouldn't share one label.</p>
-
-          <h3>Why I'm still optimistic about detection</h3>
-          <blockquote>Detecting AI has an infinite stream of data to learn from, while bypassing detectors is a very
-          low-data, sparse-reward task.</blockquote>
-          <p>Long term, I think detectors should keep the advantage (short of truly inhuman mimicry). AI detection is
-          important work. For now, though, a detector's output should be one piece of evidence, not the final word.</p>
-        </div>
+      <article class="panel post">
+        <span class="caption">project</span>
+        <p class="back"><a href="../blog.html">&larr; all posts</a></p>
+        <h1>I broke an AI-image detector, in both directions</h1>
+        <p class="meta">2026-08 &middot; <span class="pill pink">AI safety</span> <span class="pill pink">red-teaming</span> <span class="pill pink">detection</span></p>
+<p>In August I posted a long thread claiming I'd broken Pangram's AI-image detector "completely": I could turn any real image into one it flagged as AI, and any AI image into one it called real. This is the longer version: what I did, the reasoning, the reply from Pangram's co-founder, and where I've landed.</p>
+<p>First, the ground rules. I did all of this on the <strong>free plan</strong>, because Pangram never got back to me about API access. I'm <strong>not releasing checkpoints</strong>, for reasons below. And I like the company. I think AI detection is genuinely important work, which is why I took it seriously enough to attack.</p>
+<h2>Why I was skeptical in the first place</h2>
+<p>A diffusion model, by construction, samples from the <em>distribution of real images</em>. If it's good, the images it makes are statistically very close to the real thing, so you'd expect a detector to be fighting a losing battle. Yet Pangram claims it can even tell AI images from <em>photoshopped</em> ones, which is a hard distinction for a human.</p>
+<p>My hypothesis: it isn't doing what humans do. We spot AI images by <em>content</em>, the six-fingered hand, the garbled text. A detector that separates AI from Photoshop is probably reading something <strong>spectral</strong>: faint high-frequency fingerprints left by how the image was made. If so, it should be brittle to anything that moves energy around in frequency space.</p>
+<h2>Four experiments</h2>
+<p><img alt="The four attacks and what the detector says" src="../img/pangram_flow.svg" /></p>
+<p><strong>1. Upscale a real photo.</strong> Resizing a real image with most classical algorithms made the detector call it AI. Not an exotic attack: 128×128 to 512×512 did it, consistently.</p>
+<p><strong>2. Re-encode a real photo through a VAE.</strong> Flagged as AI. High-frequency artifacts are characteristic of multistep generation (next-pixel prediction, diffusion, VAEs), and a plain autoencoder leaves them too.</p>
+<p><strong>3. Try the obvious fix, and watch it fail.</strong> Matching frequency statistics to real images, the "clean" spectral transforms, did <em>not</em> fool it. So it isn't a global spectrum check; it's probably doing patch-level spectral analysis. That's why I switched to learning the attack.</p>
+<p><strong>4. Train an autoencoder with an adversarial term.</strong> Train it on CelebA with an ordinary GAN-style discriminator objective, and run any AI image through it. The output is a high-fidelity copy of the original that the detector calls <strong>real</strong>. Interpolating between the original and the re-encoded image acts as a smooth knob: you can dial the detector's confidence to whatever number you like. You can even optimize a single image directly against a discriminative prior in minutes on a laptop, or train a general model for a whole domain in about a day.</p>
+<p>I also tried a StyleGAN image, which wasn't detected as AI. That fits the same story: the fingerprint belongs to the <em>generation process</em>.</p>
+<p>The summary I put in the thread: <strong>encode any image through an autoencoder and it becomes "AI"; encode it through an autoencoder with an adversarial term and it becomes "real."</strong></p>
+<h2>The text detector</h2>
+<p>I ran far fewer experiments on text and went in with much less skepticism. LLMs aren't true p(x) samplers: they're fine-tuned and RLHF'd into their own vocabulary and cadence, and their system prompt and temperature add more. A detector can learn the fingerprint of each big model. Pangram's own embedding apparently separates Claude, ChatGPT and Gemini cleanly.</p>
+<p>That also suggests brittleness. People reported strings of random numbers getting flagged as AI, which smells like overfitting to existing language models. And to get past the detector you mostly need text that doesn't match any single model, which is as easy as training your own. I did this with a small language model trained as a classic Twitter bot. That's one data point, and I'd want to see whether models fine-tuned on a specific domain (say, essays) also slip through.</p>
+<h2>Why I'm not releasing the code</h2>
+<p>Both attacks are dangerous in the same way. Turning real images into "AI" lets someone deny real evidence. Turning AI images into "real" is a deniability machine in the other direction. I couldn't think of a normal reason for a regular user to need either, so the checkpoints stay private. Anyone curious can reproduce the results from the thread. Real attackers with resources would do it faster than I did, which is the reason to talk about it publicly at all.</p>
+<h2>How Pangram's co-founder responded</h2>
+<p>Max Spero (the co-founder) replied in good faith and asked the hard question: if you upscale by a <em>large</em> factor, the upscaler hallucinates detail, so calling the result "AI" is arguably right. Not ideal to count a hallucinated image as "not AI", and what taxonomy would I propose?</p>
+<p>I think he's right about the extreme case. But 128 to 512 isn't extreme, and many people upscale images without knowing it. My real fear isn't that one threshold is wrong; it's that <strong>everyday processing pushes real photos into the AI bucket</strong>, and a false positive on a real photo is exactly what a detector is supposed to prevent. There is a real taxonomy problem hiding here: "AI-generated", "AI-edited" and "passed through a normal resize" shouldn't share one label.</p>
+<h2>What I actually think</h2>
+<ul>
+<li><strong>For the generations of the big labs, I think detection will keep working.</strong> Their models leave footprints, and there's an endless supply of labeled data. Pangram works very well on images that were already generated, since nobody generates with a GAN or passes things through an adversarial autoencoder on purpose.</li>
+<li><strong>Anything adversarial is a race that doesn't end.</strong> The defender has to handle every failure mode; the attacker needs one. Pangram's accumulated data is strong at catching past usage, and a motivated attacker can still reshape their output with weird downsampling, more precise spectral prediction, or a "humanize" model for images. I'm not optimistic detection wins that race.</li>
+<li><strong>The fix that matters most is failure modes.</strong> A detector needs to say when it's out of its depth, and it needs to be robust to benign transforms like upscaling. At the moment a verdict gets treated as objective truth when it should be treated as a measurement.</li>
+</ul>
+<p>For now I'd treat a Pangram result as one piece of evidence, not the last word. That's not a knock; the same is true of most classifiers.</p>
+<p>If anyone at Pangram wants the details, I'm happy to share them directly.</p>
       </article>
   </main>
 
   <footer>
-    <span>© 2026 trevor chen · no photos, only spots</span>
-    <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    <div class="holes-row"><span class="holes-label">the holes</span><a class="hole-mini" href="../hobbies/crochet.html"><span class="blob"></span>crochet</a><a class="hole-mini" href="../hobbies/guitar.html"><span class="blob"></span>guitar</a><a class="hole-mini" href="../hobbies/skateboarding.html"><span class="blob"></span>skateboarding</a><a class="hole-mini" href="../hobbies/movies.html"><span class="blob"></span>movies</a><a class="hole-mini" href="../hobbies/badminton.html"><span class="blob"></span>badminton</a><a class="hole-mini" href="../hobbies/figure-skating.html"><span class="blob"></span>figure skating</a><a class="hole-mini" href="../hobbies/anime.html"><span class="blob"></span>anime / manga / LN</a></div>
+    <div class="plush-stage" id="plush-stage">
+      <canvas id="plush" aria-label="Two plush toys, a penguin and a panda. Drag them around."></canvas>
+      <div class="bubble" id="bubble"></div>
+      <p class="plush-hint">drag the plushes. poke them.</p>
+    </div>
+    <div class="foot-line">
+      <span class="tag">2026 &middot; trevorbchen</span>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    </div>
   </footer>
 
   <div id="portal" aria-hidden="true"></div>
   <script src="../site.js"></script>
+  <script src="../fx.js"></script>
+  <script src="../plush.js"></script>
+  <script src="../demos.js"></script>
 </body>
 </html>

@@ -3,24 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Rendering a black hole on the GPU — Trevor Chen</title>
-  <meta name="description" content="Trevor Chen — Caltech researcher and founder. Generative models, AI for science, interpretability.">
+  <title>Rendering a black hole on the GPU | Trevor Chen</title>
+  <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style.css">
 </head>
-<body>
+<body data-root="../">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <filter id="boil"><feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="0"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+    <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
   </svg>
-  <div class="spots" aria-hidden="true"><span class="spot" style="left:4%;top:18%;width:46px;height:40px"></span><span class="spot" style="left:93%;top:12%;width:30px;height:26px"></span><span class="spot" style="left:88%;top:56%;width:70px;height:60px"></span><span class="spot" style="left:2%;top:72%;width:26px;height:22px"></span><span class="spot" style="left:47%;top:94%;width:38px;height:33px"></span><span class="spot" style="left:70%;top:33%;width:16px;height:14px"></span><span class="spot" style="left:20%;top:46%;width:14px;height:12px"></span><span class="spot" style="left:96%;top:86%;width:22px;height:19px"></span></div>
+  <canvas id="dots" aria-hidden="true"></canvas>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="../hobbies/crochet.html" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:3%;top:15%;width:64px;height:55px" aria-label="crochet"></a><a class="hole" href="../hobbies/guitar.html" data-label="guitar" data-tip="currently learning Let Her Go." style="left:1.5%;top:37%;width:36px;height:31px" aria-label="guitar"></a><a class="hole" href="../hobbies/skateboarding.html" data-label="skateboarding" data-tip="falling is part of the curriculum." style="left:4%;top:60%;width:52px;height:45px" aria-label="skateboarding"></a><a class="hole" href="../hobbies/movies.html" data-label="movies" data-tip="Spider-Verse, 12 Angry Men, unpopular opinions." style="left:2%;top:82%;width:42px;height:36px" aria-label="movies"></a><a class="hole" href="../hobbies/badminton.html" data-label="badminton" data-tip="ask me for a game." style="left:95%;top:20%;width:58px;height:50px" aria-label="badminton"></a><a class="hole" href="../hobbies/figure-skating.html" data-label="figure skating" data-tip="not competitive. I can do an axel." style="left:97%;top:48%;width:34px;height:29px" aria-label="figure skating"></a><a class="hole" href="../hobbies/anime.html" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:94%;top:74%;width:70px;height:60px" aria-label="anime / manga / LN"></a></div>
+  <div id="tip" class="tip" role="tooltip"></div>
 
   <header class="top">
     <div>
       <p class="logo"><a href="../index.html">TREVOR CHEN</a></p>
-      <p class="tagline">generative models / ai for science / interpretability</p>
+      <p class="tagline">diffusion / ai for science / interpretability</p>
     </div>
     <nav class="nav" aria-label="site">
       <a href="../index.html">home</a>
@@ -29,57 +32,81 @@
       <a href="../Trevor_Chen_Resume.pdf">cv</a>
     </nav>
   </header>
+  <div class="ticker" aria-hidden="true"><div class="track"><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span></div></div>
 
   <main>
-      <article class="panel cyan post">
-        <span class="caption">Blog</span>
-        <div class="body">
-          <p class="back"><a href="../blog.html">← all posts</a></p>
-          <h1>Rendering a black hole on the GPU</h1>
-          <p class="meta">2026-06-12 · <span class="pill">CUDA</span><span class="pill gold">physics</span></p>
-          <p>For my CS 179 (GPU programming) final, Kevin Peng and I built a real-time renderer for a Schwarzschild
-          black hole. Kevin wrote the geodesic integrator; I wrote the camera, the shading, and the CUDA rendering
-          kernels. <a href="https://github.com/trevorbchen/CS_179_final">Code on GitHub.</a></p>
-
-          <h3>The trick: stay in the plane</h3>
-          <p>Schwarzschild spacetime is spherically symmetric, so every photon's path lies in one fixed plane.
-          Instead of integrating the full 8-dimensional phase space, each ray integrates three numbers in polar
-          coordinates (r, φ) — which halves memory bandwidth on the GPU:</p>
-          <pre>dr/dλ   = v_r
-dv_r/dλ = L²(r − 3) / r⁴     ← exact Schwarzschild geodesic
-dφ/dλ   = L / r²</pre>
-          <p>Near the photon sphere (r = 3) curvature gets intense, so the RK4 step size shrinks adaptively. Each ray
-          ends up captured by the horizon, hitting the accretion disk (shaded as a blackbody), or escaping to the
-          starfield skybox.</p>
-
-          <h3>On the GPU</h3>
-          <p>Every pixel is independent, so the double loop becomes a CUDA kernel with one thread per pixel in 16×16
-          blocks. On top of that: bloom and HDR tone mapping as post-processing kernels, Doppler beaming on the disk,
-          and a browser viewer where you can orbit, zoom, and tweak the physics live.</p>
-
-          <h3>Keeping it honest</h3>
-          <p>Pretty pictures are easy to fake, so we wrote a physics test suite against general relativity:</p>
-          <table>
-            <tr><th>test</th><th>result</th></tr>
-            <tr><td>weak-field deflection vs. GR (b = 50)</td><td>0.44% error</td></tr>
-            <tr><td>photon sphere capture at b = 3√3</td><td>captured / escaped correctly at ±0.1</td></tr>
-            <tr><td>energy + angular momentum drift</td><td>~10⁻⁶</td></tr>
-            <tr><td>time reversal</td><td>retraces within 0.16%</td></tr>
-            <tr><td>spherical symmetry</td><td>1.8 × 10⁻⁷ max error</td></tr>
-          </table>
-          <p>Plus CPU–GPU parity tests so the CUDA port matches the reference implementation.</p>
-          <p>The little <em>black_hole.cam</em> in the sidebar is a much simpler cousin: a thin-lens approximation in a
-          WebGL shader, not real geodesics. Still fun to hover.</p>
-        </div>
+      <article class="panel post">
+        <span class="caption">project</span>
+        <p class="back"><a href="../blog.html">&larr; all posts</a></p>
+        <h1>Rendering a black hole on the GPU</h1>
+        <p class="meta">2026-06 &middot; <span class="pill pink">CUDA</span> <span class="pill pink">graphics</span> <span class="pill pink">physics</span></p>
+<p>I'd taken a computer graphics class with Al Barr and, around the same time, got to meet Kip Thorne, the Caltech physicist who won a Nobel for gravitational waves and whose equations drove the black hole in <em>Interstellar</em>. (Yes, I find it funny that I'm not a fan of the movie.) The two things collided: <em>could I render one, properly, in real time?</em></p>
+<p>Kevin Peng and I built it for our CS 179 (GPU programming) final. Kevin wrote the geodesic integrator, the part that traces how light bends. I wrote the camera, the shading and the CUDA rendering kernels. <a href="https://github.com/trevorbchen/CS_179_final">Code on GitHub.</a></p>
+<p><strong>You can also try a version in your browser</strong>: the <a href="../renderer.html">black hole renderer</a>, a WebGL shader that traces the same physics. Drag to orbit.</p>
+<h2>The trick: stay in the plane</h2>
+<p>Schwarzschild spacetime is spherically symmetric, so every photon's path lies in one fixed plane through the black hole. Instead of integrating the full 4D problem, each ray integrates three numbers in polar coordinates (r, φ) plus a velocity, which halves memory bandwidth on the GPU:</p>
+<pre><code>dr/dλ   = v_r
+dv_r/dλ = L²(r − 3) / r⁴      ← exact Schwarzschild null geodesic
+dφ/dλ   = L / r²
+</code></pre>
+<p>Near the photon sphere (r = 3M), curvature is extreme, so the RK4 step size shrinks adaptively. Every ray ends in one of three ways: swallowed by the horizon, hits the <strong>accretion disk</strong> (shaded as a hot blackbody), or escapes to the starfield.</p>
+<h2>On the GPU</h2>
+<p>Each pixel is independent, so the double loop over the image becomes a CUDA kernel, one thread per pixel in 16×16 blocks. On top of that: bloom and HDR tone mapping as post-processing kernels, Doppler beaming on the disk, and an interactive browser viewer with live controls and FPS profiling.</p>
+<h2>Keeping it honest</h2>
+<p>Pretty pictures are easy to fake, so we wrote a physics test suite against general relativity:</p>
+<table>
+<thead>
+<tr>
+<th>test</th>
+<th>result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>weak-field deflection vs. GR (b = 50)</td>
+<td>0.44% error</td>
+</tr>
+<tr>
+<td>photon-sphere capture at b = 3√3</td>
+<td>captured / escaped correctly at ±0.1</td>
+</tr>
+<tr>
+<td>energy + angular-momentum drift</td>
+<td>~10⁻⁶</td>
+</tr>
+<tr>
+<td>time reversal</td>
+<td>retraces within 0.16%</td>
+</tr>
+<tr>
+<td>spherical symmetry</td>
+<td>1.8 × 10⁻⁷ max error</td>
+</tr>
+</tbody>
+</table>
+<p>It also has CPU–GPU parity tests so the CUDA port provably matches the reference implementation.</p>
+<h2>The natural next step</h2>
+<p>The big missing piece is <strong>spin</strong>: a Kerr black hole drags spacetime around with it and gives the famous lopsided shadow. The geodesics are no longer planar, which breaks the central trick above, so the kernel layout would need rethinking.</p>
       </article>
   </main>
 
   <footer>
-    <span>© 2026 trevor chen · no photos, only spots</span>
-    <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    <div class="holes-row"><span class="holes-label">the holes</span><a class="hole-mini" href="../hobbies/crochet.html"><span class="blob"></span>crochet</a><a class="hole-mini" href="../hobbies/guitar.html"><span class="blob"></span>guitar</a><a class="hole-mini" href="../hobbies/skateboarding.html"><span class="blob"></span>skateboarding</a><a class="hole-mini" href="../hobbies/movies.html"><span class="blob"></span>movies</a><a class="hole-mini" href="../hobbies/badminton.html"><span class="blob"></span>badminton</a><a class="hole-mini" href="../hobbies/figure-skating.html"><span class="blob"></span>figure skating</a><a class="hole-mini" href="../hobbies/anime.html"><span class="blob"></span>anime / manga / LN</a></div>
+    <div class="plush-stage" id="plush-stage">
+      <canvas id="plush" aria-label="Two plush toys, a penguin and a panda. Drag them around."></canvas>
+      <div class="bubble" id="bubble"></div>
+      <p class="plush-hint">drag the plushes. poke them.</p>
+    </div>
+    <div class="foot-line">
+      <span class="tag">2026 &middot; trevorbchen</span>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    </div>
   </footer>
 
   <div id="portal" aria-hidden="true"></div>
   <script src="../site.js"></script>
+  <script src="../fx.js"></script>
+  <script src="../plush.js"></script>
+  <script src="../demos.js"></script>
 </body>
 </html>

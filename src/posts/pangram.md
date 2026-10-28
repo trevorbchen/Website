@@ -1,0 +1,59 @@
+---
+title: I broke an AI-image detector, in both directions
+date: 2026-08
+kind: project
+tags: AI safety, red-teaming, detection
+blurb: What I tried, why it worked, how Pangram's co-founder responded, and what I actually think about AI detection. I'm not releasing the code. Here's why.
+---
+
+In August I posted a long thread claiming I'd broken Pangram's AI-image detector "completely": I could turn any real image into one it flagged as AI, and any AI image into one it called real. This is the longer version: what I did, the reasoning, the reply from Pangram's co-founder, and where I've landed.
+
+First, the ground rules. I did all of this on the **free plan**, because Pangram never got back to me about API access. I'm **not releasing checkpoints**, for reasons below. And I like the company. I think AI detection is genuinely important work, which is why I took it seriously enough to attack.
+
+## Why I was skeptical in the first place
+
+A diffusion model, by construction, samples from the *distribution of real images*. If it's good, the images it makes are statistically very close to the real thing, so you'd expect a detector to be fighting a losing battle. Yet Pangram claims it can even tell AI images from *photoshopped* ones, which is a hard distinction for a human.
+
+My hypothesis: it isn't doing what humans do. We spot AI images by *content*, the six-fingered hand, the garbled text. A detector that separates AI from Photoshop is probably reading something **spectral**: faint high-frequency fingerprints left by how the image was made. If so, it should be brittle to anything that moves energy around in frequency space.
+
+## Four experiments
+
+![The four attacks and what the detector says](../img/pangram_flow.svg)
+
+**1. Upscale a real photo.** Resizing a real image with most classical algorithms made the detector call it AI. Not an exotic attack: 128×128 to 512×512 did it, consistently.
+
+**2. Re-encode a real photo through a VAE.** Flagged as AI. High-frequency artifacts are characteristic of multistep generation (next-pixel prediction, diffusion, VAEs), and a plain autoencoder leaves them too.
+
+**3. Try the obvious fix, and watch it fail.** Matching frequency statistics to real images, the "clean" spectral transforms, did *not* fool it. So it isn't a global spectrum check; it's probably doing patch-level spectral analysis. That's why I switched to learning the attack.
+
+**4. Train an autoencoder with an adversarial term.** Train it on CelebA with an ordinary GAN-style discriminator objective, and run any AI image through it. The output is a high-fidelity copy of the original that the detector calls **real**. Interpolating between the original and the re-encoded image acts as a smooth knob: you can dial the detector's confidence to whatever number you like. You can even optimize a single image directly against a discriminative prior in minutes on a laptop, or train a general model for a whole domain in about a day.
+
+I also tried a StyleGAN image, which wasn't detected as AI. That fits the same story: the fingerprint belongs to the *generation process*.
+
+The summary I put in the thread: **encode any image through an autoencoder and it becomes "AI"; encode it through an autoencoder with an adversarial term and it becomes "real."**
+
+## The text detector
+
+I ran far fewer experiments on text and went in with much less skepticism. LLMs aren't true p(x) samplers: they're fine-tuned and RLHF'd into their own vocabulary and cadence, and their system prompt and temperature add more. A detector can learn the fingerprint of each big model. Pangram's own embedding apparently separates Claude, ChatGPT and Gemini cleanly.
+
+That also suggests brittleness. People reported strings of random numbers getting flagged as AI, which smells like overfitting to existing language models. And to get past the detector you mostly need text that doesn't match any single model, which is as easy as training your own. I did this with a small language model trained as a classic Twitter bot. That's one data point, and I'd want to see whether models fine-tuned on a specific domain (say, essays) also slip through.
+
+## Why I'm not releasing the code
+
+Both attacks are dangerous in the same way. Turning real images into "AI" lets someone deny real evidence. Turning AI images into "real" is a deniability machine in the other direction. I couldn't think of a normal reason for a regular user to need either, so the checkpoints stay private. Anyone curious can reproduce the results from the thread. Real attackers with resources would do it faster than I did, which is the reason to talk about it publicly at all.
+
+## How Pangram's co-founder responded
+
+Max Spero (the co-founder) replied in good faith and asked the hard question: if you upscale by a *large* factor, the upscaler hallucinates detail, so calling the result "AI" is arguably right. Not ideal to count a hallucinated image as "not AI", and what taxonomy would I propose?
+
+I think he's right about the extreme case. But 128 to 512 isn't extreme, and many people upscale images without knowing it. My real fear isn't that one threshold is wrong; it's that **everyday processing pushes real photos into the AI bucket**, and a false positive on a real photo is exactly what a detector is supposed to prevent. There is a real taxonomy problem hiding here: "AI-generated", "AI-edited" and "passed through a normal resize" shouldn't share one label.
+
+## What I actually think
+
+- **For the generations of the big labs, I think detection will keep working.** Their models leave footprints, and there's an endless supply of labeled data. Pangram works very well on images that were already generated, since nobody generates with a GAN or passes things through an adversarial autoencoder on purpose.
+- **Anything adversarial is a race that doesn't end.** The defender has to handle every failure mode; the attacker needs one. Pangram's accumulated data is strong at catching past usage, and a motivated attacker can still reshape their output with weird downsampling, more precise spectral prediction, or a "humanize" model for images. I'm not optimistic detection wins that race.
+- **The fix that matters most is failure modes.** A detector needs to say when it's out of its depth, and it needs to be robust to benign transforms like upscaling. At the moment a verdict gets treated as objective truth when it should be treated as a measurement.
+
+For now I'd treat a Pangram result as one piece of evidence, not the last word. That's not a knock; the same is true of most classifiers.
+
+If anyone at Pangram wants the details, I'm happy to share them directly.

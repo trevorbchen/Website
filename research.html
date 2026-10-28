@@ -3,24 +3,27 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>research — Trevor Chen</title>
-  <meta name="description" content="Trevor Chen — Caltech researcher and founder. Generative models, AI for science, interpretability.">
+  <title>research | Trevor Chen</title>
+  <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-root="">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <filter id="boil"><feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="0"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+    <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
   </svg>
-  <div class="spots" aria-hidden="true"><span class="spot" style="left:4%;top:18%;width:46px;height:40px"></span><span class="spot" style="left:93%;top:12%;width:30px;height:26px"></span><span class="spot" style="left:88%;top:56%;width:70px;height:60px"></span><span class="spot" style="left:2%;top:72%;width:26px;height:22px"></span><span class="spot" style="left:47%;top:94%;width:38px;height:33px"></span><span class="spot" style="left:70%;top:33%;width:16px;height:14px"></span><span class="spot" style="left:20%;top:46%;width:14px;height:12px"></span><span class="spot" style="left:96%;top:86%;width:22px;height:19px"></span></div>
+  <canvas id="dots" aria-hidden="true"></canvas>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="hobbies/crochet.html" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:3%;top:15%;width:64px;height:55px" aria-label="crochet"></a><a class="hole" href="hobbies/guitar.html" data-label="guitar" data-tip="currently learning Let Her Go." style="left:1.5%;top:37%;width:36px;height:31px" aria-label="guitar"></a><a class="hole" href="hobbies/skateboarding.html" data-label="skateboarding" data-tip="falling is part of the curriculum." style="left:4%;top:60%;width:52px;height:45px" aria-label="skateboarding"></a><a class="hole" href="hobbies/movies.html" data-label="movies" data-tip="Spider-Verse, 12 Angry Men, unpopular opinions." style="left:2%;top:82%;width:42px;height:36px" aria-label="movies"></a><a class="hole" href="hobbies/badminton.html" data-label="badminton" data-tip="ask me for a game." style="left:95%;top:20%;width:58px;height:50px" aria-label="badminton"></a><a class="hole" href="hobbies/figure-skating.html" data-label="figure skating" data-tip="not competitive. I can do an axel." style="left:97%;top:48%;width:34px;height:29px" aria-label="figure skating"></a><a class="hole" href="hobbies/anime.html" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:94%;top:74%;width:70px;height:60px" aria-label="anime / manga / LN"></a></div>
+  <div id="tip" class="tip" role="tooltip"></div>
 
   <header class="top">
     <div>
       <p class="logo"><a href="index.html">TREVOR CHEN</a></p>
-      <p class="tagline">generative models / ai for science / interpretability</p>
+      <p class="tagline">diffusion / ai for science / interpretability</p>
     </div>
     <nav class="nav" aria-label="site">
       <a href="index.html">home</a>
@@ -29,52 +32,70 @@
       <a href="Trevor_Chen_Resume.pdf">cv</a>
     </nav>
   </header>
+  <div class="ticker" aria-hidden="true"><div class="track"><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span></div></div>
 
   <main>
       <section class="panel gold">
-        <span class="caption">Research</span>
+        <span class="caption">research</span>
           <h2>research</h2>
-          <p>I like problems where a model has to <em>find</em> something — a molecule, an enzyme, a feature, a failure
-          mode — with as few expensive questions as possible.</p>
-          <div class="grid">
-            <article class="comic">
-              <span class="pill gold">AI for science</span>
-              <h3>Closed-loop discovery</h3>
-              <p>A frozen LLM proposes mechanistic hypotheses; each is distilled into a domain-specific flow model that
-              generates testable designs, and wet-lab results certify or refute it — in campaigns of ~10² measurements.
-              ETH Zurich (Krause) + the Arnold Lab.</p>
-            </article>
-            <article class="comic">
-              <span class="pill pink">drug discovery</span>
-              <h3>Sample-efficient generative design</h3>
-              <p>Online RL fine-tuning, active learning, and reward shaping for diffusion molecule generators: the best
-              search baseline's score with 58× fewer oracle calls (16× on proteins). NeurIPS 2026, with Genesis Molecular AI.</p>
-            </article>
-            <article class="comic">
-              <span class="pill violet">theory</span>
-              <h3>Why diffusion models memorize</h3>
-              <p>Extra latent dimensions act as a spectral buffer that delays when a diffusion model starts copying its
-              training data (3.6× later on CelebA). ICML HiLD 2026; ICLR 2027 under review.</p>
-            </article>
-            <article class="comic">
-              <span class="pill">interpretability</span>
-              <h3>Steerable sparse autoencoders</h3>
-              <p>A family of SAE training objectives that steer which features a model learns — targeted feature
-              discovery instead of seed luck. Plus SAEs on every layer of a diffusion transformer. CVPR 2027 under review.</p>
-            </article>
-          </div>
+          <p class="lede">I like problems where a model has to <em>find</em> something (a molecule, an enzyme, a feature, a failure mode) with as few expensive questions as possible.</p>
+          <p>Most of my current work is in <b>diffusion models</b> and <b>AI for science</b>, especially biology. I started in physics and moved through biology and then ML. Hover a row for a tiny live preview, click it for the write-up.</p>
+      </section>
+
+      <section class="panel">
+        <span class="caption">physics</span>
+          <ul class="rows">
+            <li class="row"><div class="row-text"><h3><a href="posts/optics.html">Mid-IR gratings and a thermal camera for jet engines</a></h3><p>Diffraction gratings in use at national labs; an infrared borescope that survives flame.</p><div><span class="pill">optics</span><span class="pill">nanofabrication</span></div></div><canvas class="pv" width="200" height="110" data-pv="grating"></canvas></li>
+          </ul>
+      </section>
+
+      <section class="panel pink">
+        <span class="caption">biology</span>
+          <ul class="rows">
+            <li class="row"><div class="row-text"><h3><a href="posts/bio.html">Drug discovery on a supercomputer</a></h3><p>Screening 50,000+ compounds for HIV-1 protease and aldose-reductase inhibitors; a review on anelloviruses and cancer.</p><div><span class="pill">docking</span><span class="pill">virtual screening</span></div></div><canvas class="pv" width="200" height="110" data-pv="docking"></canvas></li>
+          </ul>
+      </section>
+
+      <section class="panel cyan">
+        <span class="caption">ai for science</span>
+          <ul class="rows">
+            <li class="row"><div class="row-text"><h3><a href="posts/ddamo.html">Steering discrete diffusion for molecular optimization</a></h3><p>Online adaptation with 58x fewer oracle calls. NeurIPS 2026.</p><div><span class="pill">diffusion</span><span class="pill">RL</span><span class="pill">NeurIPS</span></div></div><canvas class="pv" width="200" height="110" data-pv="noise"></canvas></li>
+            <li class="row soon"><div class="row-text"><h3>Closed-loop discovery with wet-lab feedback</h3><p>LLM-proposed hypotheses distilled into generative models for enzyme and protein design, with ETH Zurich and the Arnold lab. In progress.</p><div><span class="pill">current</span><span class="pill">ETH</span><span class="pill">Caltech</span></div></div><canvas class="pv" width="200" height="110" data-pv="loop"></canvas></li>
+          </ul>
+      </section>
+
+      <section class="panel violet">
+        <span class="caption">interpretability</span>
+          <ul class="rows">
+            <li class="row"><div class="row-text"><h3><a href="posts/sae-families.html">Sparse autoencoders you can steer</a></h3><p>A family of objectives that choose which features a model learns. CVPR 2027, under review.</p><div><span class="pill">SAEs</span><span class="pill">CVPR</span></div></div><canvas class="pv" width="200" height="110" data-pv="heat"></canvas></li>
+            <li class="row"><div class="row-text"><h3><a href="explorer.html">Interpretability explorer</a></h3><p>Click a token in a real transformer and trace its attention and logit lens across layers.</p><div><span class="pill">tool</span><span class="pill">GPT-2</span></div></div><canvas class="pv" width="200" height="110" data-pv="heat"></canvas></li>
+          </ul>
+      </section>
+
+      <section class="panel">
+        <span class="caption">theory</span>
+          <ul class="rows">
+            <li class="row"><div class="row-text"><h3><a href="posts/memorization.html">Why diffusion models memorize late</a></h3><p>A spectral buffer from extra latent dimensions. ICML HiLD 2026; ICLR 2027 under review.</p><div><span class="pill">diffusion</span><span class="pill">generalization</span></div></div><canvas class="pv" width="200" height="110" data-pv="noise"></canvas></li>
+            <li class="row soon"><div class="row-text"><h3>A theory of reasoning</h3><p>Coming soon.</p><div><span class="pill">in progress</span></div></div></li>
+            <li class="row"><div class="row-text"><h3><a href="posts/diffusion-gaussians.html">A diffusion theory that was wrong</a></h3><p>My first mental model of why diffusion works, seven toy experiments, and why it failed.</p><div><span class="pill">essay</span></div></div><canvas class="pv" width="200" height="110" data-pv="noise"></canvas></li>
+          </ul>
+      </section>
+
+      <section class="panel gold">
+        <span class="caption">also</span>
+          <ul class="rows">
+            <li class="row"><div class="row-text"><h3><a href="https://ascade.co/">Formal verification at Ascade</a></h3><p>Verified software for AI agents. Not research on this page, but the same itch.</p><div><span class="pill">startup</span><span class="pill">verification</span></div></div><canvas class="pv" width="200" height="110" data-pv="graph"></canvas></li>
+          </ul>
       </section>
 
       <section class="panel cyan" id="pubs">
-        <span class="caption">Publications</span>
-        <div class="body">
-          <h2>publications</h2>
-          <p style="font-size:13px;color:var(--muted)">* equal contribution · also on <a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">google scholar</a> · full <a href="Trevor_Chen_Resume.pdf">cv</a></p>
+        <span class="caption">publications</span>
+          <p class="small">* equal contribution &middot; also on <a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">google scholar</a> &middot; <a href="Trevor_Chen_Resume.pdf">cv</a></p>
           <ol class="pubs">
             <li><a href="https://arxiv.org/abs/2607.02834">On the Design Space of Discrete Diffusion Online Adaptation for Molecular Optimization</a><span class="who"><b>T. Chen*</b>, A. Dai*, J. Yang, R. De Santi, et al., M. Al-Shedivat, Y. Yue</span><span class="where">NeurIPS 2026</span></li>
-            <li>How Excess Latent Dimensionality Delays Memorization in Diffusion Models<span class="who"><b>T. Chen</b>, R. Shahbaba</span><span class="where soon">ICLR 2027 · under review</span></li>
+            <li>How Excess Latent Dimensionality Delays Memorization in Diffusion Models<span class="who"><b>T. Chen</b>, R. Shahbaba</span><span class="where soon">ICLR 2027 &middot; under review</span></li>
             <li><a href="https://icml.cc/virtual/2026/72322">How Excess Latent Dimensionality Delays Memorization in Diffusion Models</a><span class="who"><b>T. Chen</b>, R. Shahbaba, K. Peng, A. Garg</span><span class="where">ICML 2026 Workshop on High-dimensional Learning Dynamics</span></li>
-            <li>Objective Geometry Steers Sparse Autoencoder Vocabularies<span class="who"><b>T. Chen</b>, I. Demler, P. Perona</span><span class="where soon">CVPR 2027 · under review</span></li>
+            <li>Objective Geometry Steers Sparse Autoencoder Vocabularies<span class="who"><b>T. Chen</b>, I. Demler, P. Perona</span><span class="where soon">CVPR 2027 &middot; under review</span></li>
             <li><a href="https://doi.org/10.1093/infdis/jiae626">Anelloviruses and Cancer</a><span class="who">J. Y. Tang*, <b>T. Chen*</b>, V. L. Kouznetsova, I. F. Tsigelny</span><span class="where">The Journal of Infectious Diseases, 2025</span></li>
             <li><a href="https://opg.optica.org/ome/fulltext.cfm?uri=ome-14-5-1336&amp;id=549158">Development of Broadband High-Efficiency Mid-IR Gratings for High-Energy Ultrafast Lasers</a><span class="who"><b>T. Chen</b>, B. Liu, J. A. McCoy, et al.</span><span class="where">Optical Materials Express, 2024</span></li>
             <li><a href="https://doi.org/10.1117/12.3032561">Enabling Ultra-Broadband High-Efficiency Gratings for Single-Cycle Infrared Lasers</a><span class="who"><b>T. Chen</b>, P. S. Hsu</span><span class="where">SPIE Nanoengineering, 2024</span></li>
@@ -85,16 +106,26 @@
             <li><a href="https://doi.org/10.1016/j.aichem.2023.100014">Machine-Learning-Based Virtual Screening and Ligand Docking Identify Potent HIV-1 Protease Inhibitors</a><span class="who">A. K. Gao, <b>T. Chen</b>, V. L. Kouznetsova, I. F. Tsigelny</span><span class="where">Artificial Intelligence Chemistry, 2023</span></li>
             <li><a href="https://opg.optica.org/abstract.cfm?uri=LACSEA-2022-LM1B.5">Compact Borescope Design for 2D Long-Wavelength IR Thermal Imaging Sensing</a><span class="who"><b>T. Chen</b>, P. S. Hsu</span><span class="where">Optica LACSEA, 2022</span></li>
           </ol>
-        </div>
       </section>
   </main>
 
   <footer>
-    <span>© 2026 trevor chen · no photos, only spots</span>
-    <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    <div class="holes-row"><span class="holes-label">the holes</span><a class="hole-mini" href="hobbies/crochet.html"><span class="blob"></span>crochet</a><a class="hole-mini" href="hobbies/guitar.html"><span class="blob"></span>guitar</a><a class="hole-mini" href="hobbies/skateboarding.html"><span class="blob"></span>skateboarding</a><a class="hole-mini" href="hobbies/movies.html"><span class="blob"></span>movies</a><a class="hole-mini" href="hobbies/badminton.html"><span class="blob"></span>badminton</a><a class="hole-mini" href="hobbies/figure-skating.html"><span class="blob"></span>figure skating</a><a class="hole-mini" href="hobbies/anime.html"><span class="blob"></span>anime / manga / LN</a></div>
+    <div class="plush-stage" id="plush-stage">
+      <canvas id="plush" aria-label="Two plush toys, a penguin and a panda. Drag them around."></canvas>
+      <div class="bubble" id="bubble"></div>
+      <p class="plush-hint">drag the plushes. poke them.</p>
+    </div>
+    <div class="foot-line">
+      <span class="tag">2026 &middot; trevorbchen</span>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    </div>
   </footer>
 
   <div id="portal" aria-hidden="true"></div>
   <script src="site.js"></script>
+  <script src="fx.js"></script>
+  <script src="plush.js"></script>
+  <script src="demos.js"></script>
 </body>
 </html>

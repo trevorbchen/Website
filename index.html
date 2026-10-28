@@ -4,23 +4,26 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Trevor Chen</title>
-  <meta name="description" content="Trevor Chen — Caltech researcher and founder. Generative models, AI for science, interpretability.">
+  <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-root="">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <filter id="boil"><feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="0"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+    <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
   </svg>
-  <div class="spots" aria-hidden="true"><span class="spot" style="left:4%;top:18%;width:46px;height:40px"></span><span class="spot" style="left:93%;top:12%;width:30px;height:26px"></span><span class="spot" style="left:88%;top:56%;width:70px;height:60px"></span><span class="spot" style="left:2%;top:72%;width:26px;height:22px"></span><span class="spot" style="left:47%;top:94%;width:38px;height:33px"></span><span class="spot" style="left:70%;top:33%;width:16px;height:14px"></span><span class="spot" style="left:20%;top:46%;width:14px;height:12px"></span><span class="spot" style="left:96%;top:86%;width:22px;height:19px"></span></div>
+  <canvas id="dots" aria-hidden="true"></canvas>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="hobbies/crochet.html" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:3%;top:15%;width:64px;height:55px" aria-label="crochet"></a><a class="hole" href="hobbies/guitar.html" data-label="guitar" data-tip="currently learning Let Her Go." style="left:1.5%;top:37%;width:36px;height:31px" aria-label="guitar"></a><a class="hole" href="hobbies/skateboarding.html" data-label="skateboarding" data-tip="falling is part of the curriculum." style="left:4%;top:60%;width:52px;height:45px" aria-label="skateboarding"></a><a class="hole" href="hobbies/movies.html" data-label="movies" data-tip="Spider-Verse, 12 Angry Men, unpopular opinions." style="left:2%;top:82%;width:42px;height:36px" aria-label="movies"></a><a class="hole" href="hobbies/badminton.html" data-label="badminton" data-tip="ask me for a game." style="left:95%;top:20%;width:58px;height:50px" aria-label="badminton"></a><a class="hole" href="hobbies/figure-skating.html" data-label="figure skating" data-tip="not competitive. I can do an axel." style="left:97%;top:48%;width:34px;height:29px" aria-label="figure skating"></a><a class="hole" href="hobbies/anime.html" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:94%;top:74%;width:70px;height:60px" aria-label="anime / manga / LN"></a></div>
+  <div id="tip" class="tip" role="tooltip"></div>
 
   <header class="top">
     <div>
       <p class="logo"><a href="index.html">TREVOR CHEN</a></p>
-      <p class="tagline">generative models / ai for science / interpretability</p>
+      <p class="tagline">diffusion / ai for science / interpretability</p>
     </div>
     <nav class="nav" aria-label="site">
       <a href="index.html" aria-current="page">home</a>
@@ -29,73 +32,78 @@
       <a href="Trevor_Chen_Resume.pdf">cv</a>
     </nav>
   </header>
+  <div class="ticker" aria-hidden="true"><div class="track"><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span><span>working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** poke the holes. poke the plushes. </span></div></div>
 
   <main>
-      <section class="panel gold">
-        <span class="caption">Meanwhile, at Caltech…</span>
+      <section class="panel">
+        <span class="caption">hi</span>
           <div class="hero">
           <div>
           <h2>hi, i'm trevor.</h2>
-          <p class="lede">I'm an undergrad at Caltech building learning systems that discover things.</p>
-          <p>I work with <a href="https://las.inf.ethz.ch/">Andreas Krause</a> (ETH Zurich) and
-          <a href="https://cheme.caltech.edu/groups/fha/">Frances Arnold</a> on closed-loop, LLM-guided scientific
-          discovery; with <a href="https://www.yisongyue.com/">Yisong Yue</a> on sample-efficient generative design and
-          diffusion theory; and with <a href="https://www.vision.caltech.edu/">Pietro Perona</a> on interpretability.</p>
-          <p>I also founded <a href="https://ascade.co/">Ascade</a> (accepted to YC F25), where we build formally
-          verified infrastructure for AI agents. Before all that I spent years in optics labs and supercomputer
-          clusters, which is why there are laser gratings in my <a href="research.html#pubs">publication list</a>.</p>
+          <p class="lede">I'm an undergrad at Caltech doing research in diffusion models and AI for science, mostly bio, with side quests in interpretability and theory.</p>
+          <p>I'm lucky to work with <a href="https://www.yisongyue.com/">Yisong Yue</a> and <a href="https://www.vision.caltech.edu/">Pietro Perona</a> at Caltech,
+          <a href="https://cheme.caltech.edu/groups/fha/">Frances Arnold</a>'s lab, and <a href="https://las.inf.ethz.ch/">Andreas Krause</a>'s group at ETH Zurich.
+          I co-founded <a href="https://ascade.co/">Ascade</a>, which was accepted to YC F25, and later chose research (<a href="posts/leaving-startups.html">here's why</a>).</p>
+          <p class="small">This is also where I put the things that don't fit in a paper: failed theories, bad bets, and hobbies. The black holes on the sides are doors.</p>
           </div>
           <div>
-            <div class="portal"><canvas id="cam" aria-label="A black hole bending starlight; hover to move it"></canvas></div>
-            <p class="portal-note">↑ a real lensing shader. poke it.</p>
+            <a class="portal" href="renderer.html" title="open the black hole renderer"><canvas id="cam" aria-label="A black hole bending starlight. Click to open the full renderer."></canvas></a>
+            <p class="portal-note">click the black hole</p>
           </div>
           </div>
       </section>
 
       <section class="panel pink">
-        <span class="caption">Latest</span>
-          <ul class="log">
-            <li><time>2026</time>started closed-loop discovery with ETH Zurich (Krause group) and the Arnold Lab</li>
-            <li><time>2026</time><span class="pill gold">NeurIPS</span> design space of online adaptation for molecular diffusion models — accepted</li>
-            <li><time>2026</time><span class="pill">ICLR</span><span class="pill pink">CVPR</span> memorization + sparse autoencoder papers under review</li>
-            <li><time>Aug 2026</time><a href="posts/pangram.html">broke an AI-image detector in both directions</a></li>
-            <li><time>Jun 2026</time><a href="posts/black-hole.html">wrote a real-time black hole renderer in CUDA</a></li>
-            <li><time>Jun 2026</time>SURF fellowship in the Perona Vision Lab</li>
-            <li><time>2025</time>Ascade accepted to Y Combinator F25</li>
+        <span class="caption">currently</span>
+          <ul class="now">
+            <li><b>Working on</b> closed-loop discovery with Andreas Krause's group (ETH) and Frances Arnold's lab: language models propose hypotheses, generative models turn them into designs, and the wet lab says yes or no.</li>
+            <li><b>Writing</b> two submissions: sparse-autoencoder dictionaries (<a href="posts/sae-families.html">CVPR</a>) and why diffusion models memorize late (<a href="posts/memorization.html">ICLR</a>).</li>
+            <li><b>Learning</b> reinforcement learning, evals, operating systems and distributed computing.</li>
           </ul>
       </section>
 
       <section class="panel cyan">
-        <span class="caption">Highlights</span>
+        <span class="caption">start here</span>
           <div class="grid grid-3">
-            <a class="comic" href="research.html">
-              <span class="pow">58×!</span>
-              <span class="pill gold">NeurIPS 2026</span>
-              <h3>Sample-efficient molecule design</h3>
-              <p>RL fine-tuning for diffusion molecule generators that needs 58× fewer oracle calls.</p>
-            </a>
             <a class="comic" href="posts/pangram.html">
               <span class="pow">BOTH WAYS</span>
               <span class="pill pink">AI safety</span>
-              <h3>Breaking an AI detector</h3>
-              <p>AI images passing as human; real photos flagged as AI.</p>
+              <h3>I broke an AI-image detector</h3>
+              <p>Real photos flagged as AI, AI images passing as real, and what the company's co-founder said back.</p>
             </a>
-            <a class="comic" href="posts/black-hole.html">
-              <span class="pow">CUDA</span>
-              <span class="pill">GPU</span>
-              <h3>Black hole renderer</h3>
-              <p>Bending light through curved spacetime, one pixel per thread.</p>
+            <a class="comic" href="posts/ddamo.html">
+              <span class="pow">58x</span>
+              <span class="pill gold">NeurIPS 2026</span>
+              <h3>Steering discrete diffusion</h3>
+              <p>Four design decisions for feedback-efficient molecule optimization, and the one the rest were waiting on.</p>
             </a>
+            <div class="comic soon">
+              <span class="pow">SOON</span>
+              <span class="pill violet">theory</span>
+              <h3>A theory of reasoning</h3>
+              <p>In progress. Check back.</p>
+            </div>
           </div>
       </section>
   </main>
 
   <footer>
-    <span>© 2026 trevor chen · no photos, only spots</span>
-    <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    <div class="holes-row"><span class="holes-label">the holes</span><a class="hole-mini" href="hobbies/crochet.html"><span class="blob"></span>crochet</a><a class="hole-mini" href="hobbies/guitar.html"><span class="blob"></span>guitar</a><a class="hole-mini" href="hobbies/skateboarding.html"><span class="blob"></span>skateboarding</a><a class="hole-mini" href="hobbies/movies.html"><span class="blob"></span>movies</a><a class="hole-mini" href="hobbies/badminton.html"><span class="blob"></span>badminton</a><a class="hole-mini" href="hobbies/figure-skating.html"><span class="blob"></span>figure skating</a><a class="hole-mini" href="hobbies/anime.html"><span class="blob"></span>anime / manga / LN</a></div>
+    <div class="plush-stage" id="plush-stage">
+      <canvas id="plush" aria-label="Two plush toys, a penguin and a panda. Drag them around."></canvas>
+      <div class="bubble" id="bubble"></div>
+      <p class="plush-hint">drag the plushes. poke them.</p>
+    </div>
+    <div class="foot-line">
+      <span class="tag">2026 &middot; trevorbchen</span>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    </div>
   </footer>
 
   <div id="portal" aria-hidden="true"></div>
   <script src="site.js"></script>
+  <script src="fx.js"></script>
+  <script src="plush.js"></script>
+  <script src="demos.js"></script>
 </body>
 </html>
