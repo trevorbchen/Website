@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>I over-engineered an arbitrage machine, and simple methods still won | Trevor Chen</title>
+  <title>An over-engineered arbitrage bot, and the simple methods that beat it | Trevor Chen</title>
   <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../style.css?v=1793207841">
+  <link rel="stylesheet" href="../style.css?v=1793222848">
 </head>
 <body data-root="../">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -38,30 +38,23 @@
       <article class="panel post">
         <span class="caption">project</span>
         <p class="back"><a href="../blog.html">&larr; all posts</a></p>
-        <h1>I over-engineered an arbitrage machine, and simple methods still won</h1>
+        <h1>An over-engineered arbitrage bot, and the simple methods that beat it</h1>
         <p class="meta">2025-08 &middot; <span class="pill pink">markets</span> <span class="pill pink">reinforcement learning</span> <span class="pill pink">trading</span></p>
-<p>In the summer of 2025 I built a trading system for binary prediction markets. These are markets where a contract pays $1 if something happens and $0 if it doesn't, so its price is supposed to be a probability.</p>
-<h2>The setup</h2>
-<p>Back then these markets had no central venue doing the job of keeping prices coherent. They were fragmented, thin, and full of related contracts whose prices didn't agree with each other. And a large share of the people betting were, to put it kindly, <strong>degenerate gamblers</strong>: betting on feel, on a headline, on their team. My starting thesis was blunt: <em>the average participant is dumb, so basic techniques should be enough to win.</em></p>
-<p>It turned out to be true.</p>
-<h2>What I built first (too much)</h2>
-<p>I did what engineers do and built an absurdly elaborate machine:</p>
+<p>In the summer of 2025 I built a trading system for binary prediction markets, where a contract pays $1 if something happens and $0 if not, so its price should be a probability.</p>
+<h2>Setup</h2>
+<p>The markets were fragmented and thin, with related contracts whose prices disagreed, and many of the people betting were going on feel or a headline. My starting thesis was that the average participant was making obvious mistakes, so basic techniques should be enough. That held up.</p>
+<h2>What I built</h2>
+<p>I started with too much:</p>
 <ul>
-<li>A <strong>reinforcement-learning inventory manager</strong>: holding too much of one side is the main risk, and naive execution leaks money to slippage. The RL policy cut execution slippage by about 30%.</li>
-<li><strong>Sentiment signals</strong> from text, to get ahead of news.</li>
-<li><strong>Arbitrage and hedging</strong> across related markets.</li>
+<li>A reinforcement-learning inventory manager. Holding too much of one side is the main risk and naive execution loses money to slippage. The policy cut execution slippage by about 30%.</li>
+<li>Sentiment signals from text, to get ahead of news.</li>
+<li>Arbitrage and hedging across related markets.</li>
 <li>A secure execution API with local signing, which made the trading loop about 6× faster.</li>
 </ul>
-<p>Over a three-month stretch this made money consistently, on the order of 8% a week. That was a small experiment and I wouldn't extrapolate it.</p>
-<h2>What actually worked</h2>
-<p>The embarrassing finding: <strong>the simple methods beat the over-engineered ones.</strong> When two related contracts implied inconsistent probabilities, or a price sat far from any sensible estimate of the expected payoff, the mispricings were so large that you didn't need a clever model. Buy the obviously cheap side, hedge when you could, don't get fancy. The RL and sentiment stack added complexity and latency for a thin sliver of extra return, because the pricing errors were so big that a rule fit on a napkin captured most of the edge.</p>
-<h2>What I took from it</h2>
-<ul>
-<li><strong>Find where the market is dumb before you build anything smart.</strong> All the cleverness in the world is wasted if the inefficiency is simple.</li>
-<li><strong>Fancy ML earns its keep when the easy edge is gone</strong>, and in a young, fragmented market the easy edge is everywhere.</li>
-<li>Execution and inventory are most of trading. The signal is the easy part.</li>
-</ul>
-<p>It stayed a summer project, and I'm happy to have it as a lesson in not over-building.</p>
+<p>Over a three-month stretch it made money consistently, on the order of 8% a week. That was a small experiment and I wouldn't extrapolate from it.</p>
+<h2>What worked</h2>
+<p>The simple methods did better. When two related contracts implied inconsistent probabilities, or a price sat far from any sensible estimate of the payoff, the mispricings were large enough that a rule fit on a napkin captured most of the edge: buy the obviously cheap side and hedge when possible. The RL and sentiment stack added complexity and latency for a thin sliver of extra return.</p>
+<p>Execution and inventory turned out to be most of the work, and the signal was the easy part. I'd look for where the market is wrong in a simple way before building anything clever, since sophistication only pays once the easy edge is gone. It stayed a summer project.</p>
       </article>
   </main>
 
@@ -76,9 +69,9 @@
   <div class="bubble" id="bubble"></div>
 
   <div id="portal" aria-hidden="true"></div>
-  <script src="../site.js?v=1793207841"></script>
-  <script src="../fx.js?v=1793207841"></script>
-  <script src="../plush.js?v=1793207841"></script>
-  <script src="../demos.js?v=1793207841"></script>
+  <script src="../site.js?v=1793222848"></script>
+  <script src="../fx.js?v=1793222848"></script>
+  <script src="../plush.js?v=1793222848"></script>
+  <script src="../demos.js?v=1793222848"></script>
 </body>
 </html>

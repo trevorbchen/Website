@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../style.css?v=1793207841">
+  <link rel="stylesheet" href="../style.css?v=1793222848">
 </head>
 <body data-root="../">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -41,57 +41,42 @@
         <h1>Sparse autoencoders you can steer</h1>
         <p class="meta">2026-10 &middot; <span class="pill cyan">interpretability</span> <span class="pill cyan">sparse autoencoders</span></p>
 <div class="stats">
-<div><b>5</b><span>training objectives compared, with only the loss changed</span></div>
-<div><b>&asymp;49&ndash;54%</b><span>held-out explained variance, matching the plain-MSE control</span></div>
-<div><b>64%</b><span>five-way objective classification from features, against 20% chance</span></div>
-<div><b>1.3 pts</b><span>reconstruction cost of folding four objectives into one model</span></div>
+<div><b>5</b><span>objectives compared, only the loss changed</span></div>
+<div><b>64%</b><span>five-way objective classification from features, 20% chance</span></div>
+<div><b>1.3 pts</b><span>reconstruction cost of combining four objectives</span></div>
 </div>
 
-<p>A sparse autoencoder (SAE) is the standard tool for asking a network what it has represented. You take a layer's activations, train a small model to reconstruct them using only a few active units at a time, and treat the learned directions as a <strong>dictionary</strong>, a vocabulary of features you can name, read off, and edit. Interpretability work leans on that dictionary. This project is about how much it should.</p>
-<h2>The dictionary isn't determined by the data</h2>
-<p>Train two SAEs on identical data with the same objective, change only the random seed, and you can get dictionaries that disagree a lot. Earlier work found as little as 30% feature overlap for TopK SAEs trained on a language model. Which features you end up with depends on things like initialization that have nothing to do with the data.</p>
-<p>That is a strange foundation for explaining a model. And the reason it happens is simple: <strong>every standard SAE objective says "reconstruct well under a sparsity budget" and nothing else.</strong> When more than one dictionary reconstructs equally well, the objective has no preference between them, so the optimizer settles on whichever one it stumbles into.</p>
-<p>We asked whether we could give it a preference.</p>
-<h2>The idea: tilt the loss</h2>
-<p>If you weight one geometric property of the reconstruction error more heavily, such as an edge detector or a frequency band, then features that live along that geometry become more valuable to keep. So we add a transform of the error on top of ordinary reconstruction:</p>
+<p>A sparse autoencoder (SAE) reconstructs a layer's activations using a few active units at a time, and the learned directions form a dictionary of features. Interpretability work treats that dictionary as a vocabulary for the model. The trouble is that it depends on more than the data. Two SAEs with the same objective and different seeds can disagree a lot; earlier work found as little as 30% feature overlap for TopK SAEs on a language model.</p>
+<p>Standard objectives only ask for good reconstruction under a sparsity budget. When several dictionaries reconstruct equally well, nothing in the loss prefers one, and the optimizer takes whichever it reaches. We tried giving the loss a preference.</p>
+<h2>Tilting the loss</h2>
+<p>We add a transform of the reconstruction error to ordinary MSE:</p>
 <div class="formula">MSE &nbsp;+&nbsp; &lambda; &middot; Transform(loss)</div>
 
-<p>We tried four transforms for image-like latents: a <strong>Laplacian</strong>, which rewards local edge content and is near zero in smooth regions, and three disjoint <strong>Fourier-magnitude bands</strong> (low, mid, high), each rewarding structure at a different spatial scale. If you want an SAE to care about fine detail you reach for the high band; for coarse structure you reach for the low one. The transform is the lever.</p>
-<h3>Why this isn't a hack</h3>
-<p>I wanted a reason to believe this wasn't just an arbitrary penalty that happens to move things around, so we worked out a tiny model where you can prove what happens. Take a residual with two directions and a dictionary with room for only one. Suppose direction 1 shows up 75% of the time.</p>
-<figure><img src="../img/sae/reversal.svg" alt="Bar charts of the risk of keeping axis 1 or axis 2 under MSE versus a tilted loss"><figcaption>The same data, two losses, opposite preferred dictionaries. Under plain MSE, keeping axis 1 costs 0.25 and keeping axis 2 costs 0.75, so MSE keeps axis 1. Reweight the second axis by 4 and keeping axis 1 now costs 1.0 against 0.75, so the tilted loss keeps axis 2. Reweighting alone flips the choice.</figcaption></figure>
+<p>For image latents we used a Laplacian, which weights local edge content, and three disjoint Fourier-magnitude bands (low, mid, high), which weight structure at different spatial scales.</p>
+<p>A small model shows the lever exists. Take a residual with two directions and a dictionary with room for one, where direction 1 appears 75% of the time. Under MSE, keeping axis 1 costs 0.25 and keeping axis 2 costs 0.75, so MSE keeps axis 1. Weight the second axis by 4 and the costs become 1.0 and 0.75, so the tilted loss keeps axis 2. With the MSE term kept as an anchor, the tilted loss accepts exactly the reconstructions MSE accepts, so nothing a plain SAE can represent is lost. Without the anchor, a transform with a nullspace can call a bad reconstruction perfect, which is why every objective keeps it.</p>
+<figure><img src="../img/sae/reversal.svg" alt="Risk of keeping axis 1 or axis 2 under MSE versus a tilted loss"><figcaption>Same data, two losses, opposite dictionaries.</figcaption></figure>
 
-<p>That's the first result: <strong>geometry can reverse which dictionary is preferred</strong>. The second matters just as much: with the plain MSE term kept as an anchor, the tilted loss accepts exactly the same perfect reconstructions as MSE does. It gives up nothing a plain SAE could represent. And the anchor is necessary: without it, a transform with a nontrivial nullspace can call a bad reconstruction perfect, which is why every objective in the paper keeps the MSE term.</p>
-<h2>Does it work on real SAEs?</h2>
-<p>The toy model says the lever exists. We tested it on trained SAEs: TopK SAEs on the 512-dimensional latent space of a convolutional autoencoder trained on face images, with matched architectures (vector and spatial layouts at two sizes), the five objectives (a plain MSE control, the Laplacian, and three Fourier bands), and the only thing varying within each setting being the SAE's random seed.</p>
-<h3>The vocabularies really differ</h3>
-<p>If the objective didn't matter, the dictionaries from different objectives would be no more different from each other than the dictionaries from different seeds. They are. We checked this at three levels:</p>
-<ul>
-<li><strong>Whole-image level:</strong> projecting each held-out image's reconstruction residual into the shared latent space and embedding it without any labels separates cleanly by training objective, and colouring the same points by seed or by reconstruction quality shows nothing.</li>
-<li><strong>Feature level:</strong> a linear discriminant analysis on single features' causal contributions orders the five objectives from MSE and low-frequency to Laplacian and high-frequency, with about 64% five-way held-out accuracy against 20% chance.</li>
-<li><strong>Direct comparison:</strong> four independent dictionary-similarity metrics (decoder cosine, activation CKA, per-feature activation correlation, and atom recurrence) agree that same-objective SAEs are more similar to each other than different-objective ones, even at matched seeds.</li>
-</ul>
-<h3>Without paying for it in reconstruction</h3>
-<p>The usual worry about an extra term in the loss is that it makes the model worse at its main job. Held-out explained variance stays close to the MSE control, around 49 to 54%, and training stays stable across every transform and every strength we tried: a stronger transformed term trains to a lower loss plateau instead of diverging.</p>
-<h2>What the different vocabularies are for</h2>
-<p>Different isn't the same as useful. Three tests ask whether tilting the geometry buys targeted search.</p>
-<p><strong>1. Readability of downstream tasks.</strong> We trained linear probes on each SAE's features to read out four things: CelebA attributes, decoder-output geometry, source-image geometry, and controlled image transforms.</p>
-<figure><img src="../img/sae/fig07_linear_probe_heatmap_lambda10.png" alt="Linear-probe accessibility heatmap by representation"><figcaption>Which tasks are easiest to read out of which SAE. The Fourier-low objective makes decoder-output geometry much easier to decode (0.561 against 0.478 for the MSE control), and the Laplacian objective does the same for controlled transforms (0.203 against 0.185). Different objectives make different tasks easy.</figcaption></figure>
+<h2>On trained SAEs</h2>
+<p>We trained TopK SAEs on the 512-dimensional latent of a convolutional autoencoder on faces, in vector and spatial layouts at two sizes, with the five objectives. Within each setting only the seed varies.</p>
+<p>The dictionaries separate by objective. Embedding each held-out image's residual without labels separates by training objective and shows nothing by seed. A linear discriminant on single-feature contributions orders the objectives from MSE and Fourier-low to Laplacian and Fourier-high, with about 64% five-way held-out accuracy against 20% chance. Four dictionary-similarity metrics (decoder cosine, activation CKA, activation correlation, atom recurrence) agree that same-objective SAEs are more alike than different-objective ones at matched seeds.</p>
+<p>Reconstruction stays close to the control: held-out explained variance is 49 to 54% across objectives, with 55.3% for MSE.</p>
+<figure><img src="../img/sae/fig03a_ev_with_anchor.png" alt="Held-out explained variance by objective"><figcaption>Held-out explained variance per objective.</figcaption></figure>
 
-<p><strong>2. Recovering a planted signal.</strong> We planted twenty known visual effects (a checkerboard, a colour tint, a local blob, and so on) into images and asked which SAEs recover them. The ones whose objective matches an effect's geometry recover it better. The absolute numbers are small, because planted signals are out of distribution by construction, but the ranking across objectives is consistent.</p>
-<p><strong>3. Predicting where the model fails.</strong> If you're auditing a deployed model you often only see its outputs, not its dictionary. So we compared SAEs by which held-out images each reconstructs worst, which needs no correspondence between features. Two SAEs trained on the same objective agree on which images are hard more than two SAEs trained on different objectives do, and that holds on four independent probe datasets, including faces the autoencoder never saw.</p>
-<figure><img src="../img/sae/fig08_failure_mode_intra_vs_inter.png" alt="Overlap of hard-image sets for same-objective versus different-objective SAE pairs"><figcaption>Overlap in the worst-reconstructed images (Jaccard, higher means more agreement). Blue: two SAEs with the same objective and different seeds. Orange: different objectives at matched seeds. In every dataset and architecture the blue bars win. Each objective fails on its own characteristic set of images.</figcaption></figure>
+<h2>What the different dictionaries are good for</h2>
+<p>Linear probes on each SAE's features read out four things: CelebA attributes, decoder-output geometry, source-image geometry and controlled transforms. Fourier-low makes decoder-output geometry easier to read (0.561 against 0.478 for MSE), and the Laplacian does the same for controlled transforms (0.203 against 0.185).</p>
+<figure><img src="../img/sae/fig07_linear_probe_heatmap_lambda10.png" alt="Linear-probe accessibility by representation"><figcaption>Probe accuracy by objective and task, λ = 10.</figcaption></figure>
 
-<h2>All four in one model</h2>
-<p>If different objectives specialize, can you have the specializations in a single SAE? We built a five-branch model with one reconstruction-focused branch and four branches routed to the four transformed objectives.</p>
-<figure><img src="../img/sae/fig10_combining_objectives_ev.png" alt="Peak validation explained variance, five-branch MSE control versus the combined model"><figcaption>The combined model reaches 48.88% peak validation explained variance against 50.22% for a five-branch MSE control. About a 1.3-point cost, in exchange for holding four steerable vocabularies of the same data in one model.</figcaption></figure>
+<p>We also planted twenty known visual effects (a checkerboard, a tint, a local blob and so on) into images. SAEs whose objective matches an effect's geometry recover it better. Absolute numbers are small because planted signals are out of distribution, but the ranking is consistent.</p>
+<p>For auditing, you often see a model's outputs but not its dictionary. So we compared SAEs by which held-out images each reconstructs worst, which needs no feature correspondence. Same-objective SAEs agree on the hard images more than different-objective ones, on four probe datasets including faces the autoencoder never saw.</p>
+<figure><img src="../img/sae/fig08_failure_mode_intra_vs_inter.png" alt="Overlap of hard-image sets, same objective versus different objective"><figcaption>Jaccard overlap of the worst-reconstructed images. Blue: same objective, different seeds. Orange: different objectives, matched seeds.</figcaption></figure>
 
-<h2>Where I'd be careful</h2>
-<p>This is TopK SAEs on a single convolutional autoencoder, trained on faces. Language models are where most of the field's tooling lives, and I haven't tested them: our transforms are image-specific and would need a different analogue there. I also haven't tried a production-scale model or a different backbone. The failure-mode result is correlational: the objective predicts <em>which</em> images an SAE struggles with, not <em>why</em>. And we picked the four transforms by hand, from prior knowledge of what matters for faces. In a setting where you don't already know the right geometry, you would need a way to choose or learn the transform.</p>
-<h2>Why I like it</h2>
-<p>Interpretability usually treats an SAE's dictionary as a fixed by-product of whatever seed and hyperparameters happened to be used. This project treats the training objective as a lever, as controllable as dictionary size or sparsity, for choosing which of many equally good vocabularies you want to look through. If it holds up beyond faces, it turns "which features did we get?" from a matter of seed luck into something closer to a search you can aim.</p>
-<p>If you'd like to poke at real activations yourself, the <a href="../explorer.html">interpretability explorer</a> lets you click through attention and the logit lens inside a real transformer.</p>
-<p>The paper is with Ilona Demler and Pietro Perona, and is under review at CVPR 2027.</p>
+<h2>Combining objectives</h2>
+<p>A five-branch SAE with one MSE branch and four routed to the transformed objectives reaches 48.88% peak validation explained variance, against 50.22% for a five-branch MSE control. That is a 1.3-point cost for four steerable vocabularies in one model.</p>
+<figure><img src="../img/sae/fig10_combining_objectives_ev.png" alt="Peak validation explained variance, MSE control versus combined model"><figcaption>Five-branch MSE control and the combined model.</figcaption></figure>
+
+<h2>Limits</h2>
+<p>This is TopK SAEs on one convolutional autoencoder trained on faces. The transforms are image-specific, and language models would need different ones. I haven't tried production-scale models or other backbones. The failure-mode result is correlational: the objective predicts which images an SAE struggles with, not why. We chose the four transforms by hand, so a setting without prior knowledge of the right geometry would need a way to choose or learn the transform.</p>
+<p>The <a href="../explorer.html">interpretability explorer</a> has attention and the logit lens on real GPT-2 activations. The paper is with Ilona Demler and Pietro Perona, under review at CVPR 2027.</p>
       </article>
   </main>
 
@@ -106,9 +91,9 @@
   <div class="bubble" id="bubble"></div>
 
   <div id="portal" aria-hidden="true"></div>
-  <script src="../site.js?v=1793207841"></script>
-  <script src="../fx.js?v=1793207841"></script>
-  <script src="../plush.js?v=1793207841"></script>
-  <script src="../demos.js?v=1793207841"></script>
+  <script src="../site.js?v=1793222848"></script>
+  <script src="../fx.js?v=1793222848"></script>
+  <script src="../plush.js?v=1793222848"></script>
+  <script src="../demos.js?v=1793222848"></script>
 </body>
 </html>

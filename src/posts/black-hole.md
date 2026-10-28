@@ -6,15 +6,15 @@ tags: CUDA, graphics, physics
 blurb: A real-time CUDA ray tracer that bends light through Schwarzschild spacetime, built with Kevin Peng. It started because I'd just met Kip Thorne.
 ---
 
-I'd taken a computer graphics class with Al Barr and, around the same time, got to meet Kip Thorne, the Caltech physicist who won a Nobel for gravitational waves and whose equations drove the black hole in *Interstellar*. (Yes, I find it funny that I'm not a fan of the movie.) The two things collided: *could I render one, properly, in real time?*
+I took a computer graphics class with Al Barr and around the same time met Kip Thorne, the Caltech physicist who won a Nobel for gravitational waves and whose equations drove the black hole in *Interstellar*. I wanted to see whether I could render one in real time.
 
 Kevin Peng and I built it for our CS 179 (GPU programming) final. Kevin wrote the geodesic integrator, the part that traces how light bends. I wrote the camera, the shading and the CUDA rendering kernels. [Code on GitHub.](https://github.com/trevorbchen/CS_179_final)
 
-**You can also try a version in your browser**: the [black hole renderer](../renderer.html), a WebGL shader that traces the same physics. Drag to orbit.
+There is also a [browser version](../renderer.html), a WebGL shader that traces the same physics.
 
-## The trick: stay in the plane
+## Staying in the plane
 
-Schwarzschild spacetime is spherically symmetric, so every photon's path lies in one fixed plane through the black hole. Instead of integrating the full 4D problem, each ray integrates three numbers in polar coordinates (r, φ) plus a velocity, which halves memory bandwidth on the GPU:
+Schwarzschild spacetime is spherically symmetric, so every photon's path lies in one fixed plane through the black hole. Instead of integrating the full 4D problem, each ray integrates polar coordinates (r, φ) and a radial velocity, which halves memory bandwidth on the GPU:
 
 ```
 dr/dλ   = v_r
@@ -28,9 +28,9 @@ Near the photon sphere (r = 3M), curvature is extreme, so the RK4 step size shri
 
 Each pixel is independent, so the double loop over the image becomes a CUDA kernel, one thread per pixel in 16×16 blocks. On top of that: bloom and HDR tone mapping as post-processing kernels, Doppler beaming on the disk, and an interactive browser viewer with live controls and FPS profiling.
 
-## Keeping it honest
+## Tests
 
-Pretty pictures are easy to fake, so we wrote a physics test suite against general relativity:
+We wrote a physics test suite against general relativity:
 
 | test | result |
 |------|--------|
@@ -42,6 +42,6 @@ Pretty pictures are easy to fake, so we wrote a physics test suite against gener
 
 It also has CPU–GPU parity tests so the CUDA port provably matches the reference implementation.
 
-## The natural next step
+## Next
 
-The big missing piece is **spin**: a Kerr black hole drags spacetime around with it and gives the famous lopsided shadow. The geodesics are no longer planar, which breaks the central trick above, so the kernel layout would need rethinking.
+Spin is missing. A Kerr black hole drags spacetime around with it and gives a lopsided shadow. Its geodesics are not planar, which breaks the trick above, so the kernel layout would need to change.

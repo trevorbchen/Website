@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../style.css?v=1793207841">
+  <link rel="stylesheet" href="../style.css?v=1793222848">
 </head>
 <body data-root="../">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -40,63 +40,59 @@
         <p class="back"><a href="../blog.html">&larr; all posts</a></p>
         <h1>Building a tiny vLLM</h1>
         <p class="meta">2026-10 &middot; <span class="pill pink">inference</span> <span class="pill pink">GPU</span> <span class="pill pink">systems</span></p>
-<p>Serving a language model is mostly a memory and scheduling problem. The arithmetic for one token is small. What makes a server fast or slow is how many requests it can keep in flight at once, and that is limited by something unglamorous: the <strong>KV cache</strong>.</p>
-<p>I wanted to understand that properly, so I built the core of a modern serving engine from scratch and measured it against Hugging Face on the same requests. This page is a tour of it. Nothing here runs a model in your browser or on a server of mine. The numbers come from runs I recorded on real hardware, saved as data files, and <strong>replayed</strong> below.</p>
-<h2>The cache is the whole game</h2>
-<p>When a transformer generates token number <em>n</em>, it needs the keys and values of all <em>n&minus;1</em> earlier tokens at every layer. Recomputing them each step would be absurdly wasteful, so they are kept: that's the KV cache. It grows by one entry per token per layer, and it is held for as long as the request is alive.</p>
-<p>For the 1.1B-parameter model I used (TinyLlama, 22 layers, 4 key-value heads of size 64, in half precision), each token costs 2 &times; 22 &times; 4 &times; 64 &times; 2 bytes = <strong>22,528 bytes</strong>. A 2,048-token request holds about 46 MB. A GPU that holds the weights and has a few gigabytes left over can only keep so many of those alive, and that number is what sets throughput.</p>
+<p>Serving a language model is mostly a memory and scheduling problem. The arithmetic for one token is small, and how many requests a server can keep in flight is limited by the KV cache.</p>
+<p>I built the core of a modern serving engine from scratch and measured it against Hugging Face on the same requests. Nothing on this page runs a model in your browser or on a server of mine. The numbers come from runs I recorded on real hardware and saved as data files, and the page replays them.</p>
+<h2>The KV cache</h2>
+<p>To generate token <em>n</em>, a transformer needs the keys and values of all <em>n&minus;1</em> earlier tokens at every layer. They are kept rather than recomputed, which is the KV cache. It grows by one entry per token per layer for as long as the request is alive.</p>
+<p>For the 1.1B model I used (TinyLlama: 22 layers, 4 key-value heads of size 64, fp16), each token costs 2 &times; 22 &times; 4 &times; 64 &times; 2 bytes = 22,528 bytes. A 2,048-token request holds about 46 MB, and the number of those that fit in the memory left after the weights sets throughput.</p>
 <h3>Paged blocks</h3>
-<p>The obvious implementation gives each request one contiguous slab of cache sized for the longest sequence it might ever reach. Most requests never get anywhere near that length, so most of the slab sits empty, and empty cache means fewer requests in the batch. The vLLM paper measured that earlier systems used only about 20 to 38 percent of their cache memory for real token state.</p>
-<p>The fix is the one operating systems use for memory: <strong>paging</strong>. Cut the cache into fixed blocks of 16 tokens, hand them out on demand, and keep a per-request <em>block table</em> that maps a sequence's logical blocks to wherever they landed physically. The only waste is the unused tail of each request's last block.</p>
+<p>The obvious implementation gives each request one contiguous slab sized for the longest sequence it might reach. Most requests never come close, so most of the slab sits empty and fewer requests fit in the batch. The vLLM paper measured earlier systems using about 20 to 38 percent of cache memory for real token state.</p>
+<p>The fix is paging, as in an operating system. The cache is cut into blocks of 16 tokens that are handed out on demand, and each request has a block table mapping its logical blocks to physical ones. The only waste is the unused tail of each request's last block.</p>
 <div class="demo light" data-demo="paging"></div>
 
-<p>Switch the policy and watch how many requests fit. In paged mode the pool fills with tokens; in the reserve-the-maximum mode, most of it is stranded and the queue backs up.</p>
 <h2>Continuous batching</h2>
-<p>The second idea is about <em>when</em> requests join the batch. The simple approach, <strong>static batching</strong>, collects a batch, runs it until the slowest sequence finishes, and only then takes the next batch. Every sequence that finished early sits there generating padding, and everything waiting behind it waits for the stragglers too.</p>
-<p><strong>Continuous batching</strong> (Orca called it iteration-level scheduling) makes the decision every step instead. After each forward pass, finished sequences leave and waiting ones take their place. The engine's scheduler is short enough to quote:</p>
+<p>Static batching collects a batch, runs it until the slowest sequence finishes, and then takes the next one. Sequences that finish early sit generating padding, and everything queued behind them waits for the slowest.</p>
+<p>Continuous batching (Orca called it iteration-level scheduling) decides every step. After each forward pass, finished sequences leave and waiting ones join. The scheduler is short:</p>
 <ol>
-<li>If a request is waiting and the cache has room for its prompt, run its <strong>prefill</strong> (one pass over the whole prompt) and emit its first token.</li>
-<li>Otherwise run one <strong>decode</strong> step for every running sequence.</li>
-<li>If a decode step needs a new block and none are free, <strong>preempt</strong> the most recently admitted sequence: free its blocks and put it back at the front of the queue to be recomputed later.</li>
+<li>If a request is waiting and the cache has room for its prompt, run its prefill (one pass over the whole prompt) and emit the first token.</li>
+<li>Otherwise run one decode step for every running sequence.</li>
+<li>If a decode step needs a new block and none is free, preempt the most recently admitted sequence: free its blocks and put it back at the front of the queue to be recomputed.</li>
 </ol>
-<p>Here is every request in a recorded run, with the engine and with Hugging Face's <code>generate</code> in static batches of 8, 16 and 32. Press play, or click anywhere on the chart to move the playhead.</p>
+<p>Here is every request in a recorded run, for the engine and for Hugging Face's <code>generate</code> in static batches of 8, 16 and 32.</p>
 <div class="demo light" data-demo="timeline"></div>
 
-<p>In the static-batch views, the grey portion of each bar is decode work spent on a sequence that had already finished. That is the straggler tax, and it is why larger batches help so little: a bigger batch has a longer slowest member.</p>
-<h3>What the cache is doing</h3>
-<p>The same run, from the engine's own trace. Each point is one scheduler step.</p>
+<p>In the static-batch views the grey part of each bar is decode work spent on a sequence that had already finished. A bigger batch has a longer slowest member, so larger batches help less than you would expect.</p>
+<p>The same run from the engine's own trace, one point per scheduler step:</p>
 <div class="demo light" data-demo="cache"></div>
 
 <h2>Results</h2>
 <div class="demo light" data-demo="results"></div>
 
-<p>Two things are worth being careful about. The workload is synthetic (random prompt tokens, lengths drawn from a skewed distribution, and every request runs for exactly its target length so both systems do the same useful work). And these are single-GPU numbers on a laptop card, which says something about scheduling and memory, not about how the engine behaves at scale.</p>
-<h2>How I know it's right</h2>
-<p>A fast server that returns different tokens is not a faster server. The engine loads weights straight from a Hugging Face model, and every claim is tested against Hugging Face's own <code>generate</code> on a small random Llama in full precision, so there's no tolerance to hide behind:</p>
+<p>The workload is synthetic: random prompt tokens, lengths from a skewed distribution, and every request runs for exactly its target length so both systems do the same useful work. These are single-GPU numbers, so they say something about scheduling and memory and nothing about behaviour at scale.</p>
+<p>The laptop RTX 4060 gives 506 tokens/s for the engine against 351 for the best static batch. One A100 80GB gives 970 against 771, a smaller gap of about 1.26&times; (1.44&times; on the laptop). A 1.1B model barely loads an A100, and with the reference attention path both systems are dominated by per-step overhead, so large static batches recover more of the idle time. With requests arriving over time, the engine's median latency was 0.7 s on the A100 against 3.6 to 9.2 s for static batching, and 1.2 s against 5.0 to 12.5 s on the laptop. I ran on the A100 only after checking that nothing else was using it, and it was idle (0 MiB, 0% utilization) before and after.</p>
+<h2>Correctness</h2>
+<p>The engine loads weights directly from a Hugging Face model. Every claim is tested against Hugging Face's <code>generate</code> on a small random Llama in full precision, so there is no tolerance:</p>
 <ul>
 <li>prefill logits match the reference exactly</li>
-<li>single-request greedy decoding through the paged cache matches token for token, at several prompt lengths</li>
+<li>single-request greedy decoding through the paged cache matches token for token at several prompt lengths</li>
 <li>nine requests of different lengths batched together all match, with no leaked blocks</li>
-<li>under deliberate memory pressure the engine preempts and recomputes eight times, and every output still matches</li>
+<li>under deliberate memory pressure the engine preempts and recomputes eight times and every output still matches</li>
 <li>generation stops correctly at the end-of-sequence token</li>
 <li>requests arriving over time are never served before they arrive</li>
 </ul>
-<p>On the real model in half precision, 6 of 6 sampled requests produced 24-token outputs identical to Hugging Face at batch size one. That is a small sample. With enough requests, near-ties will eventually come out differently, because floating-point sums are added in a different order depending on what else is in the batch.</p>
-<h2>The kernels</h2>
-<p>The attention in the recorded runs is plain PyTorch: gather each sequence's blocks into a padded tensor, mask, and call scaled-dot-product attention. That's the readable reference version, and it leaves a lot of speed on the table. I wrote the fused versions in Triton, each with a test against a float32 reference:</p>
+<p>On the real model in fp16, 6 of 6 sampled requests gave 24-token outputs identical to Hugging Face at batch size one, on both GPUs. That is a small sample. With enough requests, near-ties will eventually differ, because floating-point sums are added in a different order depending on what else is in the batch.</p>
+<h2>Kernels</h2>
+<p>The attention in the recorded runs is plain PyTorch: gather each sequence's blocks into a padded tensor, mask, and call scaled-dot-product attention. That is the readable version and it leaves a lot of speed unused. I wrote fused Triton versions with tests against a float32 reference:</p>
 <ul>
-<li><strong>add + RMSNorm</strong> in one pass over the residual stream</li>
-<li><strong>RoPE and the cache write</strong> in one kernel, so keys and values go straight into their physical blocks</li>
-<li><strong>SwiGLU</strong> from the fused gate/up projection</li>
-<li><strong>FlashAttention-2</strong> style causal attention for prefill, with grouped-query attention and an online softmax</li>
-<li><strong>PagedAttention v2</strong> for decode: a block-table gather with an online softmax, split across the context (flash-decoding), handling all the query heads that share one key-value head together, followed by a small reduction kernel</li>
+<li>add + RMSNorm in one pass over the residual stream</li>
+<li>RoPE and the cache write in one kernel, so keys and values go straight into their physical blocks</li>
+<li>SwiGLU from the fused gate/up projection</li>
+<li>FlashAttention-2 style causal attention for prefill, with grouped-query attention and an online softmax</li>
+<li>PagedAttention v2 for decode: a block-table gather with an online softmax, split across the context (flash-decoding), handling all the query heads that share a key-value head together, then a small reduction kernel</li>
 </ul>
-<p>They are written to avoid host synchronization, so a whole decode step could be captured in a CUDA graph. <strong>They have not run yet.</strong> Triton needs a C compiler to build its launcher, and the machine I developed on doesn't have one, so the runs on this page all use the reference attention path, and each run is labelled with which path it used. Once the kernels compile and pass their tests, the fused-kernel runs will show up in the same replay as another dataset, and this paragraph will change.</p>
-<h2>Where it ran</h2>
-<p>Each recorded run is labelled with its GPU, and you can switch between them above. The first is a laptop RTX 4060. The second is one A100 80GB on a shared lab machine, which I used only after checking that nothing else was running on it and that it was idle (0 MiB used, 0% utilization) before and after.</p>
-<p>The A100 gap is smaller: 970 tokens/s against 771 for the best static batch, about 1.26&times;, versus 1.44&times; on the laptop. A 1.1B model barely loads an A100, so with the reference attention path both systems spend much of their time on per-step overhead, and the larger static batches recover more of the idle time. The latency picture is the same on both cards: with requests arriving over time, the engine's median latency was 0.7 s against 3.6 to 9.2 s for static batching.</p>
-<h2>What it doesn't do yet</h2>
-<p>Greedy decoding only (no sampling), one GPU, prompts that are fully prefilled in one pass, and no prefix caching, chunked prefill, speculative decoding or tensor parallelism. Those are the natural next steps, and each is a well-known idea I'd like to build rather than just cite.</p>
+<p>They avoid host synchronization, so a decode step could be captured in a CUDA graph. They have not run yet. Triton needs a C compiler to build its launcher, and my development machine doesn't have one, so every run here uses the reference attention path. When they compile and pass their tests, the fused runs will appear as another dataset in the replay.</p>
+<h2>Not done</h2>
+<p>Greedy decoding only, one GPU, prompts prefilled in one pass, and no prefix caching, chunked prefill, speculative decoding or tensor parallelism. Each is a well-known idea I'd like to build instead of cite.</p>
       </article>
   </main>
 
@@ -111,10 +107,10 @@
   <div class="bubble" id="bubble"></div>
 
   <div id="portal" aria-hidden="true"></div>
-  <script src="../site.js?v=1793207841"></script>
-  <script src="../fx.js?v=1793207841"></script>
-  <script src="../plush.js?v=1793207841"></script>
-  <script src="../demos.js?v=1793207841"></script>
-  <script src="../replay.js?v=1793207841"></script>
+  <script src="../site.js?v=1793222848"></script>
+  <script src="../fx.js?v=1793222848"></script>
+  <script src="../plush.js?v=1793222848"></script>
+  <script src="../demos.js?v=1793222848"></script>
+  <script src="../replay.js?v=1793222848"></script>
 </body>
 </html>

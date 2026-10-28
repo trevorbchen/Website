@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../style.css?v=1793207841">
+  <link rel="stylesheet" href="../style.css?v=1793222848">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
@@ -43,50 +43,36 @@
         <p class="back"><a href="../blog.html">&larr; all posts</a></p>
         <h1>Better molecules, fewer experiments</h1>
         <p class="meta">2026-07 &middot; <span class="pill cyan">AI for science</span> <span class="pill cyan">diffusion</span> <span class="pill cyan">reinforcement learning</span> <span class="pill cyan">NeurIPS 2026</span></p>
-<p>A pretrained molecule generator is a bit like a very well-read chemist who has no idea what you're trying to make. It knows what drug-like molecules look like, so almost everything it proposes is plausible, and almost none of it binds your protein.</p>
-<p>You can fix that if you can ask a question about each molecule it proposes: <em>how well does this bind?</em> The catch is that every answer costs something, and the better the answer, the more it costs. This post is about the paper I spent most of this year on, which asks a simple question: <strong>if you can only afford a few thousand answers, how should you spend them?</strong></p>
-<h2>What we're actually trying to do</h2>
-<p>Call the pretrained generator $p_{\text{pre}}(x)$ and the score you care about $r(x)$. We don't want the generator's habits and we don't want the score maximized blindly; we want molecules that score well <em>and</em> still look like chemistry. A clean way to say that is to reweight the prior by the reward:</p>
-<p>$$p^\ast(x) \propto p_{\text{pre}}(x)\, e^{r(x)/\beta}$$</p>
-<p>Shrink $\beta$ and the target collapses onto the best molecules. Everything in the paper is some way of approximating $p^\ast$ without being able to evaluate $r$ more than a few thousand times.</p>
-<figure><img alt="Reweighting a prior by a reward" src="../img/ddamo/tilting.png"><figcaption>The prior barely covers the region where the reward is high. Multiplying the two gives a target in a place the prior would almost never sample from by itself.</figcaption></figure>
-<h2>Why the cost of one measurement decides everything</h2>
-<p>If an answer is nearly free, you don't need to be clever. Sample a million candidates, score them all, keep the best. That's why code and math get such good mileage from "sample a lot and check": a compiler or a proof checker is exact and instant.</p>
-<p>Binding affinity is the opposite. A learned affinity model takes milliseconds, a structure-prediction run takes minutes, and a wet-lab assay takes weeks. Once the measurement is the expensive part, extra sampling can't buy you more of it, and the whole game becomes <em>which candidates deserve a measurement, and how do I make each one count</em>.</p>
-<figure><img alt="Which strategy wins depends on the cost of a call" src="../img/ddamo/regimes.png"><figcaption>Same optimization problem, different winners. On the left, best-of-N is hard to beat. On the right, where molecular design lives, how you spend each measurement dominates.</figcaption></figure>
-<p>The first big choice is where the feedback goes. You can use it to <em>select</em> better draws from a frozen generator (search), or you can use it to <em>change the generator</em> so every later round starts from something better. We bet on the second. A search decision is used up the moment it's made; a gradient step compounds.</p>
-<h2>Four decisions in one loop</h2>
-<p>Once you commit to updating the generator, four design questions show up on every round. The literature has good answers to each one separately. Nobody had checked whether they work <em>together</em>, which is the experiment we ran.</p>
-<p><strong>1. Who gets measured?</strong> I'd have bet on "whichever candidate the surrogate model likes best," and that's the mistake: a surrogate trained on a few thousand points is confident exactly where you've already looked. We use Thompson sampling instead. The surrogate is an ensemble of ten small networks; for each candidate we draw one sample from its predictive spread and send the top few to the oracle. Where the ensemble disagrees, the draw is wide and the candidate can win; where it agrees, this reduces to greedy.</p>
-<p><strong>2. What do we learn from?</strong> Maximizing average reward optimizes the wrong thing, because you ship the best molecule, not the average one. We use a CVaR-style shaping: take the running 80th-percentile reward, and only reward samples above it, scaled up. The generator's gradient comes from the top fifth of what's been measured.</p>
-<p><strong>3. How far do we let it move?</strong> This is the one that surprised us. A KL penalty to the prior pulls the wrong way (you're explicitly trying to leave the prior), and a plain entropy bonus spreads probability around without caring where it goes. Instead we subtract the generator's own log-likelihood from the log-reward, $\log r(x) - \gamma \log p_\theta(x)$, which we call <strong>density entropy regularization</strong>. A molecule the model already samples often gets discounted, so the modes it has already found stop soaking up all the gradient.</p>
-<figure><img alt="What density entropy regularization does" src="../img/ddamo/diagram_der.png"><figcaption>The dominant mode gets penalized for being dominant, which frees probability for smaller modes the generator hasn't committed to yet.</figcaption></figure>
-<p><strong>4. What keeps it from breaking?</strong> Two things. A replay buffer, so a good molecule found early doesn't stop mattering once the sampling distribution moves on. And a validity penalty, because exploring off-prior mostly means exploring invalid strings. Without the penalty, validity collapses within the first hour as the model piles mass onto strange strings the surrogate happens to like.</p>
-<figure><img alt="The assembled loop" src="../img/ddamo/assembled_loop.png"><figcaption>One round: sample, score with the surrogate ensemble, pick a batch with Thompson sampling, spend oracle calls, shape the rewards, fine-tune. Each of the four decisions above is a place this loop could have been built differently.</figcaption></figure>
-<h2>What the experiments said</h2>
-<p>We ran nine tasks: six small-molecule binding targets and three protein-fitness tasks (GB1, CreiLOV, TrpB), five seeds each.</p>
-<p><strong>Every piece earns its place.</strong> Remove any single component and reward drops, and under the DDPP-LB fine-tuning objective density entropy regularization is the biggest of them: at 5,000 oracle calls the full loop reaches about 0.97 normalized reward and about 0.58 without it.</p>
-<p><strong>But the leave-one-out table hides the real story.</strong> When we ran the full factorial over density entropy regularization, CVaR and Thompson sampling, the three weren't independent. Starting with everything off, the mean best score is −1.06. CVaR alone takes it to −0.86, and Thompson alone to −0.80. Density entropy regularization alone reaches −0.43, and <em>from there</em>, adding the other two gets to +1.13. In other words, density entropy regularization opens up room away from the prior, and CVaR and Thompson only pay off once there's room to exploit.</p>
-<figure><img alt="Where each ablation moves the samples" src="../img/ddamo/distribution_shift.png"><figcaption>How far generated samples sit from the pretrained model. Remove CVaR or Thompson and the distribution is mostly intact. Remove density entropy regularization and it collapses back onto the prior's dominant modes.</figcaption></figure>
-<figure><img alt="Removing components in combination" src="../img/ddamo/additivity_curves.png"><figcaption>Removing components in pairs and all at once on one target. The curves are indistinguishable for the first hundred calls (nothing has left the prior yet) and then they split.</figcaption></figure>
-<p><strong>The protein tasks barely move, and that's informative.</strong> On GB1, CreiLOV and TrpB, the same ablations are close to flat. Those generators are trained per family, so a high-fitness variant is already something the prior samples readily. There's no off-prior headroom for the density term to open, so the components that depend on it have nothing to exploit. That gives a rough rule you can apply before spending any compute: <em>how far is what you want from what your generator already produces?</em> If it's already in distribution, sample and select.</p>
-<p><strong>Adapting beats searching.</strong> Against five inference-time search baselines on a frozen generator (best-of-N, beam search, MCTS, discrete Feynman-Kac correctors, and SMC), the full loop reaches the best baseline's final score in about <strong>58x fewer oracle calls</strong> averaged over the six molecules, and about 16x fewer on the protein tasks.</p>
-<figure><img alt="Online adaptation versus search" src="../img/ddamo/vs_search.png"><figcaption>Best reward found so far against oracle calls on one target. All methods track each other early. The search baselines flatten together; the adaptive loop keeps climbing, because it's drawing from a better distribution by then.</figcaption></figure>
-<h2>Where I'd be careful</h2>
-<p>A few honest caveats, because the 58x number is easy to over-read:</p>
+<p>A pretrained molecule generator knows what drug-like molecules look like. Almost everything it proposes is plausible and almost none of it binds the protein you care about. To fix that you need a score for each molecule, and the scores that matter are expensive. This paper asks what to do when you can afford a few thousand of them.</p>
+<h2>Setup</h2>
+<p>Let $p_{\text{pre}}(x)$ be the generator and $r(x)$ the score. The target is the prior reweighted by the reward,</p>
+<p>$$p^\ast(x) \propto p_{\text{pre}}(x)\, e^{r(x)/\beta},$$</p>
+<p>which keeps molecules that look like chemistry and pushes mass toward the ones that score well. Everything in the paper is a way to approximate $p^\ast$ with a small number of reward evaluations.</p>
+<p><img alt="Reweighting a prior by a reward" src="../img/ddamo/tilting.png" /></p>
+<h2>Cost decides the method</h2>
+<p>When a score is cheap you can sample a million candidates and keep the best. Code and math work this way, since a compiler or proof checker is exact and fast. Binding affinity is not like that: a learned model takes milliseconds, a structure-prediction run takes minutes, a wet-lab assay takes weeks. Once measurements are the bottleneck, more sampling doesn't help, and the question becomes which candidates get measured and what each measurement teaches.</p>
+<p><img alt="Best-of-N wins when calls are cheap; adaptation wins when they are not" src="../img/ddamo/regimes.png" /></p>
+<p>There are two places to put the feedback. You can use it to select among samples from a frozen generator, or you can use it to update the generator. We update the generator, because a selection is used once and a gradient step carries into every later round.</p>
+<h2>The loop</h2>
+<p>Each round samples from the generator, scores candidates with a surrogate ensemble, spends a few oracle calls, and fine-tunes. Four choices matter.</p>
 <ul>
-<li>It's a statement about <strong>budget, not ceiling</strong>: give search enough calls and it gets there too. It matters because nobody has enough calls.</li>
-<li>Our oracle is a <strong>learned affinity model</strong>, so this isn't evidence we found 58x better molecules, and we haven't validated any of them in a wet lab.</li>
-<li>We deliberately didn't tune the baselines, which is the right call for attributing where gains come from, but it means they sit below their ceilings.</li>
-<li>The ranking of components depends on the fine-tuning objective: under VIDD, Thompson sampling matters more than density entropy regularization. "Which knob matters" isn't a universal fact.</li>
+<li><strong>Which candidates to measure.</strong> We use Thompson sampling over an ensemble of ten small networks: draw one sample from each candidate's predictive spread and send the top few to the oracle. A surrogate trained on a few thousand points is overconfident near what it has seen, and this keeps sending queries elsewhere.</li>
+<li><strong>What to learn from.</strong> CVaR shaping. Only samples above the running 80th-percentile reward contribute, since you ship the best molecule and the average one doesn't matter.</li>
+<li><strong>How far to move.</strong> Density entropy regularization (DER) subtracts the generator's own log-likelihood from the log-reward, $\log r(x) - \gamma \log p_\theta(x)$. Molecules the model already samples often are discounted, so the dominant mode stops absorbing all the gradient.</li>
+<li><strong>What keeps it stable.</strong> A replay buffer and a validity penalty. Without the penalty, validity collapses within the first hour.</li>
 </ul>
-<h2>What I took from it</h2>
-<ol>
-<li>Before you spend compute, check how far your target sits from what the generator already samples. If it's close, you don't need this.</li>
-<li>If it's far, get the <strong>density term</strong> right first. The rest of the machinery was waiting on it.</li>
-<li><strong>Measure interactions, not just ablations.</strong> A leave-one-out table would have told us CVaR and Thompson sampling were marginal. They aren't; they just needed something else switched on.</li>
-</ol>
-<p>This is a team paper: I shared first authorship with Ariel Dai, and the work was with Jason Yang, Riccardo De Santi, Daniel Khalil, Wenda Chu, Nate Gruver, Pranav Murugan, Alexander Goldberg, Maruan Al-Shedivat and Yisong Yue, across Caltech, ETH Zurich and Genesis Molecular AI. The full paper is on <a href="https://arxiv.org/abs/2607.02834">arXiv</a>, the code is on <a href="https://github.com/trevorbchen/DDAMO">GitHub</a>, and the results are on <a href="https://huggingface.co/trevorbchen/DDAMO">Hugging Face</a>.</p>
+<p><img alt="Density entropy regularization discounts the dominant mode" src="../img/ddamo/diagram_der.png" /></p>
+<h2>Results</h2>
+<p>Nine tasks, five seeds each: six small-molecule binding targets and three protein-fitness tasks (GB1, CreiLOV, TrpB).</p>
+<p>Against five inference-time search baselines on a frozen generator (best-of-N, beam search, MCTS, discrete Feynman-Kac correctors, SMC), the full loop reaches the best baseline's final score in about 58 times fewer oracle calls on the molecules and about 16 times fewer on the proteins.</p>
+<p><img alt="Best reward so far against oracle calls" src="../img/ddamo/vs_search.png" /></p>
+<p>Removing any one component lowers reward. Density entropy regularization is the largest under the DDPP-LB objective: at 5,000 calls the full loop reaches about 0.97 normalized reward, and about 0.58 without it.</p>
+<p>The more interesting result is in the interactions. With DER, CVaR and Thompson sampling all off, the mean best score is −1.06. CVaR alone gives −0.86 and Thompson alone gives −0.80. DER alone gives −0.43, and from there adding the other two reaches +1.13. DER makes room away from the prior, and the other two only help once that room exists. A leave-one-out table makes them look marginal.</p>
+<p><img alt="Removing components in combination, on one target" src="../img/ddamo/additivity_curves.png" /></p>
+<p>On the protein tasks the ablations are nearly flat. The generators there are trained per family, so good variants are already in distribution and there is no off-prior headroom to open. If the molecules you want are close to what the prior already produces, sampling and selecting is enough.</p>
+<h2>Limits</h2>
+<p>The 58x figure is about budget, not ceiling; with enough calls the search baselines get there too. The oracle is a learned affinity model, so this is not evidence of 58x better molecules, and none of them were tested in a lab. We did not tune the baselines. The ranking of components also depends on the fine-tuning objective: under VIDD, Thompson sampling matters more than DER.</p>
+<p>I shared first authorship with Ariel Dai. The other authors are Jason Yang, Riccardo De Santi, Daniel Khalil, Wenda Chu, Nate Gruver, Pranav Murugan, Alexander Goldberg, Maruan Al-Shedivat and Yisong Yue, across Caltech, ETH Zurich and Genesis Molecular AI. The paper is on <a href="https://arxiv.org/abs/2607.02834">arXiv</a>, the code on <a href="https://github.com/trevorbchen/DDAMO">GitHub</a>, and the results on <a href="https://huggingface.co/trevorbchen/DDAMO">Hugging Face</a>.</p>
       </article>
   </main>
 
@@ -101,9 +87,9 @@
   <div class="bubble" id="bubble"></div>
 
   <div id="portal" aria-hidden="true"></div>
-  <script src="../site.js?v=1793207841"></script>
-  <script src="../fx.js?v=1793207841"></script>
-  <script src="../plush.js?v=1793207841"></script>
-  <script src="../demos.js?v=1793207841"></script>
+  <script src="../site.js?v=1793222848"></script>
+  <script src="../fx.js?v=1793222848"></script>
+  <script src="../plush.js?v=1793222848"></script>
+  <script src="../demos.js?v=1793222848"></script>
 </body>
 </html>

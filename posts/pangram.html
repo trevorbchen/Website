@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../style.css?v=1793207841">
+  <link rel="stylesheet" href="../style.css?v=1793222848">
 </head>
 <body data-root="../">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -40,38 +40,34 @@
         <p class="back"><a href="../blog.html">&larr; all posts</a></p>
         <h1>I broke an AI-image detector, in both directions</h1>
         <p class="meta">2026-08 &middot; <span class="pill pink">AI safety</span> <span class="pill pink">red-teaming</span> <span class="pill pink">detection</span></p>
-<p>In August I posted a long thread claiming I'd broken Pangram's AI-image detector "completely": I could turn any real image into one it flagged as AI, and any AI image into one it called real. This is the longer version: what I did, the reasoning, the reply from Pangram's co-founder, and where I've landed.</p>
-<p>First, the ground rules. I did all of this on the <strong>free plan</strong>, because Pangram never got back to me about API access. I'm <strong>not releasing checkpoints</strong>, for reasons below. And I like the company. I think AI detection is genuinely important work, which is why I took it seriously enough to attack.</p>
-<h2>Why I was skeptical in the first place</h2>
-<p>A diffusion model, by construction, samples from the <em>distribution of real images</em>. If it's good, the images it makes are statistically very close to the real thing, so you'd expect a detector to be fighting a losing battle. Yet Pangram claims it can even tell AI images from <em>photoshopped</em> ones, which is a hard distinction for a human.</p>
-<p>My hypothesis: it isn't doing what humans do. We spot AI images by <em>content</em>, the six-fingered hand, the garbled text. A detector that separates AI from Photoshop is probably reading something <strong>spectral</strong>: faint high-frequency fingerprints left by how the image was made. If so, it should be brittle to anything that moves energy around in frequency space.</p>
+<p>In August I posted a thread saying I could break Pangram's AI-image detector in both directions: turn a real image into one it flags as AI, and an AI image into one it calls real. This is the longer version. I used the free plan, since Pangram never gave me API access. I'm not releasing checkpoints, for the reasons at the end. I like the company and think detection is worth working on, which is why I attacked it.</p>
+<h2>Why I expected it to be brittle</h2>
+<p>A diffusion model samples from the distribution of real images, so a good one produces images that are statistically close to real ones. Pangram says it can tell AI images from photoshopped ones, which is hard for a person. People tell by content, like extra fingers and garbled text, so I guessed the detector reads something spectral instead: high-frequency traces left by how an image was made. If so, moving energy around in frequency space should break it.</p>
 <h2>Four experiments</h2>
 <p><img alt="The four attacks and what the detector says" src="../img/pangram_flow.svg" /></p>
-<p><strong>1. Upscale a real photo.</strong> Resizing a real image with most classical algorithms made the detector call it AI. Not an exotic attack: 128×128 to 512×512 did it, consistently.</p>
-<figure><img src="../img/pangram/eileen_sheet.jpg" alt="Eileen Collins's NASA portrait: original, shrunk and enlarged, and passed through a Stable Diffusion VAE"><figcaption>Left: Eileen Collins's official NASA portrait (public domain), the real photograph. Middle: the same photo shrunk and enlarged with an ordinary resampler. Right: the same photo encoded and decoded by a Stable Diffusion VAE. In my tests the original read as "No AI" and copies like the middle and right ones were flagged as AI.</figcaption></figure>
+<p><strong>1. Upscaling a real photo.</strong> Resizing a real image with most classical algorithms made the detector call it AI. Going from 128×128 to 512×512 was enough.</p>
+<figure><img src="../img/pangram/eileen_sheet.jpg" alt="Eileen Collins's NASA portrait: original, resized, and passed through a Stable Diffusion VAE"><figcaption>Eileen Collins's NASA portrait (public domain). Left: the original. Middle: shrunk and enlarged with an ordinary resampler. Right: encoded and decoded by a Stable Diffusion VAE. The original read as "No AI" and the other two were flagged as AI.</figcaption></figure>
 
-<details><summary>Pangram's own screen for the original and a resized copy</summary>
+<details><summary>Pangram's screens for the original and a resized copy</summary>
 <div class="figrow">
-<figure><img src="../img/pangram/nasa_original.jpg" alt="Pangram result for the NASA portrait: No AI"><figcaption>The original: "No AI".</figcaption></figure>
-<figure><img src="../img/pangram/nasa_resized.jpg" alt="Pangram result for a resized copy: Fully AI"><figcaption>A resized 512 by 512 copy: "Fully AI", with the heatmap lit up almost everywhere.</figcaption></figure>
+<figure><img src="../img/pangram/nasa_original.jpg" alt="Pangram result for the NASA portrait: No AI"><figcaption>Original: "No AI".</figcaption></figure>
+<figure><img src="../img/pangram/nasa_resized.jpg" alt="Pangram result for a resized copy: Fully AI"><figcaption>Resized to 512 by 512: "Fully AI".</figcaption></figure>
 </div>
 </details>
 
-<p><strong>2. Re-encode a real photo through a VAE.</strong> Flagged as AI. High-frequency artifacts are characteristic of multistep generation (next-pixel prediction, diffusion, VAEs), and a plain autoencoder leaves them too.</p>
-<p><strong>3. Try the obvious fix, and watch it fail.</strong> Matching frequency statistics to real images, the "clean" spectral transforms, did <em>not</em> fool it. So it isn't a global spectrum check; it's probably doing patch-level spectral analysis. That's why I switched to learning the attack.</p>
-<figure><img src="../img/pangram/eileen_spectrum.jpg" alt="Radial power spectrum of the original, the shrunk and enlarged copy, and the VAE reconstruction"><figcaption>The radial power spectrum of the three Eileen Collins images. The VAE reconstruction (green) sits almost exactly on top of the original (blue), while the shrunk-and-enlarged copy (orange) loses power at middle frequencies. In my tests both copies were flagged as AI, so "the high frequencies are missing" doesn't explain the verdict on its own. That is part of why I think it keys on local patterns instead of the global spectrum.</figcaption></figure>
+<p><strong>2. Re-encoding through a VAE.</strong> Also flagged as AI. Multistep generation leaves high-frequency artifacts, and a plain autoencoder leaves them too.</p>
+<p><strong>3. Matching the spectrum.</strong> Matching frequency statistics to real images did not fool it, so it isn't a global spectrum check. My guess is that it looks at local patches, which is why I moved to learning the attack.</p>
+<figure><img src="../img/pangram/eileen_spectrum.jpg" alt="Radial power spectrum of the original, the resized copy and the VAE reconstruction"><figcaption>Radial power spectrum of the three images. The VAE copy (green) lies on top of the original (blue), and the resized copy (orange) loses mid-frequency power. Both were flagged, so a missing high end doesn't explain the verdict alone.</figcaption></figure>
 
-<p><strong>4. Train an autoencoder with an adversarial term.</strong> Train it on CelebA with an ordinary GAN-style discriminator objective, and run any AI image through it. The output is a close copy of the original that the detector calls <strong>real</strong>. Interpolating between the original and the re-encoded image acts as a smooth knob: you can dial the detector's confidence to whatever number you like. You can even optimize a single image directly against a discriminative prior in minutes on a laptop, or train a general model for a whole domain in about a day.</p>
-<p>I also tried a StyleGAN image, which wasn't detected as AI. That fits the same story: the fingerprint belongs to the <em>generation process</em>.</p>
-<p>Here is the knob in action on a face generated by a diffusion model. The first image is the original, which the detector correctly calls AI. The last is the same image passed through the adversarial autoencoder. Interpolating between the two lets you dial the verdict.</p>
+<p><strong>4. An autoencoder with an adversarial term.</strong> I trained an autoencoder on CelebA with a GAN-style discriminator and ran AI images through it. The output is a close copy that the detector calls real. Interpolating between the original and the re-encoded image moves the verdict smoothly, so the confidence can be set to a chosen value. A single image can be optimized against a discriminative prior in minutes on a laptop, and a model for a whole domain takes about a day. A StyleGAN image was not detected as AI to begin with, which fits the idea that the fingerprint comes from the generation process.</p>
 <div class="figrow">
-<figure><img src="../img/pangram/gen_original.jpg" alt="A face generated by a latent diffusion model"><figcaption><span class="vtag ai">Fully AI</span> The original, sampled from a latent diffusion model.</figcaption></figure>
-<figure><img src="../img/pangram/gen_alpha35.jpg" alt="The same face, 35 percent of the way to the autoencoder's version"><figcaption><span class="vtag unsure">Unsure</span> 35% of the way toward the autoencoder's version.</figcaption></figure>
-<figure><img src="../img/pangram/gen_aegan.jpg" alt="The same face passed through the adversarial autoencoder"><figcaption><span class="vtag real">No AI</span> The adversarial autoencoder's version.</figcaption></figure>
+<figure><img src="../img/pangram/gen_original.jpg" alt="A face generated by a latent diffusion model"><figcaption><span class="vtag ai">Fully AI</span> Original, from a latent diffusion model.</figcaption></figure>
+<figure><img src="../img/pangram/gen_alpha35.jpg" alt="The same face, 35 percent toward the autoencoder's version"><figcaption><span class="vtag unsure">Unsure</span> 35% of the way to the autoencoder's version.</figcaption></figure>
+<figure><img src="../img/pangram/gen_aegan.jpg" alt="The same face through the adversarial autoencoder"><figcaption><span class="vtag real">No AI</span> Adversarial autoencoder output.</figcaption></figure>
 </div>
 
-<p>To my eye these are nearly the same image. The detector's verdict goes from "Fully AI" to "Unsure" to "No AI". (All three faces are synthetic, sampled from a model, so there's no real person in them.)</p>
-<details><summary>Pangram's own screens for these three</summary>
+<p>The three faces are synthetic and look nearly identical to me. The verdict goes from "Fully AI" to "Unsure" to "No AI".</p>
+<details><summary>Pangram's screens for these three</summary>
 <div class="figrow">
 <figure><img src="../img/pangram/face_ai.jpg" alt="Pangram result: Fully AI"><figcaption>"Fully AI".</figcaption></figure>
 <figure><img src="../img/pangram/face_interp.jpg" alt="Pangram result: Unsure"><figcaption>"Unsure".</figcaption></figure>
@@ -79,23 +75,18 @@
 </div>
 </details>
 
-<p>The summary I put in the thread: <strong>encode any image through an autoencoder and it becomes "AI"; encode it through an autoencoder with an adversarial term and it becomes "real."</strong></p>
-<h2>The text detector</h2>
-<p>I ran far fewer experiments on text and went in with much less skepticism. LLMs aren't true p(x) samplers: they're fine-tuned and RLHF'd into their own vocabulary and cadence, and their system prompt and temperature add more. A detector can learn the fingerprint of each big model. Pangram's own embedding apparently separates Claude, ChatGPT and Gemini cleanly.</p>
-<p>That also suggests brittleness. People reported strings of random numbers getting flagged as AI, which smells like overfitting to existing language models. And to get past the detector you mostly need text that doesn't match any single model, which is as easy as training your own. I did this with a small language model trained as a classic Twitter bot. That's one data point, and I'd want to see whether models fine-tuned on a specific domain (say, essays) also slip through.</p>
-<h2>Why I'm not releasing the code</h2>
-<p>Both attacks are dangerous in the same way. Turning real images into "AI" lets someone deny real evidence. Turning AI images into "real" is a deniability machine in the other direction. I couldn't think of a normal reason for a regular user to need either, so the checkpoints stay private. Anyone curious can reproduce the results from the thread. Real attackers with resources would do it faster than I did, which is the reason to talk about it publicly at all.</p>
-<h2>How Pangram's co-founder responded</h2>
-<p>Max Spero (the co-founder) replied in good faith and asked the hard question: if you upscale by a <em>large</em> factor, the upscaler hallucinates detail, so calling the result "AI" is arguably right. Not ideal to count a hallucinated image as "not AI", and what taxonomy would I propose?</p>
-<p>I think he's right about the extreme case. But 128 to 512 isn't extreme, and many people upscale images without knowing it. My real fear isn't that one threshold is wrong; it's that <strong>everyday processing pushes real photos into the AI bucket</strong>, and a false positive on a real photo is exactly what a detector is supposed to prevent. There is a real taxonomy problem hiding here: "AI-generated", "AI-edited" and "passed through a normal resize" shouldn't share one label.</p>
-<h2>What I actually think</h2>
-<ul>
-<li><strong>For the generations of the big labs, I think detection will keep working.</strong> Their models leave footprints, and there's an endless supply of labeled data. Pangram works very well on images that were already generated, since nobody generates with a GAN or passes things through an adversarial autoencoder on purpose.</li>
-<li><strong>Anything adversarial is a race that doesn't end.</strong> The defender has to handle every failure mode; the attacker needs one. Pangram's accumulated data is strong at catching past usage, and a motivated attacker can still reshape their output with weird downsampling, more precise spectral prediction, or a "humanize" model for images. I'm not optimistic detection wins that race.</li>
-<li><strong>The fix that matters most is failure modes.</strong> A detector needs to say when it's out of its depth, and it needs to be robust to benign transforms like upscaling. At the moment a verdict gets treated as objective truth when it should be treated as a measurement.</li>
-</ul>
-<p>For now I'd treat a Pangram result as one piece of evidence, not the last word. That's not a knock; the same is true of most classifiers.</p>
-<p>If anyone at Pangram wants the details, I'm happy to share them directly.</p>
+<p>An image encoded through an ordinary autoencoder becomes "AI". Encoded through one with an adversarial term, it becomes "real".</p>
+<h2>Text</h2>
+<p>I ran far fewer text experiments. LLMs are fine-tuned and RLHF'd into their own vocabulary and cadence, and a detector can learn each large model's fingerprint. Pangram's embedding apparently separates Claude, ChatGPT and Gemini cleanly. Strings of random numbers have been reported as AI, which looks like overfitting to existing models. Text that matches no single model should get through, and training your own model is the easy way to get that. I tried it with a small language model trained as a Twitter bot, which is one data point. I'd want to see whether models fine-tuned on a specific domain, like essays, also get through.</p>
+<h2>Why the code stays private</h2>
+<p>Turning real images into "AI" lets someone deny real evidence. Turning AI images into "real" does the opposite. I couldn't think of an ordinary reason to need either, so the checkpoints stay private. The thread has enough to reproduce the results. People with more resources would do it faster than I did, which is why I wanted to say it publicly.</p>
+<h2>Pangram's reply</h2>
+<p>Max Spero, the co-founder, replied constructively and asked a hard question. If you upscale by a large factor the upscaler hallucinates detail, so calling the result AI is arguably right, and he asked what taxonomy I'd propose.</p>
+<p>For extreme upscaling I agree. But 128 to 512 isn't extreme, and many people upscale images without knowing it. My concern is that everyday processing pushes real photos into the AI bucket, and a false positive on a real photo is the case a detector exists to avoid. "AI-generated", "AI-edited" and "passed through a normal resize" shouldn't share one label.</p>
+<h2>Where I ended up</h2>
+<p>For images from the large labs I expect detection to keep working. Their models leave footprints and there is plenty of labeled data. Pangram does well on images that were already generated, because nobody generates with a GAN or an adversarial autoencoder by accident.</p>
+<p>Against someone adversarial, the defender has to cover every failure mode and the attacker needs one. Odd downsampling, better spectral prediction or a humanizing model for images could all shift an output. I don't expect the detector to win that race.</p>
+<p>What I'd ask for is a detector that says when it's out of its depth and is robust to benign transforms like upscaling. At the moment a verdict gets treated as ground truth when it is a measurement. I would treat a Pangram result as one piece of evidence. If anyone at Pangram wants the details, I'll share them directly.</p>
       </article>
   </main>
 
@@ -110,9 +101,9 @@
   <div class="bubble" id="bubble"></div>
 
   <div id="portal" aria-hidden="true"></div>
-  <script src="../site.js?v=1793207841"></script>
-  <script src="../fx.js?v=1793207841"></script>
-  <script src="../plush.js?v=1793207841"></script>
-  <script src="../demos.js?v=1793207841"></script>
+  <script src="../site.js?v=1793222848"></script>
+  <script src="../fx.js?v=1793222848"></script>
+  <script src="../plush.js?v=1793222848"></script>
+  <script src="../demos.js?v=1793222848"></script>
 </body>
 </html>

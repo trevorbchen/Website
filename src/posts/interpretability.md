@@ -3,65 +3,65 @@ title: Looking inside a model
 date: 2026-10
 kind: research
 tags: interpretability, sparse autoencoders, logit lens
-blurb: The interpretability tools I keep returning to, each one live on this page: the logit lens, attention, ablating heads on real GPT-2, and a sparse autoencoder that trains in your browser.
+blurb: The logit lens, attention, head ablation on real GPT-2, and a sparse autoencoder that trains in the browser.
 featured: yes
 js: sae_core.js interp.js
 ---
 
-A trained network is a program that nobody wrote. Interpretability is the attempt to read it anyway. I come at this from two sides: I want to know what a model has represented, and I want to know why it fails when it does. These are the tools I keep returning to, and each one is running on this page. The first three use real activations from GPT-2 small, computed with PyTorch. The last two train and edit a small model in your browser.
+I want to know what a model has represented and why it fails when it does. These are the tools I use for that. The first three run on real GPT-2 small activations computed with PyTorch. The last two train and edit a small model in the browser.
 
-## 1. The logit lens
+## The logit lens
 
-A transformer builds its answer by adding to a running vector, the residual stream, one layer at a time. The **logit lens** takes the stream at any layer and decodes it with the model's final output matrix, as if the network had stopped there. You get the model's best guess so far.
+A transformer builds its answer by adding to a running vector, the residual stream, one layer at a time. The logit lens decodes the stream at any layer with the model's final output matrix, as if the network had stopped there.
 
 <div class="demo light" data-demo="lens"></div>
 
-At the bottom of the network the guess is mostly an echo of the current word. The answer tends to appear in the later layers and then sharpen. The lens is crude, since later layers don't promise to read the stream the way the final one does, and refinements such as the tuned lens exist for that reason. It's still the fastest way to watch a model make up its mind.
+In early layers the guess mostly echoes the current word. The answer usually shows up in the later layers and then sharpens. The lens is crude, because later layers don't promise to read the stream the way the last one does, and the tuned lens exists to correct for that. It is still the quickest way to see where a prediction forms.
 
-## 2. Attention: where a head reads from
+## Attention
 
-Each of the model's 144 attention heads decides, for every token, which earlier tokens to read from. That makes attention the easiest thing in a transformer to look at, and the easiest to over-read.
+GPT-2 small has 144 attention heads, and each one chooses which earlier tokens to read from.
 
 <div class="demo light" data-demo="attn"></div>
 
-Head 5.5 on the repeated-names prompt is a clean example of an **induction head**. The current token is "Carol". The last time "Carol" appeared, it was followed by "Dave", and head 5.5 puts 98% of its attention on "Dave". The model then predicts "Dave" with 71% confidence. A short rule, "find the last time I saw this token and copy what came next", appears to be implemented by a single head.
+Head 5.5 on the repeated-names prompt is an induction head. The current token is "Carol", which appeared earlier followed by "Dave", and the head puts 98% of its attention on "Dave". The model then predicts "Dave" with 71% probability.
 
-## 3. Looking is not the same as doing
+## Ablation
 
-Head 9.6 on the indirect-object prompt looks like it is doing exactly the right thing: reading from "Mary", the correct answer, with 49% of its attention. So take it out.
+Head 9.6 on the indirect-object prompt puts 49% of its attention on "Mary", the correct answer. Zeroing it changes the gap between "Mary" and "John" by 0.02.
 
 <div class="demo light" data-demo="ablate"></div>
 
-Zeroing head 9.6 changes the gap between "Mary" and "John" by 0.02. The model barely notices. Across all 144 heads, removing any single one flips the answer on the indirect-object prompt in only 2 cases, and never on the other two prompts. The heads that matter most individually are mostly in the first few layers (0.10, 2.5, 1.3), which isn't surprising once you see why: they feed everything downstream, so zeroing them corrupts whatever the later layers expected to read. That is the weakness of zeroing a head. It measures how much the network depends on a component, not what the component does.
+Across all 144 heads, zeroing a single one flips the answer on the indirect-object prompt in 2 cases and never on the other two prompts. The heads that matter most individually are early ones (0.10, 2.5, 1.3), probably because everything downstream reads from them. Zeroing measures how much the network depends on a component, and says little about what the component does.
 
-The second panel shows the other side. Remove the top few heads together and the answer does change: after 5 on the indirect-object prompt, after 2 on the induction prompt, after 8 on the capital-city prompt. Computation here is **redundant and distributed**. No one head is the answer, and more than one head can do the same job. This is why the field moved to finer tools than knocking out a head: mean and resample ablation, activation patching, path patching. It's also the best argument I know for the next idea, because the head is the wrong unit.
+Removing the top few heads together does change the answer: after 5 on the indirect-object prompt, 2 on the induction prompt and 8 on the capital-city prompt. The computation is redundant and spread out, so a single head is the wrong unit. Finer tools such as mean ablation, resample ablation and activation patching exist for this reason.
 
-## 4. Sparse autoencoders
+## Sparse autoencoders
 
-If heads and neurons aren't the natural units, what is? One answer comes from **superposition**: a network represents more features than it has dimensions by letting them share directions, which works as long as only a few are active at once. A **sparse autoencoder** (SAE) tries to undo that. It learns a dictionary of directions such that every activation is rebuilt from a few of them, and the hope is that each direction is a feature you can name.
+If heads and neurons aren't the natural units, one candidate comes from superposition: a network packs more features than it has dimensions by letting them share directions, which works while only a few are active at once. A sparse autoencoder (SAE) learns a dictionary of directions so that each activation is rebuilt from a few of them, and each direction ideally corresponds to a feature you can name.
 
-Here is a tiny version you can run. The data is 8 by 8 images, each one a mix of one to three hidden features: bars, diagonals, a blob, a border. The SAE never sees which features were used. It trains live as you watch.
+Below is a toy version. The data is 8 by 8 images, each a mix of one to three hidden features (bars, diagonals, a blob, a border). The SAE never sees which were used.
 
 <div class="demo light" data-demo="sae"></div>
 
-The percentage under each true feature is how well the dictionary recovered it. At a dictionary size of 10, my runs gave average recovery anywhere from 87% to 99% depending only on the random seed, and "new seed" lets you see that for yourself. That's the problem behind my [SAE paper](sae-families.html): the dictionary you get is partly an accident of initialization, even though nothing about the data changed.
+The percentage under each true feature is how well the dictionary recovered it. At dictionary size 10, average recovery ranged from 87% to 99% across seeds in my runs. That seed dependence is what the [SAE paper](sae-families.html) is about.
 
-### Steering
+A dictionary can also be used to edit. Find which features are active in an image, scale one up or down, and decode. In the paper we do this on face images to change things like glasses thickness, hair colour and background tint.
 
-Once you have a dictionary you can use it as a control panel. Take an image, find which features are active, and scale one of them up or down before decoding. The edit shows only what that direction contributes. In the paper we do this with real face images, turning individual features to change glasses thickness, hair colour or background tint.
+## Choosing the dictionary
 
-## 5. Choosing the dictionary
-
-Every standard SAE loss says the same thing: reconstruct well using few units. When two dictionaries reconstruct equally well, nothing in the loss prefers one, which is how a seed ends up deciding. The idea in the paper is to add a term that prefers some geometry, so the loss itself says what kind of feature you want. The cleanest way to see why that works is a model small enough to solve exactly. Take two directions in the data and a dictionary with room for only one.
+A standard SAE loss asks for good reconstruction with few units. When two dictionaries reconstruct equally well, the seed decides between them. The paper adds a term that prefers a geometry. The smallest case that can be solved exactly has two directions in the data and a dictionary with room for one.
 
 <div class="demo light" data-demo="tilt"></div>
 
-Under plain MSE, the dictionary keeps whichever direction shows up more often. Reweight the loss and it keeps the other. And the same effect appears when you train an SAE. Back in the toy above, set the dictionary size to 5 with k = 2, so that it has to leave features out, and press **compare objectives**. Averaged over six seeds, plain MSE recovers the diagonals at 61 to 72% and the blob and border at 79% and 63%. The edge-tilted loss recovers both diagonals at 98% and gives up the blob and the border (about 49% each). Average recovery across all eight features drops a little, from 73% to 67%: it has chosen which features to keep, not found more of them. When the dictionary has room for everything, the tilt changes little and just costs reconstruction. It only matters when the dictionary has to choose, which is the regime the theorem is about.
+Under plain MSE the dictionary keeps whichever direction is more frequent. Reweighting the loss makes it keep the other one.
 
-In the paper the same lever works on trained SAEs for real images, without costing reconstruction. The toy here is not that result. It's the same mechanism at a scale where you can watch it.
+The same thing happens when you train the toy SAE. Set the dictionary size to 5 and k to 2 so it has to leave features out, then press compare objectives. Averaged over six seeds, plain MSE recovers the diagonals at 61 to 72%, the blob at 79% and the border at 63%. The edge-tilted loss recovers both diagonals at 98% and gives up the blob and border (about 49% each). Average recovery over all eight features drops from 73% to 67%, so the tilt chooses which features to keep and does not find more of them. When the dictionary has room for everything, the tilt changes little and costs some reconstruction.
 
-## What I want to understand next
+On trained SAEs for face images, the same lever works without hurting reconstruction. The toy here shows the mechanism at a size where you can watch it.
 
-Three things I'm after. First, failure modes: I'd like an SAE to tell me not just what a model represents but where and why it breaks, and the paper's hard-image result is a first small step. Second, diffusion models, where I've been training SAEs on a diffusion transformer to see how features steer generation across denoising steps. Third, the gap between correlation and cause, which section 3 should make feel uncomfortable: a feature that lights up when something happens is not yet a feature that makes it happen.
+## Next
 
-All of the GPT-2 numbers on this page come from six short prompts, and the SAE is a toy. They show the tools, not a finding. If you want to explore attention and the logit lens on all six prompts at once, there's a [fuller explorer](../explorer.html).
+I want an SAE to say where and why a model breaks as well as what it represents; the hard-image result in the paper is a small first step. I'm interested in what SAEs can say about diffusion models. And I want better answers to the correlation-versus-cause problem that the ablation section runs into: a feature that lights up when something happens doesn't yet cause it.
+
+All the GPT-2 numbers on this page come from six short prompts, and the SAE is a toy. They illustrate the tools and are not findings. The [explorer](../explorer.html) lets you browse attention and the logit lens on all six prompts.

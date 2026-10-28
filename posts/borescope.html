@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../style.css?v=1793207841">
+  <link rel="stylesheet" href="../style.css?v=1793222848">
 </head>
 <body data-root="../">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -41,27 +41,23 @@
         <h1>A thermal camera that survives a flame</h1>
         <p class="meta">2023-03 &middot; <span class="pill cyan">optics</span> <span class="pill cyan">sensing</span> <span class="pill cyan">thermal imaging</span></p>
 <div class="stats">
-<div><b>8&ndash;14 &micro;m</b><span>the long-wave infrared band the camera looks in</span></div>
-<div><b>2,400 K</b><span>flame temperature the water-cooled housing is designed to survive, at 50 bar</span></div>
+<div><b>8&ndash;14 &micro;m</b><span>long-wave infrared band</span></div>
+<div><b>2,400 K</b><span>flame temperature the water-cooled housing is designed for, at 50 bar</span></div>
 <div><b>10&times;</b><span>the spatial resolution of competing designs</span></div>
-<div><b>98%</b><span>accuracy of the temperature readings after calibration against a blackbody</span></div>
+<div><b>98%</b><span>accuracy after blackbody calibration</span></div>
 </div>
 
-<p>Inside a running gas turbine, the hardware that matters most is also the hardest to measure. A combustor liner or turbine blade has to be hot enough to be efficient and not so hot that it fails, and the margin between the two is small. If you want to know where the hot spots are, a thermocouple gives you a handful of points and disturbs the flow around them. What you want is an <em>image</em> of the surface temperature, taken from inside the engine, while it runs.</p>
-<p>That is what this project was: a compact camera on the end of a probe, with the optics, the housing and the calibration to turn pixels into temperatures.</p>
-<h2>Why the long-wave infrared</h2>
-<p>Every warm surface glows, and how brightly it glows at each wavelength follows from its temperature. That is the principle of thermal imaging: measure the glow, invert for the temperature. The difficulty here is that the flame glows too. Hot combustion gases and soot emit strongly across much of the visible and near-infrared, which swamps the signal from the surface you actually care about.</p>
-<p>The <strong>long-wave infrared (8 to 14 micrometres)</strong> is a quieter region. Looking there reduces the interference from hot gases and soot, so the surface can be seen through the flame instead of being drowned by it.</p>
-<h2>A borescope in a water jacket</h2>
-<p>A <strong>borescope</strong> is a long, thin optical probe, the kind a mechanic uses to look inside an engine without taking it apart. This one is a compact long-wave infrared design. The probe sits inside a custom water-cooled housing, about 19 millimetres across on the outside and 10 on the inside, designed to survive flame temperatures up to about 2,400 K at a pressure of 50 bar. The camera stays alive because the water carries the heat away from the optics while the front of the probe looks into the flame.</p>
-<h2>My part: design and calibration</h2>
-<p>My work on the project was twofold. The first half was the <strong>design</strong>: I developed optimization algorithms to design a robust sensing system. The design we arrived at has about ten times the spatial resolution of competing designs.</p>
-<p>The second half was <strong>calibration</strong>. A camera produces counts, not temperatures. To turn one into the other you point it at a <strong>blackbody</strong>, a source whose temperature you know exactly, record what each pixel reports across a range of temperatures, and fit a curve. The wrinkle is that no two pixels respond identically, so a single global curve leaves visible structure in the image. We calibrated <strong>pixel by pixel</strong>, fitting a regression for each one, and the resulting temperature readings were accurate to about 98%.</p>
-<h2>The demonstration</h2>
-<p>We tested the camera on a <strong>V-gutter bluff body</strong>, a standard flame-holding shape, cooled with nitrogen in a laboratory combustion testbed. The camera measured the surface temperature accurately with little background noise, and it followed the transient cooling as the nitrogen came on, which is exactly the kind of event you can't see with a handful of thermocouples.</p>
-<p>The work produced a journal paper, <a href="https://doi.org/10.1088/1361-6501/acc048"><em>A compact LWIR borescope sensor for 2D engine component surface temperature measurement</em></a> in <em>Measurement Science and Technology</em>, and conference papers at <a href="https://doi.org/10.2514/6.2023-3580">AIAA AVIATION</a>, <a href="https://doi.org/10.1117/12.2672622">SPIE</a>, and <a href="https://opg.optica.org/abstract.cfm?uri=LACSEA-2022-LM1B.5">Optica</a>. It was with Paul Hsu and Tim Lieuwen's group.</p>
-<h2>What I took from it</h2>
-<p>An image sensor doesn't measure temperature; it measures counts and a model tells you what they mean. Most of the accuracy in the final result came from being careful about that model: the blackbody, the per-pixel fits, the cooling jacket. I think about this every time I work with an expensive oracle now. The number you get back is only as good as the process that turns the raw signal into a number.</p>
+<p>In a gas turbine, a combustor liner or blade has to run hot enough to be efficient and cool enough not to fail, and the margin is small. A thermocouple gives a handful of points and disturbs the flow. What you want is an image of the surface temperature from inside the running engine. This project was a compact camera on the end of a probe, with the optics, housing and calibration needed to turn pixels into temperatures.</p>
+<h2>Why long-wave infrared</h2>
+<p>Every warm surface glows, and the brightness at each wavelength follows from its temperature, so a thermal camera measures the glow and inverts for temperature. The flame glows too: hot gases and soot emit strongly across the visible and near-infrared and swamp the surface. The long-wave infrared (8 to 14 µm) is quieter, so the surface can be seen through the flame.</p>
+<h2>The probe</h2>
+<p>A borescope is a long, thin optical probe for looking inside an engine without taking it apart. This one sits inside a custom water-cooled housing, about 19 mm across outside and 10 mm inside, designed for flame temperatures up to about 2,400 K at 50 bar. Water carries heat away from the optics while the front of the probe faces the flame.</p>
+<h2>My part</h2>
+<p>I worked on the design and the calibration. For the design I developed optimization algorithms for a robust sensing system, which gave about ten times the spatial resolution of competing designs.</p>
+<p>A camera reports counts, not temperatures. To convert, you point it at a blackbody at known temperatures, record each pixel's response, and fit a curve. No two pixels respond identically, so one global curve leaves structure in the image. We fit a regression for each pixel, and the temperature readings came out accurate to about 98%.</p>
+<h2>Demonstration</h2>
+<p>We tested the camera on a V-gutter bluff body, a standard flame-holding shape, cooled with nitrogen in a laboratory combustion testbed. The camera measured surface temperature accurately with little background noise and followed the transient cooling when the nitrogen came on, which a handful of thermocouples would not resolve.</p>
+<p>This was published as <a href="https://doi.org/10.1088/1361-6501/acc048"><em>A compact LWIR borescope sensor for 2D engine component surface temperature measurement</em></a> in <em>Measurement Science and Technology</em>, with conference papers at <a href="https://doi.org/10.2514/6.2023-3580">AIAA AVIATION</a>, <a href="https://doi.org/10.1117/12.2672622">SPIE</a> and <a href="https://opg.optica.org/abstract.cfm?uri=LACSEA-2022-LM1B.5">Optica</a>. The work was with Paul Hsu and Tim Lieuwen's group.</p>
       </article>
   </main>
 
@@ -76,9 +72,9 @@
   <div class="bubble" id="bubble"></div>
 
   <div id="portal" aria-hidden="true"></div>
-  <script src="../site.js?v=1793207841"></script>
-  <script src="../fx.js?v=1793207841"></script>
-  <script src="../plush.js?v=1793207841"></script>
-  <script src="../demos.js?v=1793207841"></script>
+  <script src="../site.js?v=1793222848"></script>
+  <script src="../fx.js?v=1793222848"></script>
+  <script src="../plush.js?v=1793222848"></script>
+  <script src="../demos.js?v=1793222848"></script>
 </body>
 </html>

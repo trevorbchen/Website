@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1793207841">
+  <link rel="stylesheet" href="style.css?v=1793222848">
 </head>
 <body data-root="">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -42,22 +42,22 @@
             <button class="filter on" data-f="">all</button><button class="filter" data-f="research">research</button><button class="filter" data-f="project">projects</button><button class="filter" data-f="essay">essays</button>
            </p>
           <ul class="posts">
-            <li data-kind="research"><span class="lvl">2026-10 &middot; research</span><a href="posts/interpretability.html">Looking inside a model</a> <span class="pill gold">featured</span><p>The interpretability tools I keep returning to, each one live on this page: the logit lens, attention, ablating heads on real GPT-2, and a sparse autoencoder that trains in your browser.</p></li>
-            <li data-kind="project"><span class="lvl">2026-08 &middot; project</span><a href="posts/pangram.html">I broke an AI-image detector, in both directions</a> <span class="pill gold">featured</span><p>What I tried, why it worked, how Pangram's co-founder responded, and what I actually think about AI detection. I'm not releasing the code. Here's why.</p></li>
-            <li data-kind="research"><span class="lvl">2026-07 &middot; research</span><a href="posts/ddamo.html">Better molecules, fewer experiments</a> <span class="pill gold">featured</span><p>What it took to steer a molecule generator with only a few expensive measurements, and the one ingredient everything else turned out to depend on. NeurIPS 2026, with Genesis Molecular AI and ETH Zurich.</p></li>
-            <li data-kind="project"><span class="lvl">2026-10 &middot; project</span><a href="posts/inference-engine.html">Building a tiny vLLM</a><p>A small LLM serving engine with the canonical pieces: a paged KV cache, continuous batching, preemption, and fused Triton kernels. Checked token for token against Hugging Face, with real recorded runs you can replay on this page.</p></li>
-            <li data-kind="research"><span class="lvl">2026-10 &middot; research</span><a href="posts/sae-families.html">Sparse autoencoders you can steer</a><p>Two sparse autoencoders trained on the same data can learn very different dictionaries, decided by things that have nothing to do with the data. We found a way to pick one on purpose. With Ilona Demler and Pietro Perona. CVPR 2027, under review.</p></li>
-            <li data-kind="research"><span class="lvl">2026-09 &middot; research</span><a href="posts/memorization.html">Why giving a diffusion model extra room delays memorization</a><p>Widen the latent space and a diffusion model starts copying its training set much later. A long look at the phenomenon, a spectral explanation, and an honest account of what we still can't show. ICML HiLD 2026, with an extended version under review at ICLR 2027.</p></li>
+            <li data-kind="research"><span class="lvl">2026-10 &middot; research</span><a href="posts/interpretability.html">Looking inside a model</a> <span class="pill gold">featured</span><p>The logit lens, attention, head ablation on real GPT-2, and a sparse autoencoder that trains in the browser.</p></li>
+            <li data-kind="project"><span class="lvl">2026-08 &middot; project</span><a href="posts/pangram.html">I broke an AI-image detector, in both directions</a> <span class="pill gold">featured</span><p>How I got Pangram's image detector to call real photos AI and AI images real, how its co-founder responded, and why I'm not releasing the code.</p></li>
+            <li data-kind="research"><span class="lvl">2026-07 &middot; research</span><a href="posts/ddamo.html">Better molecules, fewer experiments</a> <span class="pill gold">featured</span><p>Steering a molecule generator with a few thousand expensive measurements. NeurIPS 2026, with Genesis Molecular AI and ETH Zurich.</p></li>
+            <li data-kind="project"><span class="lvl">2026-10 &middot; project</span><a href="posts/inference-engine.html">Building a tiny vLLM</a><p>A small LLM serving engine with a paged KV cache, continuous batching and preemption, checked token for token against Hugging Face, with recorded runs you can replay here.</p></li>
+            <li data-kind="research"><span class="lvl">2026-10 &middot; research</span><a href="posts/sae-families.html">Sparse autoencoders you can steer</a><p>Two sparse autoencoders trained on the same data can learn different dictionaries. Changing the loss lets us choose which one. With Ilona Demler and Pietro Perona, CVPR 2027, under review.</p></li>
+            <li data-kind="research"><span class="lvl">2026-09 &middot; research</span><a href="posts/memorization.html">Why extra latent dimensions delay memorization</a><p>Widen the latent space of a diffusion model and it starts copying its training set much later. ICML HiLD 2026, with an extended version under review at ICLR 2027.</p></li>
             <li data-kind="essay"><span class="lvl">2026-07 &middot; essay</span><a href="posts/connect4.html">i got good at connect 4 by farming a bot and then my roommate cooked me</a><p>a story about distribution shift, catastrophic forgetting, and why you should not grind a single opponent. also i lost to a roommate. it's fine.</p></li>
             <li data-kind="project"><span class="lvl">2026-06 &middot; project</span><a href="posts/black-hole.html">Rendering a black hole on the GPU</a><p>A real-time CUDA ray tracer that bends light through Schwarzschild spacetime, built with Kevin Peng. It started because I'd just met Kip Thorne.</p></li>
-            <li data-kind="essay"><span class="lvl">2026-05 &middot; essay</span><a href="posts/leaving-startups.html">Why I left startups for now</a><p>I loved it, and I plan to go back. Why I stepped away from Ascade to do research, and why my co-founder is still one of my closest friends.</p></li>
-            <li data-kind="project"><span class="lvl">2025-11 &middot; project</span><a href="posts/verification-loop.html">Specs are the hard part</a><p>Most of formal verification isn't proving things. It's deciding what to prove, and a loop between a model that drafts specs and a verifier that refutes them. A small demo you can break.</p></li>
-            <li data-kind="essay"><span class="lvl">2025-10 &middot; essay</span><a href="posts/diffusion-gaussians.html">A theory of diffusion models that turned out to be wrong, and why I&#x27;m glad I wrote it down</a><p>After reading Yang Song's diffusion work I got a clean theory in my head and tested it with seven small experiments. It was wrong in an instructive way.</p></li>
-            <li data-kind="essay"><span class="lvl">2025-09 &middot; essay</span><a href="posts/high-school-research.html">Doing research in high school was a mistake (mostly)</a><p>I don't regret any of it, but I'd tell my younger self to do olympiads and build things instead. Hyperspecializing early is overrated.</p></li>
-            <li data-kind="project"><span class="lvl">2025-08 &middot; project</span><a href="posts/prediction-markets.html">I over-engineered an arbitrage machine, and simple methods still won</a><p>Binary prediction markets in the early days: fragmented, thin, and full of degenerate gamblers. Notes on what worked and what was embarrassing.</p></li>
-            <li data-kind="research"><span class="lvl">2024-05 &middot; research</span><a href="posts/optics.html">Bending light for a living: mid-IR gratings for ultrafast lasers</a><p>Years of optics research before I touched ML. How you make a grating that stays efficient across an octave of mid-infrared light, and why it matters for ultrafast lasers. Optical Materials Express and SPIE.</p></li>
+            <li data-kind="essay"><span class="lvl">2026-05 &middot; essay</span><a href="posts/leaving-startups.html">Why I left startups for now</a><p>Why I stepped away from Ascade to do research, and why I plan to go back.</p></li>
+            <li data-kind="project"><span class="lvl">2025-11 &middot; project</span><a href="posts/verification-loop.html">Specs are the hard part</a><p>Most of formal verification is deciding what to prove. A loop between a model that drafts specs and a verifier that refutes them, with a small demo.</p></li>
+            <li data-kind="essay"><span class="lvl">2025-10 &middot; essay</span><a href="posts/diffusion-gaussians.html">A theory of diffusion models that was wrong</a><p>After reading Yang Song's diffusion work I had a clean theory and tested it with seven small experiments. It was wrong in a useful way.</p></li>
+            <li data-kind="essay"><span class="lvl">2025-09 &middot; essay</span><a href="posts/high-school-research.html">Doing research in high school was a mistake (mostly)</a><p>I don't regret it, but I'd tell my younger self to do olympiads and build things. Specializing early is overrated.</p></li>
+            <li data-kind="project"><span class="lvl">2025-08 &middot; project</span><a href="posts/prediction-markets.html">An over-engineered arbitrage bot, and the simple methods that beat it</a><p>Trading binary prediction markets in the summer of 2025, when they were fragmented and thin.</p></li>
+            <li data-kind="research"><span class="lvl">2024-05 &middot; research</span><a href="posts/optics.html">Mid-IR gratings for ultrafast lasers</a><p>How to make a grating that stays efficient across an octave of mid-infrared light. My optics research before ML. Optical Materials Express and SPIE.</p></li>
             <li data-kind="research"><span class="lvl">2023-08 &middot; research</span><a href="posts/bio.html">Drug discovery before I knew what machine learning was</a><p>Screening 50,000+ compounds on a supercomputer for HIV and diabetic-cataract drugs, plus a literature review on viruses and cancer.</p></li>
-            <li data-kind="research"><span class="lvl">2023-03 &middot; research</span><a href="posts/borescope.html">A thermal camera that survives a flame</a><p>Reading the surface temperature of engine hardware while a flame burns next to it. A compact long-wave infrared borescope, from design to calibration. Measurement Science and Technology, AIAA and SPIE.</p></li>
+            <li data-kind="research"><span class="lvl">2023-03 &middot; research</span><a href="posts/borescope.html">A thermal camera that survives a flame</a><p>A compact long-wave infrared borescope for reading surface temperature inside an engine while a flame burns next to it. Measurement Science and Technology, AIAA and SPIE.</p></li>
           </ul>
       </section>
   </main>
@@ -73,9 +73,9 @@
   <div class="bubble" id="bubble"></div>
 
   <div id="portal" aria-hidden="true"></div>
-  <script src="site.js?v=1793207841"></script>
-  <script src="fx.js?v=1793207841"></script>
-  <script src="plush.js?v=1793207841"></script>
-  <script src="demos.js?v=1793207841"></script>
+  <script src="site.js?v=1793222848"></script>
+  <script src="fx.js?v=1793222848"></script>
+  <script src="plush.js?v=1793222848"></script>
+  <script src="demos.js?v=1793222848"></script>
 </body>
 </html>

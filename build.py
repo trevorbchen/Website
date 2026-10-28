@@ -193,7 +193,7 @@ def build_home():
             <a class="comic" href="posts/ddamo.html">
               <span class="pill gold">NeurIPS 2026</span>
               <h3>Better molecules, fewer experiments</h3>
-              <p>What it took to steer a molecule generator with a handful of expensive measurements, and the one ingredient everything else depended on.</p>
+              <p>Steering a molecule generator with a few thousand expensive measurements. NeurIPS 2026.</p>
             </a>
             <a class="comic" href="posts/interpretability.html">
               <span class="pill">interpretability</span>
@@ -278,7 +278,7 @@ def build_research():
     ], "cyan")
     interp = area("interpretability", [
         row("Sparse autoencoders you can steer",
-            "A family of objectives that choose which features a model learns. CVPR 2027, under review.",
+            "Changing the loss to choose which features a sparse autoencoder learns. CVPR 2027, under review.",
             ["SAEs", "CVPR"], "posts/sae-families.html", "heat"),
         row("Looking inside a model",
             "Logit lens, attention, head ablation and a sparse autoencoder you can train live, all in the browser.",
@@ -296,7 +296,7 @@ def build_research():
     ], "")
     other = area("also", [
         row("Building a tiny vLLM",
-            "A paged KV cache, continuous batching and fused Triton kernels, checked against Hugging Face, with recorded runs you can replay.",
+            "A paged KV cache and continuous batching, checked against Hugging Face, with recorded runs on a laptop GPU and an A100.",
             ["inference", "GPU", "systems"], "posts/inference-engine.html", None),
         row("Specs, verifiers and counterexamples",
             "Formal verification for AI agents at Ascade, and a loop you can break in the browser.",

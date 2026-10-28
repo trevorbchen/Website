@@ -3,31 +3,31 @@ title: Doing research in high school was a mistake (mostly)
 date: 2025-09
 kind: essay
 tags: advice, learning, research
-blurb: I don't regret any of it, but I'd tell my younger self to do olympiads and build things instead. Hyperspecializing early is overrated.
+blurb: I don't regret it, but I'd tell my younger self to do olympiads and build things. Specializing early is overrated.
 ---
 
-I did serious research for most of high school. By the end I had a handful of publications in optics and computational biology, and I'm grateful for it. I also think it was a mistake, and I'd tell any high schooler thinking about it to do something else.
+I did research for most of high school and had several publications in optics and computational biology by the end. I'm grateful for it, and I would still tell a high schooler to do something else.
 
-## The case against
+## Against
 
-**It's hyperspecialization, far too early.** I can tell you a lot about cell biology and how proteins work. I can't tell you basic organic chemistry. I can tell you a lot about lasers and optics and how to model diffraction. I'm not confident I could be dropped into a high-level E&M class and pass. That's a strange place to be: deep expertise in a couple of narrow corners with holes in the foundations underneath.
+It's specialization far too early. I can say a lot about cell biology and how proteins work, and I can't do basic organic chemistry. I know lasers, optics and how to model diffraction, and I'm not sure I could pass a high-level E&M class. I have deep knowledge in a few narrow places and holes in the foundations under them.
 
-There's very little the research gave me that a broader education wouldn't have. If I could go back, I'd rather have spent that time **learning broadly and building things**. And I'd do **olympiads**: they're better training. They force you to learn a wide base, to think fast, and to be wrong constantly in a setting where it's cheap.
+A broader education would have given me most of what the research did. I'd rather have spent the time learning widely and building things, and I'd have done olympiads, which are better training. They force a wide base, fast thinking, and being wrong often when it's cheap.
 
-## The case for (the one thing)
+## For
 
-Here's what research *did* give me, and it's real. Starting in 8th grade I had basically no structured academic path. I had to figure out how to learn on my own: find papers, find the actual question, get unstuck with nobody to ask. That turns out to be the transferable skill, much more than any specific result.
+Starting in 8th grade I had no structured academic path, so I had to learn how to learn on my own: find the papers, find the actual question, get unstuck with nobody to ask. That skill transferred much more than any result did.
 
-In 12th grade, after college applications were done, I was bored. So I decided to learn machine learning. I knew essentially none. About a year later I had a NeurIPS paper. The papers in optics and biology had taught me *how to learn a field from scratch*, and ML was just the next field.
+In 12th grade, after college applications, I was bored and decided to learn machine learning. I knew almost none. About a year later I had a NeurIPS paper. The optics and biology work had taught me how to pick up a field from scratch, and ML was the next one.
 
-Two years in, I have strong intuition for ideas in diffusion, RL and AI for science, and I'm comfortable in LLMs, interpretability, evals and distributed computing: I can read the papers and sometimes have something interesting to say. That's not a boast so much as evidence that you can get up to speed far faster than people think.
+Two years in, I have good intuition for diffusion, RL and AI for science. I'm comfortable in LLMs, interpretability, evals and distributed computing, where I can read the papers and sometimes add something. I take that as evidence that you can get up to speed faster than people expect.
 
-## What research is actually about
+## What research needs
 
-I'd rewrite my own idea of it, too. Research isn't knowing everything. There's always more to learn and always someone ahead of you, and having people around who are better than you is a gift. What makes you a useful researcher is **a strong intuition for why new ideas work, and the habit of asking the right questions.** That's learnable, and it doesn't require starting at fourteen.
+You don't need to know everything. There is always more to learn and someone ahead of you, and being around people better than you helps. What makes a researcher useful is intuition for why new ideas work and the habit of asking good questions, and that can be learned at any age.
 
-I met one of my closest friends doing this stuff, someone who was well ahead of me in ML at the time and who I later co-founded a company with. A good lab or a good collaborator is worth more than any single result.
+I met one of my closest friends through this, someone well ahead of me in ML at the time, and later co-founded a company with them. A good lab or collaborator was worth more to me than any single result.
 
-## So what would I change?
+## What I'd change
 
-Not much about the outcome, honestly. I'd change the order: build more, specialize later, take the olympiad route, learn organic chemistry on purpose. I don't regret any of it, and I'd still want the learning-to-learn part. I'd just want everything underneath it.
+The order. I'd build more, specialize later, do olympiads, and learn organic chemistry on purpose. I'd keep the learning-to-learn part and want the foundations under it.
