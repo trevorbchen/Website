@@ -376,11 +376,41 @@ def build_learning():
     intro = panel("learning", """          <h2>learning</h2>
           <p class="lede">What I've worked through, and the roadmap I keep for learning modern AI engineering.</p>
           <p>I'm currently learning reinforcement learning, evals, operating systems and distributed computing. Gotta use Twitter/X to keep up, too.</p>""", "gold")
-    taken = sec("courses i've taken", [
-        ("Stanford's distributed computing course", None, ""),
-        ("CMU's operating systems course", None, ""),
+    taken = sec("other universities", [
+        ("CMU 15-410, Operating System Design and Implementation", None, ""),
+        ("Stanford CS 149, Parallel Computing", None, ""),
         ("Hands-On Modern RL", "https://walkinglabs.github.io/hands-on-modern-rl/preface/introduction", "reinforcement learning, hands on"),
     ], "pink")
+    caltech = panel("caltech courses", """          <p class="k">machine learning and computer science</p>
+          <ul class="reading">
+            <li><b>CS/CNS/EE/IDS 155</b> Machine Learning &amp; Data Mining</li>
+            <li><b>EE/CNS/CS 148 A and B</b> Deep Learning</li>
+            <li><b>CS/CNS/EE/IDS 159</b> Advanced Topics in Machine Learning</li>
+            <li><b>CS 179</b> GPU Programming</li>
+            <li><b>CS 1x</b> Intermediate Computer Programming</li>
+            <li><b>CS 19a</b> Introduction to Computer Science in Industry</li>
+            <li><b>CMS 9</b> Introduction to Research in Computing and Mathematical Sciences</li>
+          </ul>
+          <p class="k">statistics, mathematics and economics</p>
+          <ul class="reading">
+            <li><b>ACM/EE/IDS 116</b> Introduction to Probability Models</li>
+            <li><b>IDS/ACM/CS 157</b> Statistical Inference</li>
+            <li><b>PS/Ec 172</b> Game Theory</li>
+            <li><b>Ma 17</b> How to Solve It</li>
+            <li><b>Ec 11</b> Introduction to Economics</li>
+          </ul>
+          <p class="k">also</p>
+          <ul class="reading">
+            <li><b>ME 8</b> Introduction to Robotics</li>
+            <li><b>Ch 1a, 1b</b> General Chemistry</li>
+            <li><b>Hum/VC 50</b> Introduction to Film</li>
+          </ul>
+          <p class="k">this term</p>
+          <ul class="reading">
+            <li><b>ACM/IDS 104</b> Applied Linear Algebra</li>
+            <li><b>Ma 108a</b> Classical Analysis</li>
+            <li><b>Ma/CS 6a</b> Introduction to Discrete Mathematics</li>
+          </ul>""", "cyan")
     s0 = sec("general intuition", [
         ("CS229", None, "ML fundamentals: convex optimization, deep neural networks, data"),
         ("Welch Labs", "https://www.youtube.com/@WelchLabs", "good for general intuition"),
@@ -440,7 +470,7 @@ def build_learning():
         ("Jia-Bin Huang (YouTube)", "https://www.youtube.com/c/JiaBinHuang", "technical, and very good for research ideas"),
         ("AI Explained (YouTube)", "https://www.youtube.com/@aiexplained-official", "AI news"),
     ], "violet")
-    page("learning.html", "learning | Trevor Chen", "\n\n".join([intro, taken, s0, s1, s2, s3, s4, s5, s6, s7, s8]), "learning.html")
+    page("learning.html", "learning | Trevor Chen", "\n\n".join([intro, taken, caltech, s0, s1, s2, s3, s4, s5, s6, s7, s8]), "learning.html")
 
 
 # ---------------------------------------------------------------- tools
