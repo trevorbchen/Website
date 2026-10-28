@@ -21,8 +21,8 @@ NAV = [("index.html", "home"), ("research.html", "research"), ("blog.html", "blo
 
 # hobby "holes": slug, label, hover tip, margin position (left %, top %, px size)
 HOLES = [
-    ("crochet", "crochet", "amigurumi. learning to freehand dolls.", -1.2, 21, 76),
-    ("guitar", "guitar", "learning Let Her Go.", 4.6, 43, 26),
+    ("crochet", "crochet", "amigurumi. currently learning stitches.", -1.2, 21, 76),
+    ("guitar", "guitar", "currently learning Let Her Go.", 4.6, 43, 26),
     ("skateboarding", "skateboarding", "", 0.6, 68, 44),
     ("movies", "movies", "favorites and unpopular opinions.", 5.6, 88, 20),
     ("badminton", "badminton", "", 98.2, 12, 56),
@@ -194,8 +194,8 @@ def build_home():
             <a class="comic" href="posts/ddamo.html">
               <span class="pow">58x</span>
               <span class="pill gold">NeurIPS 2026</span>
-              <h3>Steering discrete diffusion</h3>
-              <p>Four design decisions for feedback-efficient molecule optimization, and the one the rest were waiting on.</p>
+              <h3>Better molecules, fewer experiments</h3>
+              <p>What it took to steer a molecule generator with a handful of expensive measurements, and the one ingredient everything else depended on.</p>
             </a>
             <div class="comic soon">
               <span class="pow">SOON</span>
@@ -264,8 +264,8 @@ def build_research():
             ["docking", "virtual screening"], "posts/bio.html", "docking"),
     ], "pink")
     sci = area("ai for science", [
-        row("Steering discrete diffusion for molecular optimization",
-            "Online adaptation with 58x fewer oracle calls. NeurIPS 2026.",
+        row("Better molecules, fewer experiments",
+            "Steering a diffusion model with a few expensive measurements: the same result with 58x fewer oracle calls. NeurIPS 2026.",
             ["diffusion", "RL", "NeurIPS"], "posts/ddamo.html", "noise"),
         row("Closed-loop discovery with wet-lab feedback",
             "LLM-proposed hypotheses distilled into generative models for enzyme and protein design, with ETH Zurich and the Arnold lab. In progress.",
@@ -304,7 +304,7 @@ def build_research():
 {pubs}
           </ol>
       </section>"""
-    page("research.html", "research | Trevor Chen", "\n\n".join([intro, physics, bio, sci, interp, theory, other, pubpanel]),
+    page("research.html", "research | Trevor Chen", "\n\n".join([intro, sci, interp, theory, bio, physics, other, pubpanel]),
          "research.html")
 
 
@@ -339,7 +339,7 @@ def build_hobbies():
         return f'          <li class="hob" id="{slug}"><h3>{name}</h3>{inner}</li>'
 
     items = [
-        hob("crochet", "Crochet", "<p>I crochet amigurumi. Right now I'm learning to freehand dolls, and hopefully design my own. Also learning new stitches.</p>"),
+        hob("crochet", "Crochet", "<p>I crochet amigurumi. Currently learning stitches, and hoping to freehand dolls and design my own.</p>"),
         hob("guitar", "Guitar", "<p>Currently learning <b>Let Her Go</b>.</p>"),
         hob("skateboarding", "Skateboarding"),
         hob("movies", "Movies", f"""

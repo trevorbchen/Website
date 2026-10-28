@@ -17,18 +17,18 @@
   }
 
   function makePlush(kind, cx) {
-    const y0 = H - 24;
+    const F = H - 10;                                  // feet rest here
     const n = {
-      head: new P(cx, y0 - 118, 24), neck: new P(cx, y0 - 92, 6), hip: new P(cx, y0 - 46, 14),
-      handL: new P(cx - 34, y0 - 80, 8), handR: new P(cx + 34, y0 - 80, 8),
-      footL: new P(cx - 16, y0 - 8, 9), footR: new P(cx + 16, y0 - 8, 9),
+      head: new P(cx, F - 74, 24), neck: new P(cx, F - 58, 8), hip: new P(cx, F - 28, 22),
+      handL: new P(cx - 32, F - 42, 9), handR: new P(cx + 32, F - 42, 9),
+      footL: new P(cx - 15, F, 10), footR: new P(cx + 15, F, 10),
     };
     const c = (a, b, len, k = 1) => ({ a: n[a], b: n[b], len, k });
     return {
       kind, n, line: 0, blink: 0,
-      cons: [c("head", "neck", 28), c("neck", "hip", 46), c("neck", "handL", 36), c("neck", "handR", 36),
-        c("hip", "footL", 40), c("hip", "footR", 40), c("head", "hip", 72, 0.8),
-        c("handL", "handR", 74, 0.08), c("footL", "footR", 34, 0.3), c("handL", "hip", 58, 0.12), c("handR", "hip", 58, 0.12)],
+      cons: [c("head", "neck", 16), c("neck", "hip", 30), c("neck", "handL", 28), c("neck", "handR", 28),
+        c("hip", "footL", 28), c("hip", "footR", 28), c("head", "hip", 46, 0.8),
+        c("handL", "handR", 60, 0.08), c("footL", "footR", 34, 0.3), c("handL", "hip", 44, 0.12), c("handR", "hip", 44, 0.12)],
     };
   }
 
@@ -61,7 +61,7 @@
     for (const el of holeEls) {
       const r = el.getBoundingClientRect();
       if (!r.width) continue;
-      masses.push({ el, x: r.left + r.width / 2, y: r.top + r.height / 2, rho: Math.max(r.width, r.height) / 2, A: 2.2 });
+      masses.push({ el, x: r.left + r.width / 2, y: r.top + r.height / 2, rho: Math.max(r.width, r.height) / 2, A: 2.6 });
     }
     if (portalEl) {
       const r = portalEl.getBoundingClientRect();
@@ -102,11 +102,12 @@
         p.px = p.x; p.py = p.y; p.x += vx + f.ax; p.y += vy + g + f.ay;
       }
       const grounded = pl.n.footL.y > H - 36 || pl.n.footR.y > H - 36;
-      if (grounded && !pl.n.head.pin) {            // stuffing: gently self-right when standing
-        const dx = (pl.n.hip.x - pl.n.head.x) * 0.03;       // a torque, so equal and opposite: no net sideways push
-        pl.n.head.x += dx;
-        if (!pl.n.hip.pin) pl.n.hip.x -= dx;
-        pl.n.head.y += ((pl.n.hip.y - 76) - pl.n.head.y) * 0.04;
+      if (grounded && !pl.n.head.pin) {            // stuffing: posture springs pull it upright over its feet
+        const n = pl.n, cx = (n.footL.x + n.footR.x) / 2;
+        const nudge = (node, tx, ty, kx, ky) => { if (!node.pin) { node.x += (tx - node.x) * kx; node.y += (ty - node.y) * ky; } };
+        nudge(n.hip, cx, n.hip.y, 0.1, 0);
+        nudge(n.neck, n.hip.x, n.hip.y - 30, 0.12, 0.08);
+        nudge(n.head, n.hip.x, n.hip.y - 46, 0.12, 0.1);
       }
       for (let it = 0; it < 8; it++) {
         for (const c of pl.cons) {
@@ -127,7 +128,7 @@
     }
     const [a, b] = plushes;
     for (const k of ["hip", "head"]) {
-      const dx = b.n[k].x - a.n[k].x, dy = b.n[k].y - a.n[k].y, d = Math.hypot(dx, dy) || 1, min = k === "hip" ? 62 : 52;
+      const dx = b.n[k].x - a.n[k].x, dy = b.n[k].y - a.n[k].y, d = Math.hypot(dx, dy) || 1, min = k === "hip" ? 72 : 60;
       if (d < min) {
         const push = (min - d) / 2;
         if (!a.n[k].pin) { a.n[k].x -= (dx / d) * push; a.n[k].y -= (dy / d) * push; }
@@ -152,43 +153,51 @@
     ctx.strokeStyle = fill; ctx.lineWidth = w;
     ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
   }
-  function eyes(blink, x, y, col, r = 3.4) {
-    ctx.fillStyle = col; ctx.strokeStyle = col; ctx.lineWidth = 2.5;
-    for (const sx of [x, -x]) {
-      if (blink) { ctx.beginPath(); ctx.moveTo(sx - 4, y); ctx.lineTo(sx + 4, y); ctx.stroke(); }
-      else { ctx.beginPath(); ctx.arc(sx, y, r, 0, 6.2832); ctx.fill(); }
-    }
+  function eye(blink, x, y, rx, ry, col) {            // big shiny eye (a touch of anime)
+    if (blink) { ctx.strokeStyle = col; ctx.lineWidth = 2.6; ctx.beginPath(); ctx.moveTo(x - rx, y); ctx.lineTo(x + rx, y); ctx.stroke(); return; }
+    ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 6.2832); ctx.fillStyle = col; ctx.fill();
+    ctx.beginPath(); ctx.arc(x - rx * 0.3, y - ry * 0.35, rx * 0.38, 0, 6.2832); ctx.fillStyle = "#fff"; ctx.fill();
+  }
+  function blush(x, y) { ctx.beginPath(); ctx.ellipse(x, y, 5.5, 3.6, 0, 0, 6.2832); ctx.fillStyle = "rgba(255,46,136,0.45)"; ctx.fill(); }
+  function limbBlob(a, b, rx, ry, fill) {              // short stubby limb: an ellipse pointing from a toward b
+    const mx = a.x + (b.x - a.x) * 0.62, my = a.y + (b.y - a.y) * 0.62;
+    inkEllipse(mx, my, rx, ry, Math.atan2(b.y - a.y, b.x - a.x) - Math.PI / 2, fill);
   }
 
   function draw(pl, t) {
     const n = pl.n, pen = pl.kind === "penguin";
-    const skin = pen ? INK : "#fbf9f3";
-    if (pen) { for (const f of [n.footL, n.footR]) inkEllipse(f.x, f.y, 13, 6, 0, "#ff9f1c"); }
-    else { limb(n.hip, n.footL, 15, INK); limb(n.hip, n.footR, 15, INK); }
-    const mx = (n.neck.x + n.hip.x) / 2, my = (n.neck.y + n.hip.y) / 2 + 4;
+    const WHITE = "#fbf9f3", ORANGE = "#ff9f1c";
+    const mx = (n.neck.x + n.hip.x) / 2, my = (n.neck.y + n.hip.y) / 2 + 8;
     const bAng = Math.atan2(-(n.hip.x - n.neck.x), n.hip.y - n.neck.y);
-    inkEllipse(mx, my, 31, 46, bAng, pen ? INK : "#fbf9f3");
-    ctx.save(); ctx.translate(mx, my + 5); ctx.rotate(bAng);
-    if (pen) { ctx.beginPath(); ctx.ellipse(0, 4, 19, 33, 0, 0, 6.2832); ctx.fillStyle = "#fbf9f3"; ctx.fill(); }
-    ctx.restore();
-    limb(n.neck, n.handL, 14, INK); limb(n.neck, n.handR, 14, INK);
     const hAng = Math.atan2(n.head.x - n.neck.x, -(n.head.y - n.neck.y));
-    ctx.save(); ctx.translate(n.head.x, n.head.y); ctx.rotate(hAng);
-    if (!pen) {
-      for (const sx of [-1, 1]) { ctx.beginPath(); ctx.arc(sx * 19, -19, 9, 0, 6.2832); ctx.fillStyle = INK; ctx.fill(); }
+    // legs / feet
+    for (const f of [n.footL, n.footR]) {
+      if (pen) inkEllipse(f.x, f.y + 1, 13, 7.5, 0, ORANGE); else inkEllipse(f.x, f.y - 2, 12, 11, 0, INK);
     }
-    inkEllipse(0, 0, 25, 23, 0, skin);
-    const blink = Math.sin(t / 700 + n.head.x) > 0.985 || pl.blink > 0;
+    // round body
+    inkEllipse(mx, my, 36, 37, bAng, pen ? INK : WHITE);
     if (pen) {
-      ctx.beginPath(); ctx.ellipse(0, 3, 17, 15, 0, 0, 6.2832); ctx.fillStyle = "#fbf9f3"; ctx.fill();
-      ctx.beginPath(); ctx.moveTo(-5, 4); ctx.lineTo(5, 4); ctx.lineTo(0, 12); ctx.closePath();
-      ctx.fillStyle = "#ff9f1c"; ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 2.5; ctx.stroke();
-      eyes(blink, -9, -4, INK);
-    } else {
-      for (const sx of [-1, 1]) { ctx.beginPath(); ctx.ellipse(sx * 10, -3, 6.5, 8.5, sx * 0.4, 0, 6.2832); ctx.fillStyle = INK; ctx.fill(); }
-      ctx.beginPath(); ctx.ellipse(0, 7, 4.5, 3.2, 0, 0, 6.2832); ctx.fillStyle = INK; ctx.fill();
-      eyes(blink, -10, -4, "#fbf9f3", 3.2);
+      ctx.save(); ctx.translate(mx, my + 5); ctx.rotate(bAng);
+      ctx.beginPath(); ctx.ellipse(0, 3, 23, 26, 0, 0, 6.2832); ctx.fillStyle = WHITE; ctx.fill();
+      ctx.restore();
     }
+    // arms / flippers
+    limbBlob(n.neck, n.handL, 9, 16, INK); limbBlob(n.neck, n.handR, 9, 16, INK);
+    // head
+    ctx.save(); ctx.translate(n.head.x, n.head.y); ctx.rotate(hAng);
+    const blink = Math.sin(t / 700 + n.head.x) > 0.985 || pl.blink > 0;
+    if (!pen) for (const sx of [-1, 1]) inkEllipse(sx * 21, -17, 10, 10, 0, INK);          // ears
+    inkEllipse(0, 0, 31, 26, 0, pen ? INK : WHITE);
+    if (pen) {
+      ctx.beginPath(); ctx.ellipse(0, 4, 22, 17, 0, 0, 6.2832); ctx.fillStyle = WHITE; ctx.fill();
+      eye(blink, -11, -2, 5, 6.5, INK); eye(blink, 11, -2, 5, 6.5, INK);
+      ctx.beginPath(); ctx.ellipse(0, 8, 5.5, 3.8, 0, 0, 6.2832); ctx.fillStyle = ORANGE; ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 2.4; ctx.stroke();
+    } else {
+      for (const sx of [-1, 1]) { ctx.beginPath(); ctx.ellipse(sx * 12, -2, 8, 10.5, sx * 0.4, 0, 6.2832); ctx.fillStyle = INK; ctx.fill(); }
+      eye(blink, -12, -3, 3.6, 4.4, WHITE); eye(blink, 12, -3, 3.6, 4.4, WHITE);
+      ctx.beginPath(); ctx.ellipse(0, 8, 4.6, 3.2, 0, 0, 6.2832); ctx.fillStyle = INK; ctx.fill();
+    }
+    blush(-21, 9); blush(21, 9);
     ctx.restore();
     if (pl.blink > 0) pl.blink--;
   }

@@ -561,3 +561,5 @@ html.plush-drag, html.plush-drag * { cursor: grabbing !important; user-select: n
 .hob:target { background: rgba(255, 224, 58, 0.4); box-shadow: -10px 0 0 var(--yellow); }
 .panel .k { font-family: var(--mono); font-size: 12px; font-weight: 600; text-transform: uppercase; color: var(--muted); margin: 16px 0 2px; }
 .panel .k:first-child { margin-top: 0; }
+
+a.portal, a.portal:hover { background: none; text-decoration: none; }

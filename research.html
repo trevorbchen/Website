@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1793178327">
+  <link rel="stylesheet" href="style.css?v=1793178621">
 </head>
 <body data-root="">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -17,7 +17,7 @@
     <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
   </svg>
   <canvas id="dots" aria-hidden="true"></canvas>
-  <div class="holes" aria-label="hobbies"><a class="hole" href="hobbies.html#crochet" data-label="crochet" data-tip="amigurumi. learning to freehand dolls." style="left:-1.2%;top:21%;width:76px;height:65px" aria-label="crochet"></a><a class="hole" href="hobbies.html#guitar" data-label="guitar" data-tip="learning Let Her Go." style="left:4.6%;top:43%;width:26px;height:22px" aria-label="guitar"></a><a class="hole" href="hobbies.html#skateboarding" data-label="skateboarding" data-tip="" style="left:0.6%;top:68%;width:44px;height:38px" aria-label="skateboarding"></a><a class="hole" href="hobbies.html#movies" data-label="movies" data-tip="favorites and unpopular opinions." style="left:5.6%;top:88%;width:20px;height:17px" aria-label="movies"></a><a class="hole" href="hobbies.html#badminton" data-label="badminton" data-tip="" style="left:98.2%;top:12%;width:56px;height:48px" aria-label="badminton"></a><a class="hole" href="hobbies.html#figure-skating" data-label="figure skating" data-tip="used to. I can do an axel." style="left:94.4%;top:37%;width:22px;height:19px" aria-label="figure skating"></a><a class="hole" href="hobbies.html#anime" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:97.8%;top:61%;width:84px;height:72px" aria-label="anime / manga / LN"></a></div>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="hobbies.html#crochet" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:-1.2%;top:21%;width:76px;height:65px" aria-label="crochet"></a><a class="hole" href="hobbies.html#guitar" data-label="guitar" data-tip="currently learning Let Her Go." style="left:4.6%;top:43%;width:26px;height:22px" aria-label="guitar"></a><a class="hole" href="hobbies.html#skateboarding" data-label="skateboarding" data-tip="" style="left:0.6%;top:68%;width:44px;height:38px" aria-label="skateboarding"></a><a class="hole" href="hobbies.html#movies" data-label="movies" data-tip="favorites and unpopular opinions." style="left:5.6%;top:88%;width:20px;height:17px" aria-label="movies"></a><a class="hole" href="hobbies.html#badminton" data-label="badminton" data-tip="" style="left:98.2%;top:12%;width:56px;height:48px" aria-label="badminton"></a><a class="hole" href="hobbies.html#figure-skating" data-label="figure skating" data-tip="used to. I can do an axel." style="left:94.4%;top:37%;width:22px;height:19px" aria-label="figure skating"></a><a class="hole" href="hobbies.html#anime" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:97.8%;top:61%;width:84px;height:72px" aria-label="anime / manga / LN"></a></div>
   <div id="tip" class="tip" role="tooltip"></div>
 
   <header class="top">
@@ -42,24 +42,10 @@
           <p>Most of my current work is in <b>diffusion models</b> and <b>AI for science</b>, especially biology. I started in physics and moved through biology and then ML. Hover a row for a tiny live preview, click it for the write-up.</p>
       </section>
 
-      <section class="panel">
-        <span class="caption">physics</span>
-          <ul class="rows">
-            <li class="row"><div class="row-text"><h3><a href="posts/optics.html">Mid-IR gratings and a thermal camera for jet engines</a></h3><p>Diffraction gratings in use at national labs; an infrared borescope that survives flame.</p><div><span class="pill">optics</span><span class="pill">nanofabrication</span></div></div><canvas class="pv" width="200" height="110" data-pv="grating"></canvas></li>
-          </ul>
-      </section>
-
-      <section class="panel pink">
-        <span class="caption">biology</span>
-          <ul class="rows">
-            <li class="row"><div class="row-text"><h3><a href="posts/bio.html">Drug discovery on a supercomputer</a></h3><p>Screening 50,000+ compounds for HIV-1 protease and aldose-reductase inhibitors; a review on anelloviruses and cancer.</p><div><span class="pill">docking</span><span class="pill">virtual screening</span></div></div><canvas class="pv" width="200" height="110" data-pv="docking"></canvas></li>
-          </ul>
-      </section>
-
       <section class="panel cyan">
         <span class="caption">ai for science</span>
           <ul class="rows">
-            <li class="row"><div class="row-text"><h3><a href="posts/ddamo.html">Steering discrete diffusion for molecular optimization</a></h3><p>Online adaptation with 58x fewer oracle calls. NeurIPS 2026.</p><div><span class="pill">diffusion</span><span class="pill">RL</span><span class="pill">NeurIPS</span></div></div><canvas class="pv" width="200" height="110" data-pv="noise"></canvas></li>
+            <li class="row"><div class="row-text"><h3><a href="posts/ddamo.html">Better molecules, fewer experiments</a></h3><p>Steering a diffusion model with a few expensive measurements: the same result with 58x fewer oracle calls. NeurIPS 2026.</p><div><span class="pill">diffusion</span><span class="pill">RL</span><span class="pill">NeurIPS</span></div></div><canvas class="pv" width="200" height="110" data-pv="noise"></canvas></li>
             <li class="row soon"><div class="row-text"><h3>Closed-loop discovery with wet-lab feedback</h3><p>LLM-proposed hypotheses distilled into generative models for enzyme and protein design, with ETH Zurich and the Arnold lab. In progress.</p><div><span class="pill">current</span><span class="pill">ETH</span><span class="pill">Caltech</span></div></div><canvas class="pv" width="200" height="110" data-pv="loop"></canvas></li>
           </ul>
       </section>
@@ -78,6 +64,20 @@
             <li class="row"><div class="row-text"><h3><a href="posts/memorization.html">Why diffusion models memorize late</a></h3><p>A spectral buffer from extra latent dimensions. ICML HiLD 2026; ICLR 2027 under review.</p><div><span class="pill">diffusion</span><span class="pill">generalization</span></div></div><canvas class="pv" width="200" height="110" data-pv="noise"></canvas></li>
             <li class="row soon"><div class="row-text"><h3>A theory of reasoning</h3><p>Coming soon.</p><div><span class="pill">in progress</span></div></div></li>
             <li class="row"><div class="row-text"><h3><a href="posts/diffusion-gaussians.html">A diffusion theory that was wrong</a></h3><p>My first mental model of why diffusion works, seven toy experiments, and why it failed.</p><div><span class="pill">essay</span></div></div><canvas class="pv" width="200" height="110" data-pv="noise"></canvas></li>
+          </ul>
+      </section>
+
+      <section class="panel pink">
+        <span class="caption">biology</span>
+          <ul class="rows">
+            <li class="row"><div class="row-text"><h3><a href="posts/bio.html">Drug discovery on a supercomputer</a></h3><p>Screening 50,000+ compounds for HIV-1 protease and aldose-reductase inhibitors; a review on anelloviruses and cancer.</p><div><span class="pill">docking</span><span class="pill">virtual screening</span></div></div><canvas class="pv" width="200" height="110" data-pv="docking"></canvas></li>
+          </ul>
+      </section>
+
+      <section class="panel">
+        <span class="caption">physics</span>
+          <ul class="rows">
+            <li class="row"><div class="row-text"><h3><a href="posts/optics.html">Mid-IR gratings and a thermal camera for jet engines</a></h3><p>Diffraction gratings in use at national labs; an infrared borescope that survives flame.</p><div><span class="pill">optics</span><span class="pill">nanofabrication</span></div></div><canvas class="pv" width="200" height="110" data-pv="grating"></canvas></li>
           </ul>
       </section>
 
@@ -120,9 +120,9 @@
   <div class="bubble" id="bubble"></div>
 
   <div id="portal" aria-hidden="true"></div>
-  <script src="site.js?v=1793178327"></script>
-  <script src="fx.js?v=1793178327"></script>
-  <script src="plush.js?v=1793178327"></script>
-  <script src="demos.js?v=1793178327"></script>
+  <script src="site.js?v=1793178621"></script>
+  <script src="fx.js?v=1793178621"></script>
+  <script src="plush.js?v=1793178621"></script>
+  <script src="demos.js?v=1793178621"></script>
 </body>
 </html>
