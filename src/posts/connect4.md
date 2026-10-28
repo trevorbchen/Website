@@ -1,44 +1,47 @@
 ---
-title: I learned to beat a Connect 4 bot, then lost to my roommate
-date: 2026-10
+title: i got good at connect 4 by farming a bot and then my roommate cooked me
+date: 2026-07
 kind: essay
-tags: reinforcement learning, on-policy vs off-policy, catastrophic forgetting
-blurb: A small story about distribution shift, catastrophic forgetting, and why distilling ideas from a teacher beats copying its moves.
+tags: shitpost, reinforcement learning, skill issue
+blurb: a story about distribution shift, catastrophic forgetting, and why you should not grind a single opponent. also i lost to a roommate. it's fine.
 ---
 
-I got obsessed with Connect 4 and decided to learn it the way I'd train a model: play against a strong bot, over and over.
+so i got obsessed with connect 4. normal behavior. and i decided the only dignified way to learn it was the way i'd train a model: play a strong bot until my brain updates.
 
-It worked, in a narrow sense. I started beating the bot. I discovered tricks that win from most random openings, learned which columns tend to be winning *levels* (rows, really: parity matters a lot in this game), and got good at building **threats**, the moves that force the opponent to respond so you can set up a double. I felt great.
+**it worked.** i started beating the bot. i found tricks that win from like most openings. i learned which rows are winning rows (parity!!! it's all parity!!!). i got really good at making threats, you know, the moves where the opponent has to respond or die, so you can set up a double. i felt like a genius. i was a menace. i was Him.
 
-Then I played my roommate and lost.
+then i played my roommate.
 
-## What went wrong
+and i lost.
 
-My roommate didn't play like the bot. The bot is a very strong player of a very specific kind, and *I had learned a policy tuned to beat it*. Everything I'd absorbed, which openings the bot falls into, how it responds to a given threat, assumed its habits. A human who plays loosely, makes odd developing moves, and ignores "correct" principles pushes me into positions I'd never seen.
+## what happened
 
-And worse: **I'd forgotten basic strategy.** Because I'd spent hundreds of games on exotic tricks that worked against a bot, I wasn't practicing the plain fundamentals (control the center, watch both diagonals, don't give away a square you need) that a human opponent exploits immediately. This is **catastrophic forgetting**, in a human.
+my roommate does not play like the bot. my roommate plays like a guy who has never read a strategy guide and also doesn't care. weird developing moves. no respect for "correct." just vibes. and i was suddenly in positions i had literally never seen, because the bot would never ever go there.
 
-## It's the on-policy / off-policy problem
+and the real insult: **i forgot how to play connect 4.** like the actual basics. control the center. check both diagonals. don't hand over a square you needed. because i had spent hundreds of games learning galaxy-brain tricks that only work on a bot, so the boring fundamentals were just. gone. that's catastrophic forgetting, but in a human, and it's my fault.
 
-This is the same tension you see in RL:
+## this is just on-policy vs off-policy lol
 
-- **On-policy** learning trains on the distribution *you* actually produce. It's stable but narrow, and it costs a lot of games.
-- **Off-policy** learning, training on someone else's behavior (the bot's), is sample-efficient and can teach you a lot fast. But you're now optimizing for a distribution you'll never face, and you're **fragile off the distribution**: nothing in the training signal told you how to handle positions the teacher never reaches.
+if you've ever opened an RL textbook this is the whole chapter:
 
-I had gone off-policy against an opponent whose state distribution looked nothing like the one I'd meet. The more I squeezed out of the bot, the more specialized to it I got, which is exactly what over-optimizing against a fixed opponent does to a model.
+- **on-policy**: learn from the games you actually play. stable. slow. costs a million games. very "touch grass."
+- **off-policy**: learn from someone else's games (the bot's). way more sample efficient. also you are now optimizing for a distribution you will never ever see again, and you are made of glass. nobody told your value function what to do in the positions the teacher never reaches. copium with extra steps.
 
-## What fixed it
+i went off-policy on a guy whose states looked nothing like my roommate's states. the harder i farmed the bot, the more specialized i got to the bot. i was a bot-hunter. a one-trick pony. the pony was very good. the pony lost.
 
-I changed what I took from the bot. Instead of copying what it *plays*, I tried to understand *why* it plays it: what makes a position winning, how threats stack, why a given square is poison. In other words, I **distilled ideas rather than moves**, and I kept my own prior (the basics) intact while updating it. Learn from the teacher, but stay close to what you already knew.
+## the fix
 
-That's the same instinct as a KL penalty to the base model in fine-tuning: take the signal, don't let it drag you somewhere you can't recover from.
+i stopped copying what the bot *does* and started working out *why* it does it. what makes a position actually winning. how threats stack. why some squares are poison. basically i **distilled ideas instead of moves** and kept my own prior (the boring basics) mostly intact while i updated it.
 
-Here's what I mean by a threat you can't answer: Yellow to move on this board, and the game is already over.
+this is a KL penalty to the base model, but for your brain. take the signal, don't let it drag you somewhere you can't come back from. staying true to your prior. very based. very regularized.
 
-<div class="c4" data-board="....... ....... ....... ....... ...Y... ..RRR.Y" data-caption="Red has three in a row on the bottom with both ends open. Yellow can block only one."></div>
+here is a threat you can't answer. yellow to move. it's over. gg.
 
-Once I thought about the game in those terms, I stopped losing to people. I'm now confident that I won't lose to many of them, which is a statement about the people, not the bot.
+<div class="c4" data-board="....... ....... ....... ....... ...Y... ..RRR.Y" data-caption="red has three in a row on the bottom with both ends open. yellow can only block one."></div>
 
-## The takeaway
+after that i stopped losing to people. i'm now confident i will not lose to most of them, which is a statement about the people, not the bot.
 
-When a strong teacher is available, the temptation is to maximize against it. Resist. Optimize against a *fixed* opponent and you learn the opponent. Then check yourself against someone who plays *differently* before you believe you've learned the game.
+## the takeaway
+
+if a strong teacher shows up, you will want to max against it. do not. you will learn the teacher. then go play someone who plays *differently* before you decide you learned the game.
+

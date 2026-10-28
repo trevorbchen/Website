@@ -1,6 +1,6 @@
 ---
 title: Doing research in high school was a mistake (mostly)
-date: 2026-10
+date: 2025-09
 kind: essay
 tags: advice, learning, research
 blurb: I don't regret any of it, but I'd tell my younger self to do olympiads and build things instead. Hyperspecializing early is overrated.

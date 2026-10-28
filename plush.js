@@ -1,5 +1,6 @@
-// two plush toys (a penguin and a panda) as verlet ragdolls that live in the viewport.
-// They stay put while you scroll. Grab one anywhere on the page and toss it around.
+// two round plush toys (a penguin and a panda) as squishy verlet blobs that live in the viewport.
+// They sit still. Grab one anywhere on the page and toss it around; once it's been handled,
+// nearby black holes pull on it, and it will cling to one.
 (() => {
   const canvas = document.getElementById("plush");
   const bubble = document.getElementById("bubble");
@@ -7,28 +8,28 @@
   if (window.matchMedia("(pointer: coarse)").matches) { canvas.remove(); if (bubble) bubble.remove(); return; }
   const ctx = canvas.getContext("2d");
   const root = document.documentElement;
-  const INK = "#111015", PINK = "#ff2e88", CYAN = "#19d3e6";
+  const INK = "#111015", WHITE = "#fbf9f3", ORANGE = "#ff9f1c";
   let W = 0, H = 0, dpr = 1;
 
   const LINES = { penguin: ["squawk.", "poked."], panda: ["ow.", "bamboo."] };
 
   class P {
-    constructor(x, y, r) { this.x = x; this.y = y; this.px = x; this.py = y; this.r = r; this.pin = false; }
+    constructor(x, y, r, g) { this.x = x; this.y = y; this.px = x; this.py = y; this.r = r; this.g = g; this.pin = false; }
   }
 
+  // five nodes: a center, plus top / bottom / left / right. The bottom is heavy, so it rights itself like a weeble.
   function makePlush(kind, cx) {
-    const F = H - 10;                                  // feet rest here
+    const cy = H - 38;
     const n = {
-      head: new P(cx, F - 74, 24), neck: new P(cx, F - 58, 8), hip: new P(cx, F - 28, 22),
-      handL: new P(cx - 32, F - 42, 9), handR: new P(cx + 32, F - 42, 9),
-      footL: new P(cx - 15, F, 10), footR: new P(cx + 15, F, 10),
+      c: new P(cx, cy, 28, 1), t: new P(cx, cy - 26, 11, 0.45), b: new P(cx, cy + 26, 11, 1.7),
+      l: new P(cx - 26, cy, 12, 1), r: new P(cx + 26, cy, 12, 1),
     };
-    const c = (a, b, len, k = 1) => ({ a: n[a], b: n[b], len, k });
+    const k = (a, b, len, s = 1) => ({ a: n[a], b: n[b], len, k: s });
+    const D = 26 * Math.SQRT2;
     return {
-      kind, n, line: 0, blink: 0,
-      cons: [c("head", "neck", 16), c("neck", "hip", 30), c("neck", "handL", 28), c("neck", "handR", 28),
-        c("hip", "footL", 28), c("hip", "footR", 28), c("head", "hip", 46, 0.8),
-        c("handL", "handR", 60, 0.08), c("footL", "footR", 34, 0.3), c("handL", "hip", 44, 0.12), c("handR", "hip", 44, 0.12)],
+      kind, n, line: 0, blink: 0, awakeUntil: 0, docked: false,
+      cons: [k("c", "t", 26), k("c", "b", 26), k("c", "l", 26), k("c", "r", 26),
+        k("t", "r", D, 0.9), k("r", "b", D, 0.9), k("b", "l", D, 0.9), k("l", "t", D, 0.9), k("t", "b", 52, 0.8), k("l", "r", 52, 0.8)],
     };
   }
 
@@ -39,19 +40,16 @@
     W = window.innerWidth; H = window.innerHeight;
     canvas.width = W * dpr; canvas.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    if (!plushes.length) {
-      plushes = [makePlush("penguin", W - 190), makePlush("panda", W - 90)];
-    } else if (oldH) {
-      for (const p of plushes) for (const k in p.n) {   // keep them standing on the bottom edge
-        p.n[k].y += H - oldH; p.n[k].py += H - oldH;
-        p.n[k].x = Math.min(Math.max(p.n[k].x, 20), W - 20); p.n[k].px = p.n[k].x;
-      }
+    if (!plushes.length) plushes = [makePlush("penguin", W - 190), makePlush("panda", W - 90)];
+    else if (oldH) for (const p of plushes) for (const k in p.n) {
+      p.n[k].y += H - oldH; p.n[k].py += H - oldH;
+      p.n[k].x = Math.min(Math.max(p.n[k].x, 20), W - 20); p.n[k].px = p.n[k].x;
     }
   }
   resize();
   window.addEventListener("resize", resize);
 
-  // ---------------------------------------------------------------- black holes pull on the plushes
+  // ---------------------------------------------------------------- black holes
   const holeEls = Array.from(document.querySelectorAll(".hole"));
   const portalEl = document.querySelector("a.portal");
   const lastTouch = new WeakMap();
@@ -60,8 +58,7 @@
     masses = [];
     for (const el of holeEls) {
       const r = el.getBoundingClientRect();
-      if (!r.width) continue;
-      masses.push({ el, x: r.left + r.width / 2, y: r.top + r.height / 2, rho: Math.max(r.width, r.height) / 2, A: 2.6 });
+      if (r.width) masses.push({ el, x: r.left + r.width / 2, y: r.top + r.height / 2, rho: Math.max(r.width, r.height) / 2, A: 2.6 });
     }
     if (portalEl) {
       const r = portalEl.getBoundingClientRect();
@@ -69,16 +66,16 @@
     }
   }
   readMasses();
-  function pull(p) {              // acceleration of node p toward every hole, with a little swirl
+  function pull(p) {
     let ax = 0, ay = 0, near = false;
     for (const m of masses) {
       const dx = m.x - p.x, dy = m.y - p.y, r = Math.hypot(dx, dy) || 1, R = 320 + m.rho * 3;
       if (r > R) continue;
       let a = m.A * Math.pow(1 - r / R, 1.3);
-      if (r < m.rho + 10) { a *= 0.5; near = true; }
-      ax += (dx / r) * a - (dy / r) * a * 0.18;
-      ay += (dy / r) * a + (dx / r) * a * 0.18;
-      if (m.el && r < m.rho + 16) {                                  // touching it: the hole jiggles
+      if (r < m.rho + 10) { a *= 0.7; near = true; }
+      ax += (dx / r) * a - (dy / r) * a * 0.07;
+      ay += (dy / r) * a + (dx / r) * a * 0.07;
+      if (m.el && r < m.rho + 16) {
         const now = performance.now();
         if (now - (lastTouch.get(m.el) || 0) > 900) { lastTouch.set(m.el, now); m.el.classList.remove("wobble"); void m.el.offsetWidth; m.el.classList.add("wobble"); }
       }
@@ -89,33 +86,39 @@
   }
 
   // ---------------------------------------------------------------- physics
-  function step() {
+  function step(now) {
     const g = 0.55;
     for (const pl of plushes) {
+      const c = pl.n.c;
+      // black holes only act on a plush that has been handled (or is already clinging to one)
+      const speed = Math.hypot(c.x - c.px, c.y - c.py);
+      if (speed > 3) pl.awakeUntil = Math.max(pl.awakeUntil, now + 900);
+      pl.docked = masses.some((m) => m.el && Math.hypot(m.x - c.x, m.y - c.y) < m.rho + 110);
+      const awake = now < pl.awakeUntil || pl.docked;
       const nodes = Object.values(pl.n);
+      const N = pl.n;
+      if (N.b.y > H - 20 || N.l.y > H - 20 || N.r.y > H - 20) {       // stuffing: gently stand it back up (a torque, so no net push)
+        if (!N.t.pin && !N.b.pin) { const d = (N.b.x - N.t.x) * 0.07; N.t.x += d; N.b.x -= d * 0.5; }
+        if (!N.l.pin) N.l.y += (N.c.y - N.l.y) * 0.06;
+        if (!N.r.pin) N.r.y += (N.c.y - N.r.y) * 0.06;
+      }
       for (const p of nodes) {
         if (p.pin) continue;
-        const f = pull(p), damp = f.near ? 0.93 : 0.992;
-        const grip = p.y >= H - p.r - 1 && f.ay > -0.2 ? 0.7 : 1;          // friction while resting on the floor
-        let vx = (p.x - p.px) * damp * grip; const vy = (p.y - p.py) * damp;
-        if (grip < 1 && Math.abs(vx) < 0.25) vx = 0;                        // static friction: no creeping
-        p.px = p.x; p.py = p.y; p.x += vx + f.ax; p.y += vy + g + f.ay;
-      }
-      const grounded = pl.n.footL.y > H - 36 || pl.n.footR.y > H - 36;
-      if (grounded && !pl.n.head.pin) {            // stuffing: posture springs pull it upright over its feet
-        const n = pl.n, cx = (n.footL.x + n.footR.x) / 2;
-        const nudge = (node, tx, ty, kx, ky) => { if (!node.pin) { node.x += (tx - node.x) * kx; node.y += (ty - node.y) * ky; } };
-        nudge(n.hip, cx, n.hip.y, 0.1, 0);
-        nudge(n.neck, n.hip.x, n.hip.y - 30, 0.12, 0.08);
-        nudge(n.head, n.hip.x, n.hip.y - 46, 0.12, 0.1);
+        const f = awake ? pull(p) : { ax: 0, ay: 0, near: false };
+        const onFloor = p.y >= H - p.r - 1 && f.ay > -0.2;
+        const damp = f.near ? 0.93 : 0.992;
+        let vx = (p.x - p.px) * damp * (onFloor ? 0.7 : 1);
+        if (onFloor && Math.abs(vx) < 0.25) vx = 0;
+        const vy = (p.y - p.py) * damp;
+        p.px = p.x; p.py = p.y; p.x += vx + f.ax; p.y += vy + g * p.g + f.ay;
       }
       for (let it = 0; it < 8; it++) {
-        for (const c of pl.cons) {
-          const dx = c.b.x - c.a.x, dy = c.b.y - c.a.y, d = Math.hypot(dx, dy) || 1e-4;
-          const diff = ((d - c.len) / d) * 0.5 * c.k;
-          const wa = c.a.pin ? 0 : 1, wb = c.b.pin ? 0 : 1, w = wa + wb || 1;
-          if (!c.a.pin) { c.a.x += dx * diff * 2 * wa / w; c.a.y += dy * diff * 2 * wa / w; }
-          if (!c.b.pin) { c.b.x -= dx * diff * 2 * wb / w; c.b.y -= dy * diff * 2 * wb / w; }
+        for (const k of pl.cons) {
+          const dx = k.b.x - k.a.x, dy = k.b.y - k.a.y, d = Math.hypot(dx, dy) || 1e-4;
+          const diff = ((d - k.len) / d) * 0.5 * k.k;
+          const wa = k.a.pin ? 0 : 1, wb = k.b.pin ? 0 : 1, w = wa + wb || 1;
+          if (!k.a.pin) { k.a.x += dx * diff * 2 * wa / w; k.a.y += dy * diff * 2 * wa / w; }
+          if (!k.b.pin) { k.b.x -= dx * diff * 2 * wb / w; k.b.y -= dy * diff * 2 * wb / w; }
         }
         for (const p of nodes) {
           if (p.pin) continue;
@@ -127,77 +130,54 @@
       }
     }
     const [a, b] = plushes;
-    for (const k of ["hip", "head"]) {
-      const dx = b.n[k].x - a.n[k].x, dy = b.n[k].y - a.n[k].y, d = Math.hypot(dx, dy) || 1, min = k === "hip" ? 72 : 60;
-      if (d < min) {
-        const push = (min - d) / 2;
-        if (!a.n[k].pin) { a.n[k].x -= (dx / d) * push; a.n[k].y -= (dy / d) * push; }
-        if (!b.n[k].pin) { b.n[k].x += (dx / d) * push; b.n[k].y += (dy / d) * push; }
-      }
+    const dx = b.n.c.x - a.n.c.x, dy = b.n.c.y - a.n.c.y, d = Math.hypot(dx, dy) || 1;
+    if (d < 84) {
+      const push = (84 - d) / 2;
+      for (const k in a.n) if (!a.n[k].pin) { a.n[k].x -= (dx / d) * push; a.n[k].y -= (dy / d) * push; }
+      for (const k in b.n) if (!b.n[k].pin) { b.n[k].x += (dx / d) * push; b.n[k].y += (dy / d) * push; }
     }
   }
 
-  // ---------------------------------------------------------------- drawing
-  function inkEllipse(x, y, rx, ry, rot, fill) {
-    for (const [dx, dy, col] of [[-2.5, 1.5, CYAN], [2.5, -1.5, PINK]]) {
-      ctx.beginPath(); ctx.ellipse(x + dx, y + dy, rx, ry, rot, 0, 6.2832);
-      ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.stroke();
-    }
+  // ---------------------------------------------------------------- drawing: simple, round, clean
+  function ell(x, y, rx, ry, rot, fill, stroke = true) {
     ctx.beginPath(); ctx.ellipse(x, y, rx, ry, rot, 0, 6.2832);
-    ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 3.5; ctx.stroke();
+    ctx.fillStyle = fill; ctx.fill();
+    if (stroke) { ctx.strokeStyle = INK; ctx.lineWidth = 3.2; ctx.stroke(); }
   }
-  function limb(a, b, w, fill) {
-    ctx.lineCap = "round";
-    ctx.strokeStyle = INK; ctx.lineWidth = w + 6;
-    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-    ctx.strokeStyle = fill; ctx.lineWidth = w;
-    ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+  function eye(x, y, r, blink, sclera) {
+    if (blink) { ctx.strokeStyle = sclera ? INK : WHITE; ctx.lineWidth = 2.6; ctx.beginPath(); ctx.moveTo(x - r, y); ctx.lineTo(x + r, y); ctx.stroke(); return; }
+    if (sclera) ell(x, y, r, r, 0, WHITE, false);
+    ell(x, y, sclera ? r * 0.6 : r, sclera ? r * 0.6 : r, 0, sclera ? INK : WHITE, false);
+    ell(x - r * 0.25, y - r * 0.28, r * 0.24, r * 0.24, 0, sclera ? WHITE : INK, false);
   }
-  function eye(blink, x, y, rx, ry, col) {            // big shiny eye (a touch of anime)
-    if (blink) { ctx.strokeStyle = col; ctx.lineWidth = 2.6; ctx.beginPath(); ctx.moveTo(x - rx, y); ctx.lineTo(x + rx, y); ctx.stroke(); return; }
-    ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, 6.2832); ctx.fillStyle = col; ctx.fill();
-    ctx.beginPath(); ctx.arc(x - rx * 0.3, y - ry * 0.35, rx * 0.38, 0, 6.2832); ctx.fillStyle = "#fff"; ctx.fill();
-  }
-  function blush(x, y) { ctx.beginPath(); ctx.ellipse(x, y, 5.5, 3.6, 0, 0, 6.2832); ctx.fillStyle = "rgba(255,46,136,0.45)"; ctx.fill(); }
-  function limbBlob(a, b, rx, ry, fill) {              // short stubby limb: an ellipse pointing from a toward b
-    const mx = a.x + (b.x - a.x) * 0.62, my = a.y + (b.y - a.y) * 0.62;
-    inkEllipse(mx, my, rx, ry, Math.atan2(b.y - a.y, b.x - a.x) - Math.PI / 2, fill);
-  }
+  function blush(x, y) { ell(x, y, 6.5, 3.8, 0, "rgba(255,46,136,0.45)", false); }
 
-  function draw(pl, t) {
+  function draw(pl) {
     const n = pl.n, pen = pl.kind === "penguin";
-    const WHITE = "#fbf9f3", ORANGE = "#ff9f1c";
-    const mx = (n.neck.x + n.hip.x) / 2, my = (n.neck.y + n.hip.y) / 2 + 8;
-    const bAng = Math.atan2(-(n.hip.x - n.neck.x), n.hip.y - n.neck.y);
-    const hAng = Math.atan2(n.head.x - n.neck.x, -(n.head.y - n.neck.y));
-    // legs / feet
-    for (const f of [n.footL, n.footR]) {
-      if (pen) inkEllipse(f.x, f.y + 1, 13, 7.5, 0, ORANGE); else inkEllipse(f.x, f.y - 2, 12, 11, 0, INK);
-    }
-    // round body
-    inkEllipse(mx, my, 36, 37, bAng, pen ? INK : WHITE);
+    const RX = Math.min(Math.max(40 * Math.hypot(n.r.x - n.l.x, n.r.y - n.l.y) / 52, 31), 50);
+    const RY = Math.min(Math.max(36 * Math.hypot(n.t.x - n.b.x, n.t.y - n.b.y) / 52, 28), 46);
+    const rot = Math.atan2(n.t.x - n.b.x, -(n.t.y - n.b.y));
+    const blink = pl.blink > 0;
+    ctx.save(); ctx.translate(n.c.x, n.c.y + 3); ctx.rotate(rot);
     if (pen) {
-      ctx.save(); ctx.translate(mx, my + 5); ctx.rotate(bAng);
-      ctx.beginPath(); ctx.ellipse(0, 3, 23, 26, 0, 0, 6.2832); ctx.fillStyle = WHITE; ctx.fill();
-      ctx.restore();
-    }
-    // arms / flippers
-    limbBlob(n.neck, n.handL, 9, 16, INK); limbBlob(n.neck, n.handR, 9, 16, INK);
-    // head
-    ctx.save(); ctx.translate(n.head.x, n.head.y); ctx.rotate(hAng);
-    const blink = Math.sin(t / 700 + n.head.x) > 0.985 || pl.blink > 0;
-    if (!pen) for (const sx of [-1, 1]) inkEllipse(sx * 21, -17, 10, 10, 0, INK);          // ears
-    inkEllipse(0, 0, 31, 26, 0, pen ? INK : WHITE);
-    if (pen) {
-      ctx.beginPath(); ctx.ellipse(0, 4, 22, 17, 0, 0, 6.2832); ctx.fillStyle = WHITE; ctx.fill();
-      eye(blink, -11, -2, 5, 6.5, INK); eye(blink, 11, -2, 5, 6.5, INK);
-      ctx.beginPath(); ctx.ellipse(0, 8, 5.5, 3.8, 0, 0, 6.2832); ctx.fillStyle = ORANGE; ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 2.4; ctx.stroke();
+      ell(-RX * 0.98, RY * 0.12, 8, 15, 0.5, INK); ell(RX * 0.98, RY * 0.12, 8, 15, -0.5, INK);       // flippers
+      ell(-RX * 0.42, RY * 0.94, 13, 6.5, 0, ORANGE); ell(RX * 0.42, RY * 0.94, 13, 6.5, 0, ORANGE);  // feet
+      ell(0, 0, RX, RY, 0, INK);
+      ell(0, RY * 0.22, RX * 0.64, RY * 0.64, 0, WHITE, false);                                       // belly
+      eye(-RX * 0.3, -RY * 0.3, 6.5, blink, true); eye(RX * 0.3, -RY * 0.3, 6.5, blink, true);
+      ell(0, -RY * 0.06, 6.5, 4.2, 0, ORANGE);                                                         // beak
+      blush(-RX * 0.62, -RY * 0.02); blush(RX * 0.62, -RY * 0.02);
     } else {
-      for (const sx of [-1, 1]) { ctx.beginPath(); ctx.ellipse(sx * 12, -2, 8, 10.5, sx * 0.4, 0, 6.2832); ctx.fillStyle = INK; ctx.fill(); }
-      eye(blink, -12, -3, 3.6, 4.4, WHITE); eye(blink, 12, -3, 3.6, 4.4, WHITE);
-      ctx.beginPath(); ctx.ellipse(0, 8, 4.6, 3.2, 0, 0, 6.2832); ctx.fillStyle = INK; ctx.fill();
+      ell(-RX * 0.68, -RY * 0.8, 11, 11, 0, INK); ell(RX * 0.68, -RY * 0.8, 11, 11, 0, INK);          // ears
+      ell(-RX * 0.97, RY * 0.2, 9, 16, 0.45, INK); ell(RX * 0.97, RY * 0.2, 9, 16, -0.45, INK);       // arms
+      ell(-RX * 0.52, RY * 0.92, 13, 10, 0, INK); ell(RX * 0.52, RY * 0.92, 13, 10, 0, INK);          // legs
+      ell(0, 0, RX, RY, 0, WHITE);
+      ell(-RX * 0.32, -RY * 0.1, 8.5, 11, 0.45, INK, false); ell(RX * 0.32, -RY * 0.1, 8.5, 11, -0.45, INK, false);
+      eye(-RX * 0.32, -RY * 0.12, 3.8, blink, false); eye(RX * 0.32, -RY * 0.12, 3.8, blink, false);
+      ell(0, RY * 0.16, 5.5, 3.6, 0, INK, false);
+      ctx.strokeStyle = INK; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.arc(-3, RY * 0.2, 3.2, 0.1, 1.5); ctx.stroke(); ctx.beginPath(); ctx.arc(3, RY * 0.2, 3.2, 1.64, 3.0); ctx.stroke();
+      blush(-RX * 0.64, RY * 0.24); blush(RX * 0.64, RY * 0.24);
     }
-    blush(-21, 9); blush(21, 9);
     ctx.restore();
     if (pl.blink > 0) pl.blink--;
   }
@@ -205,26 +185,22 @@
   // ---------------------------------------------------------------- interaction (page-wide)
   let drag = null, down = null, swallowClick = false;
   function pick(p) {
-    let best = null, bd = 1e9;
     for (const pl of plushes) {
-      for (const k in pl.n) {
-        const d = Math.hypot(pl.n[k].x - p.x, pl.n[k].y - p.y) - pl.n[k].r;
-        if (d < 18 && d < bd) { bd = d; best = { pl, node: pl.n[k] }; }
-      }
-      const a = pl.n.neck, b = pl.n.hip;
-      const ab = { x: b.x - a.x, y: b.y - a.y }, t = Math.max(0, Math.min(1, ((p.x - a.x) * ab.x + (p.y - a.y) * ab.y) / (ab.x * ab.x + ab.y * ab.y || 1)));
-      const d = Math.hypot(a.x + ab.x * t - p.x, a.y + ab.y * t - p.y);
-      if (d < 30 && !best) best = { pl, node: pl.n.hip };
+      const c = pl.n.c;
+      if (((p.x - c.x) / 46) ** 2 + ((p.y - c.y) / 42) ** 2 > 1) continue;
+      let best = c, bd = Math.hypot(p.x - c.x, p.y - c.y) - 12;
+      for (const k of ["t", "b", "l", "r"]) { const d = Math.hypot(p.x - pl.n[k].x, p.y - pl.n[k].y); if (d < bd) { bd = d; best = pl.n[k]; } }
+      return { pl, node: best };
     }
-    return best;
+    return null;
   }
   function say(pl) {
     if (!bubble) return;
     const lines = LINES[pl.kind];
     bubble.textContent = lines[pl.line++ % lines.length];
     bubble.classList.add("show");
-    bubble.style.left = Math.min(Math.max(pl.n.head.x - 40, 8), W - 240) + "px";
-    bubble.style.top = Math.max(pl.n.head.y - 70, 8) + "px";
+    bubble.style.left = Math.min(Math.max(pl.n.c.x - 40, 8), W - 200) + "px";
+    bubble.style.top = Math.max(pl.n.c.y - 96, 8) + "px";
     clearTimeout(say.t); say.t = setTimeout(() => bubble.classList.remove("show"), 2200);
   }
 
@@ -234,6 +210,7 @@
     if (!hit) return;
     e.preventDefault();
     hit.node.pin = true;
+    hit.pl.awakeUntil = performance.now() + 60000;
     drag = { ...hit, off: { x: hit.node.x - e.clientX, y: hit.node.y - e.clientY }, target: { x: hit.node.x, y: hit.node.y } };
     down = { x: e.clientX, y: e.clientY, t: performance.now(), moved: 0 };
     swallowClick = true;
@@ -252,9 +229,10 @@
     if (!drag) return;
     const { pl, node } = drag;
     node.pin = false;
+    pl.awakeUntil = performance.now() + 2500;
     if (down.moved < 6 && performance.now() - down.t < 350) {
-      for (const k in pl.n) pl.n[k].py = pl.n[k].y + 9;   // boing
-      pl.blink = 8; say(pl);
+      for (const k in pl.n) pl.n[k].py = pl.n[k].y + 10;   // boing
+      pl.blink = 10; say(pl);
     }
     drag = null; root.classList.remove("plush-drag");
     setTimeout(() => { swallowClick = false; }, 0);
@@ -269,9 +247,10 @@
     last = now;
     if (drag) { drag.node.px = drag.node.x; drag.node.py = drag.node.y; drag.node.x = drag.target.x; drag.node.y = drag.target.y; }
     readMasses();
-    step();
+    step(performance.now());
     ctx.clearRect(0, 0, W, H);
-    for (const pl of plushes) draw(pl, now);
+    for (const pl of plushes) draw(pl);
   }
+  window.__plush = () => plushes;      // handy for tests
   requestAnimationFrame(frame);
 })();
