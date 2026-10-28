@@ -15,23 +15,22 @@ ROOT = pathlib.Path(__file__).parent
 OUT = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT
 
 NAV = [("index.html", "home"), ("research.html", "research"), ("blog.html", "blog"),
-       ("Trevor_Chen_Resume.pdf", "cv")]
+       ("learning.html", "learning"), ("Trevor_Chen_Resume.pdf", "cv")]
 
 # hobby "holes": slug, label, hover tip, margin position (left %, top %, px size)
 HOLES = [
-    ("crochet", "crochet", "amigurumi. currently learning stitches.", 3, 15, 64),
-    ("guitar", "guitar", "currently learning Let Her Go.", 1.5, 37, 36),
-    ("skateboarding", "skateboarding", "falling is part of the curriculum.", 4, 60, 52),
-    ("movies", "movies", "Spider-Verse, 12 Angry Men, unpopular opinions.", 2, 82, 42),
-    ("badminton", "badminton", "ask me for a game.", 95, 20, 58),
-    ("figure-skating", "figure skating", "not competitive. I can do an axel.", 97, 48, 34),
-    ("anime", "anime / manga / LN", "I don't believe in real books.", 94, 74, 70),
+    ("crochet", "crochet", "amigurumi. currently learning stitches.", -1.2, 21, 76),
+    ("guitar", "guitar", "currently learning Let Her Go.", 4.6, 43, 26),
+    ("skateboarding", "skateboarding", "falling is part of the curriculum.", 0.6, 68, 44),
+    ("movies", "movies", "Spider-Verse, 12 Angry Men, some unpopular opinions.", 5.6, 88, 20),
+    ("badminton", "badminton", "ask me for a game.", 98.2, 12, 56),
+    ("figure-skating", "figure skating", "not competitive. I can do an axel.", 94.4, 37, 22),
+    ("anime", "anime / manga / LN", "I don't believe in real books.", 97.8, 61, 84),
 ]
 
-TICKER = ("working on closed-loop discovery with Krause (ETH) + Arnold (Caltech) *** "
+TICKER = ("working on closed-loop discovery with Krause (ETH Zurich) and Arnold (Caltech) *** "
           "NeurIPS 2026 accepted *** ICLR + CVPR under review *** "
-          "currently learning RL, evals, operating systems, distributed computing *** "
-          "poke the holes. poke the plushes. ")
+          "currently learning RL, evals, operating systems, distributed computing *** ")
 
 KATEX = """  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
@@ -47,9 +46,6 @@ def page(path, title, body, current="", extra_head="", extra_js=()):
     holes_margin = "".join(
         f'<a class="hole" href="{root}hobbies/{slug}.html" data-label="{label}" data-tip="{tip}" '
         f'style="left:{x}%;top:{y}%;width:{s}px;height:{round(s * 0.86)}px" aria-label="{label}"></a>'
-        for slug, label, tip, x, y, s in HOLES)
-    holes_row = "".join(
-        f'<a class="hole-mini" href="{root}hobbies/{slug}.html"><span class="blob"></span>{label}</a>'
         for slug, label, tip, x, y, s in HOLES)
     scripts = "".join(f'  <script src="{root}{s}"></script>\n' for s in extra_js)
     doc = f"""<!doctype html>
@@ -90,15 +86,13 @@ def page(path, title, body, current="", extra_head="", extra_js=()):
   </main>
 
   <footer>
-    <div class="holes-row"><span class="holes-label">the holes</span>{holes_row}</div>
-    <div class="plush-stage" id="plush-stage">
-      <canvas id="plush" aria-label="Two plush toys, a penguin and a panda. Drag them around."></canvas>
-      <div class="bubble" id="bubble"></div>
-      <p class="plush-hint">drag the plushes. poke them.</p>
-    </div>
     <div class="foot-line">
       <span class="tag">2026 &middot; trevorbchen</span>
       <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    </div>
+    <div class="plush-stage" id="plush-stage">
+      <canvas id="plush" aria-label="A penguin and a panda plush sitting in the corner of the page"></canvas>
+      <div class="bubble" id="bubble"></div>
     </div>
   </footer>
 
@@ -181,21 +175,18 @@ def build_home():
     hero = panel("hi", """          <div class="hero">
           <div>
           <h2>hi, i'm trevor.</h2>
-          <p class="lede">I'm an undergrad at Caltech doing research in diffusion models and AI for science, mostly bio, with side quests in interpretability and theory.</p>
-          <p>I'm lucky to work with <a href="https://www.yisongyue.com/">Yisong Yue</a> and <a href="https://www.vision.caltech.edu/">Pietro Perona</a> at Caltech,
-          <a href="https://las.inf.ethz.ch/">Andreas Krause</a>'s group at ETH Zurich, and <a href="https://cheme.caltech.edu/groups/fha/">Frances Arnold</a>'s lab.
-          Before that I co-founded <a href="https://ascade.co/">Ascade</a>, which was accepted to YC F25, until May 2026, then went back to research (<a href="posts/leaving-startups.html">here's why</a>).</p>
-          <p class="small">This is also where I put the things that don't fit in a paper: failed theories, bad bets, and hobbies. The black holes on the sides are doors.</p>
+          <p class="lede">I'm an undergrad at Caltech doing research on how generative models learn, what they represent inside, and how to use them to discover things.</p>
+          <p>Most of my work is on <b>diffusion models</b> and <b>AI for science</b>, especially biology: steering generative models toward molecules and proteins with very few expensive experiments, using reinforcement learning, active learning, and increasingly a closed loop with a real wet lab. I'm also interested in why diffusion models generalize instead of memorizing, in what's inside them (sparse autoencoders and interpretability), and in the theory underneath all of it. I started in physics and biology, so I like problems where the oracle is the real world.</p>
+          <p>I work with <a href="https://www.yisongyue.com/">Yisong Yue</a> and <a href="https://www.vision.caltech.edu/">Pietro Perona</a> at Caltech, <a href="https://las.inf.ethz.ch/">Andreas Krause</a>'s group at ETH Zurich, and <a href="https://cheme.caltech.edu/groups/fha/">Frances Arnold</a>'s lab. Before that, I co-founded <a href="https://ascade.co/">Ascade</a>.</p>
           </div>
           <div>
-            <a class="portal" href="renderer.html" title="open the black hole renderer"><canvas id="cam" aria-label="A black hole bending starlight. Click to open the full renderer."></canvas></a>
-            <p class="portal-note">click the black hole</p>
+            <a class="portal" href="renderer.html" title="open the black hole renderer"><canvas id="cam" aria-label="A black hole bending starlight. Opens the full renderer."></canvas></a>
           </div>
           </div>""")
     now = panel("currently", """          <ul class="now">
             <li><b>Working on</b> closed-loop discovery with Andreas Krause's group (ETH Zurich) and Frances Arnold's lab: language models propose hypotheses, generative models turn them into designs, and the wet lab says yes or no.</li>
             <li><b>Writing</b> two submissions: sparse-autoencoder dictionaries (<a href="posts/sae-families.html">CVPR</a>) and why diffusion models memorize late (<a href="posts/memorization.html">ICLR</a>).</li>
-            <li><b>Learning</b> reinforcement learning, evals, operating systems and distributed computing.</li>
+            <li><b>Learning</b> reinforcement learning, evals, operating systems and distributed computing (<a href="learning.html">my reading list</a>).</li>
           </ul>""", "pink")
     show = panel("start here", """          <div class="grid grid-3">
             <a class="comic" href="posts/pangram.html">
@@ -349,32 +340,26 @@ def shelf(items):
 
 HOBBY_PAGES = {
     "crochet": ("Crochet", "Hole 01", """
-          <p class="lede">I crochet <b>amigurumi</b>: small stuffed creatures stitched in spirals.</p>
-          <p>Right now I'm <b>learning stitches</b>. Every new stitch unlocks a shape you couldn't make before, which makes it the most reliably satisfying learning curve I have.</p>
-          <p>The plushes at the bottom of this site are, spiritually, crochet. Go poke them.</p>"""),
+          <p class="lede">I crochet amigurumi, the small stuffed creatures.</p>
+          <p>Right now I'm learning stitches.</p>"""),
     "guitar": ("Guitar", "Hole 02", """
-          <p class="lede">Currently learning: <b>Let Her Go</b>.</p>
-          <p>I'm at the stage where my fingertips have opinions and my chord changes are a sequence of small lies. It's good for me.</p>"""),
+          <p class="lede">I play guitar.</p>
+          <p>Currently learning <b>Let Her Go</b>.</p>"""),
     "skateboarding": ("Skateboarding", "Hole 03", """
-          <p class="lede">I skateboard.</p>
-          <p>It's the one hobby where falling down is an official part of the learning process, which I find weirdly reassuring when research is also mostly falling down.</p>"""),
+          <p class="lede">I skateboard.</p>"""),
     "movies": ("Movies", "Hole 04", f"""
-          <p class="lede">Yes, the site is Spider-Verse on purpose.</p>
           <h3>favorites</h3>
           {shelf(["<b>Spider-Man: Into the Spider-Verse</b> (and Across)", "<b>Arcane</b> (show)", "<b>12 Angry Men</b>", "<b>The Truman Show</b>",
                   "<b>Avatar: The Last Airbender</b> (show)", "<b>A Clockwork Orange</b>", "<b>Fight Club</b>", "<b>The Battle of Algiers</b>",
                   "<b>Eternal Sunshine of the Spotless Mind</b>"])}
           <h3>unpopular opinions</h3>
-          <p>I don't really like <b>Inception</b>, <b>Interstellar</b>, <b>The Godfather</b>, <b>Mission Impossible</b>, or the <b>Avengers</b> movies.</p>
-          <p class="small">(I did render a black hole because of Kip Thorne, so I'm not fully immune to Interstellar.)</p>"""),
+          <p>I don't really like <b>Inception</b>, <b>Interstellar</b>, <b>The Godfather</b>, <b>Mission Impossible</b>, or the <b>Avengers</b> movies.</p>"""),
     "badminton": ("Badminton", "Hole 05", """
-          <p class="lede">I play badminton.</p>
-          <p>Ask me for a game.</p>"""),
+          <p class="lede">I play badminton.</p>"""),
     "figure-skating": ("Figure skating", "Hole 06", """
-          <p class="lede">I used to figure skate, never competitively.</p>
-          <p>I can do an <b>axel</b>. It's the only jump that takes off going forward, which is why a single axel is a full one-and-a-half rotations. It's also the first one that feels like flying.</p>"""),
+          <p class="lede">I used to figure skate, not competitively. I can do an axel.</p>"""),
     "anime": ("Anime, manga &amp; light novels", "Hole 07", f"""
-          <p class="lede">I don't believe in real books. wtf.</p>
+          <p class="lede">I don't believe in real books.</p>
           <h3>anime / manga</h3>
           {shelf(["<b>A Silent Voice</b>", "<b>Takopi's Original Sin</b>", "<b>Goodnight Punpun</b>", "<b>Three Days of Happiness</b>",
                   "<b>Princess Tutu</b>", "<b>Code Geass</b>", "<b>Vagabond</b>", "<b>Monster</b>", "<b>Jujutsu Kaisen</b>", "<b>Medalist</b>",
@@ -386,9 +371,89 @@ HOBBY_PAGES = {
 
 def build_hobbies():
     for slug, (title, hole, inner) in HOBBY_PAGES.items():
-        body = panel(hole, f"""          <p class="back"><a href="../index.html">&larr; back to the surface</a></p>
+        body = panel(hole, f"""          <p class="back"><a href="../index.html">&larr; home</a></p>
           <h2>{title}</h2>{inner}""", "violet")
         page(f"hobbies/{slug}.html", f"{title} | Trevor Chen", body, "")
+
+
+
+# ---------------------------------------------------------------- learning
+def build_learning():
+    def item(title, url=None, note=""):
+        t = f'<a href="{url}">{title}</a>' if url else title
+        return f'            <li><b>{t}</b>' + (f'<span>{note}</span>' if note else "") + "</li>"
+
+    def sec(name, items, color=""):
+        return panel(name, '          <ul class="reading">\n' + "\n".join(item(*i) for i in items) + "\n          </ul>", color)
+
+    intro = panel("learning", """          <h2>learning</h2>
+          <p class="lede">What I've worked through, and the roadmap I keep for learning modern AI engineering.</p>
+          <p>I'm currently learning reinforcement learning, evals, operating systems and distributed computing. Gotta use Twitter/X to keep up, too.</p>""", "gold")
+    taken = sec("courses i've taken", [
+        ("Stanford's distributed computing course", None, ""),
+        ("CMU's operating systems course", None, ""),
+        ("Hands-On Modern RL", "https://walkinglabs.github.io/hands-on-modern-rl/preface/introduction", "reinforcement learning, hands on"),
+    ], "pink")
+    s0 = sec("general intuition", [
+        ("CS229", None, "ML fundamentals: convex optimization, deep neural networks, data"),
+        ("Welch Labs", "https://www.youtube.com/@WelchLabs", "good for general intuition"),
+    ])
+    s1 = sec("1. canonical LLM understanding", [
+        ("Karpathy, Neural Networks: Zero to Hero", "https://karpathy.ai/zero-to-hero.html", "the backbone series: backprop up to a full GPT and tokenizer from scratch"),
+        ("Karpathy, Deep Dive into LLMs like ChatGPT", None, "pretrain, SFT, RLHF end to end"),
+        ("3Blue1Brown, Deep Learning (ch. 5-7)", "https://www.3blue1brown.com/topics/neural-networks", "attention, visually"),
+        ("The Illustrated Transformer / The Illustrated GPT-2", "https://jalammar.github.io/illustrated-transformer/", "Jay Alammar; the best static visual reference"),
+        ("RoPE", "https://blog.eleuther.ai/rotary-embeddings/", "EleutherAI; the rotation intuition without the math grind"),
+        ("Attention variants (MQA / GQA), in-context learning, chain-of-thought reasoning, scaling laws", None, ""),
+        ("CS336", "https://stanford-cs336.github.io/spring2025/", "Stanford; LLM fundamentals plus systems, free on YouTube"),
+    ], "cyan")
+    s2 = sec("2. RL", [
+        ("Nathan Lambert's post-training course and RLHF Book", "https://rlhfbook.com", "overview, reward models, rejection sampling, RL math and implementation, reasoning and inference-time scaling, RLVR, distillation. Built for LLM post-training."),
+        ("Spinning Up in Deep RL", "https://spinningup.openai.com", "OpenAI; raw RL intuition, policy gradients, value functions"),
+    ])
+    s3 = sec("3. direction of the field", [
+        ("Karpathy, Software Is Changing (Again)", None, "the Software 3.0 keynote at YC AI Startup School"),
+        ("Ilya Sutskever's talks on scaling", None, "they age well for intuition"),
+        ("Lilian Weng's blog", "https://lilianweng.github.io", "ahead of where the conversation ends up"),
+        ("Dwarkesh Patel's podcast", "https://www.dwarkesh.com", "long interviews with researchers at labs"),
+    ], "violet")
+    s4 = sec("4. agents and modern LLMs", [
+        ("Anthropic, Building Effective Agents", "https://www.anthropic.com/engineering/building-effective-agents", "workflows vs. agents, and when you need which"),
+        ("12-Factor Agents", "https://github.com/humanlayer/12-factor-agents", "Dex Horthy; principles from teams that shipped production agents. Context engineering is the real skill."),
+        ("Tool use", None, ""),
+    ])
+    s5 = sec("5. AI engineering practice", [
+        ("Prompting docs from Anthropic and OpenAI, and the OpenAI Cookbook", None, "genuinely sufficient on their own"),
+        ("Eugene Yan on evals and LLM-evaluators", "https://eugeneyan.com", "task-specific evals; validating LLM-as-judge against human labels"),
+        ("Shreya Shankar", "https://www.shreya-shankar.com", "the research side of evals; the Three Gulfs framing; DocETL and EvalGen"),
+    ], "pink")
+    s6 = sec("6. practical basics", [
+        ("The Invention of LoRA, by Edward Hu", None, "straight from LoRA's creator"),
+        ("QLoRA", "https://magazine.sebastianraschka.com", "Sebastian Raschka's blog covers the quantization layer"),
+        ("Defeating Nondeterminism in LLM Inference", "https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/", "Thinking Machines; kernels aren't batch-invariant, and batch size varies under load"),
+        ("Prompt injection", "https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/", "Simon Willison; the lethal trifecta: untrusted content, private data, exfiltration"),
+    ], "gold")
+    s7 = sec("7. systems", [
+        ("KV caching", None, "why it exists; memory grows with sequence length x layers x heads"),
+        ("Mixture of Experts Explained", "https://huggingface.co/blog/moe", "Hugging Face; routing and load balancing"),
+        ("Flash attention", None, "Umar Jamil's coding video, or Tri Dao's blog on why it's IO-aware rather than FLOPs-bound"),
+        ("RAG and chunking", None, "Pinecone's chunking write-up; the skill is knowing when RAG is the wrong tool"),
+        ("How to generate text", "https://huggingface.co/blog/how-to-generate", "Hugging Face; top-k, top-p, temperature, and why greedy decoding degenerates"),
+        ("Policy drift and designing evals", None, "why the eval harness has to run continuously, not just before launch"),
+        ("The Ultra-Scale Playbook", "https://huggingface.co/spaces/nanotron/ultrascale-playbook", "Hugging Face; data, tensor and pipeline parallelism, all-reduce, bandwidth bottlenecks"),
+        ("Inside vLLM", "https://blog.vllm.ai", "PagedAttention and continuous batching"),
+    ], "cyan")
+    s8 = sec("8. blogs and channels worth following", [
+        ("Thinking Machines Lab", "https://thinkingmachines.ai/blog/", "every post a real systems-intuition deep dive"),
+        ("Sebastian Raschka, Ahead of AI", "https://magazine.sebastianraschka.com", "consistent and technical"),
+        ("vLLM blog, LMSYS and SGLang blogs", "https://blog.vllm.ai", "serving lessons as they're learned"),
+        ("Anthropic engineering blog and OpenAI's blog", None, "primary sources from the labs"),
+        ("Chip Huyen", "https://huyenchip.com/blog/", "production and evals"),
+        ("Hamel Husain", "https://hamel.dev", "evals specifically"),
+        ("Jia-Bin Huang (YouTube)", "https://www.youtube.com/c/JiaBinHuang", "technical, and very good for research ideas"),
+        ("AI Explained (YouTube)", "https://www.youtube.com/@aiexplained-official", "AI news"),
+    ], "violet")
+    page("learning.html", "learning | Trevor Chen", "\n\n".join([intro, taken, s0, s1, s2, s3, s4, s5, s6, s7, s8]), "learning.html")
 
 
 # ---------------------------------------------------------------- tools
@@ -425,6 +490,7 @@ if __name__ == "__main__":
     build_blog(posts)
     build_hobbies()
     build_renderer()
+    build_learning()
     exp = ROOT / "explorer_page.py"
     if exp.exists():
         import importlib.util

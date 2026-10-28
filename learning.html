@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>learning | Trevor Chen</title>
+  <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-root="">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="boil"><feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="0"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+    <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
+  </svg>
+  <canvas id="dots" aria-hidden="true"></canvas>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="hobbies/crochet.html" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:-1.2%;top:21%;width:76px;height:65px" aria-label="crochet"></a><a class="hole" href="hobbies/guitar.html" data-label="guitar" data-tip="currently learning Let Her Go." style="left:4.6%;top:43%;width:26px;height:22px" aria-label="guitar"></a><a class="hole" href="hobbies/skateboarding.html" data-label="skateboarding" data-tip="falling is part of the curriculum." style="left:0.6%;top:68%;width:44px;height:38px" aria-label="skateboarding"></a><a class="hole" href="hobbies/movies.html" data-label="movies" data-tip="Spider-Verse, 12 Angry Men, some unpopular opinions." style="left:5.6%;top:88%;width:20px;height:17px" aria-label="movies"></a><a class="hole" href="hobbies/badminton.html" data-label="badminton" data-tip="ask me for a game." style="left:98.2%;top:12%;width:56px;height:48px" aria-label="badminton"></a><a class="hole" href="hobbies/figure-skating.html" data-label="figure skating" data-tip="not competitive. I can do an axel." style="left:94.4%;top:37%;width:22px;height:19px" aria-label="figure skating"></a><a class="hole" href="hobbies/anime.html" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:97.8%;top:61%;width:84px;height:72px" aria-label="anime / manga / LN"></a></div>
+  <div id="tip" class="tip" role="tooltip"></div>
+
+  <header class="top">
+    <div>
+      <p class="logo"><a href="index.html">TREVOR CHEN</a></p>
+      <p class="tagline">diffusion / ai for science / interpretability</p>
+    </div>
+    <nav class="nav" aria-label="site">
+      <a href="index.html">home</a>
+      <a href="research.html">research</a>
+      <a href="blog.html">blog</a>
+      <a href="learning.html" aria-current="page">learning</a>
+      <a href="Trevor_Chen_Resume.pdf">cv</a>
+    </nav>
+  </header>
+  <div class="ticker" aria-hidden="true"><div class="track"><span>working on closed-loop discovery with Krause (ETH Zurich) and Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** </span><span>working on closed-loop discovery with Krause (ETH Zurich) and Arnold (Caltech) *** NeurIPS 2026 accepted *** ICLR + CVPR under review *** currently learning RL, evals, operating systems, distributed computing *** </span></div></div>
+
+  <main>
+      <section class="panel gold">
+        <span class="caption">learning</span>
+          <h2>learning</h2>
+          <p class="lede">What I've worked through, and the roadmap I keep for learning modern AI engineering.</p>
+          <p>I'm currently learning reinforcement learning, evals, operating systems and distributed computing. Gotta use Twitter/X to keep up, too.</p>
+      </section>
+
+      <section class="panel pink">
+        <span class="caption">courses i've taken</span>
+          <ul class="reading">
+            <li><b>Stanford's distributed computing course</b></li>
+            <li><b>CMU's operating systems course</b></li>
+            <li><b><a href="https://walkinglabs.github.io/hands-on-modern-rl/preface/introduction">Hands-On Modern RL</a></b><span>reinforcement learning, hands on</span></li>
+          </ul>
+      </section>
+
+      <section class="panel">
+        <span class="caption">general intuition</span>
+          <ul class="reading">
+            <li><b>CS229</b><span>ML fundamentals: convex optimization, deep neural networks, data</span></li>
+            <li><b><a href="https://www.youtube.com/@WelchLabs">Welch Labs</a></b><span>good for general intuition</span></li>
+          </ul>
+      </section>
+
+      <section class="panel cyan">
+        <span class="caption">1. canonical LLM understanding</span>
+          <ul class="reading">
+            <li><b><a href="https://karpathy.ai/zero-to-hero.html">Karpathy, Neural Networks: Zero to Hero</a></b><span>the backbone series: backprop up to a full GPT and tokenizer from scratch</span></li>
+            <li><b>Karpathy, Deep Dive into LLMs like ChatGPT</b><span>pretrain, SFT, RLHF end to end</span></li>
+            <li><b><a href="https://www.3blue1brown.com/topics/neural-networks">3Blue1Brown, Deep Learning (ch. 5-7)</a></b><span>attention, visually</span></li>
+            <li><b><a href="https://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer / The Illustrated GPT-2</a></b><span>Jay Alammar; the best static visual reference</span></li>
+            <li><b><a href="https://blog.eleuther.ai/rotary-embeddings/">RoPE</a></b><span>EleutherAI; the rotation intuition without the math grind</span></li>
+            <li><b>Attention variants (MQA / GQA), in-context learning, chain-of-thought reasoning, scaling laws</b></li>
+            <li><b><a href="https://stanford-cs336.github.io/spring2025/">CS336</a></b><span>Stanford; LLM fundamentals plus systems, free on YouTube</span></li>
+          </ul>
+      </section>
+
+      <section class="panel">
+        <span class="caption">2. RL</span>
+          <ul class="reading">
+            <li><b><a href="https://rlhfbook.com">Nathan Lambert's post-training course and RLHF Book</a></b><span>overview, reward models, rejection sampling, RL math and implementation, reasoning and inference-time scaling, RLVR, distillation. Built for LLM post-training.</span></li>
+            <li><b><a href="https://spinningup.openai.com">Spinning Up in Deep RL</a></b><span>OpenAI; raw RL intuition, policy gradients, value functions</span></li>
+          </ul>
+      </section>
+
+      <section class="panel violet">
+        <span class="caption">3. direction of the field</span>
+          <ul class="reading">
+            <li><b>Karpathy, Software Is Changing (Again)</b><span>the Software 3.0 keynote at YC AI Startup School</span></li>
+            <li><b>Ilya Sutskever's talks on scaling</b><span>they age well for intuition</span></li>
+            <li><b><a href="https://lilianweng.github.io">Lilian Weng's blog</a></b><span>ahead of where the conversation ends up</span></li>
+            <li><b><a href="https://www.dwarkesh.com">Dwarkesh Patel's podcast</a></b><span>long interviews with researchers at labs</span></li>
+          </ul>
+      </section>
+
+      <section class="panel">
+        <span class="caption">4. agents and modern LLMs</span>
+          <ul class="reading">
+            <li><b><a href="https://www.anthropic.com/engineering/building-effective-agents">Anthropic, Building Effective Agents</a></b><span>workflows vs. agents, and when you need which</span></li>
+            <li><b><a href="https://github.com/humanlayer/12-factor-agents">12-Factor Agents</a></b><span>Dex Horthy; principles from teams that shipped production agents. Context engineering is the real skill.</span></li>
+            <li><b>Tool use</b></li>
+          </ul>
+      </section>
+
+      <section class="panel pink">
+        <span class="caption">5. AI engineering practice</span>
+          <ul class="reading">
+            <li><b>Prompting docs from Anthropic and OpenAI, and the OpenAI Cookbook</b><span>genuinely sufficient on their own</span></li>
+            <li><b><a href="https://eugeneyan.com">Eugene Yan on evals and LLM-evaluators</a></b><span>task-specific evals; validating LLM-as-judge against human labels</span></li>
+            <li><b><a href="https://www.shreya-shankar.com">Shreya Shankar</a></b><span>the research side of evals; the Three Gulfs framing; DocETL and EvalGen</span></li>
+          </ul>
+      </section>
+
+      <section class="panel gold">
+        <span class="caption">6. practical basics</span>
+          <ul class="reading">
+            <li><b>The Invention of LoRA, by Edward Hu</b><span>straight from LoRA's creator</span></li>
+            <li><b><a href="https://magazine.sebastianraschka.com">QLoRA</a></b><span>Sebastian Raschka's blog covers the quantization layer</span></li>
+            <li><b><a href="https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/">Defeating Nondeterminism in LLM Inference</a></b><span>Thinking Machines; kernels aren't batch-invariant, and batch size varies under load</span></li>
+            <li><b><a href="https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/">Prompt injection</a></b><span>Simon Willison; the lethal trifecta: untrusted content, private data, exfiltration</span></li>
+          </ul>
+      </section>
+
+      <section class="panel cyan">
+        <span class="caption">7. systems</span>
+          <ul class="reading">
+            <li><b>KV caching</b><span>why it exists; memory grows with sequence length x layers x heads</span></li>
+            <li><b><a href="https://huggingface.co/blog/moe">Mixture of Experts Explained</a></b><span>Hugging Face; routing and load balancing</span></li>
+            <li><b>Flash attention</b><span>Umar Jamil's coding video, or Tri Dao's blog on why it's IO-aware rather than FLOPs-bound</span></li>
+            <li><b>RAG and chunking</b><span>Pinecone's chunking write-up; the skill is knowing when RAG is the wrong tool</span></li>
+            <li><b><a href="https://huggingface.co/blog/how-to-generate">How to generate text</a></b><span>Hugging Face; top-k, top-p, temperature, and why greedy decoding degenerates</span></li>
+            <li><b>Policy drift and designing evals</b><span>why the eval harness has to run continuously, not just before launch</span></li>
+            <li><b><a href="https://huggingface.co/spaces/nanotron/ultrascale-playbook">The Ultra-Scale Playbook</a></b><span>Hugging Face; data, tensor and pipeline parallelism, all-reduce, bandwidth bottlenecks</span></li>
+            <li><b><a href="https://blog.vllm.ai">Inside vLLM</a></b><span>PagedAttention and continuous batching</span></li>
+          </ul>
+      </section>
+
+      <section class="panel violet">
+        <span class="caption">8. blogs and channels worth following</span>
+          <ul class="reading">
+            <li><b><a href="https://thinkingmachines.ai/blog/">Thinking Machines Lab</a></b><span>every post a real systems-intuition deep dive</span></li>
+            <li><b><a href="https://magazine.sebastianraschka.com">Sebastian Raschka, Ahead of AI</a></b><span>consistent and technical</span></li>
+            <li><b><a href="https://blog.vllm.ai">vLLM blog, LMSYS and SGLang blogs</a></b><span>serving lessons as they're learned</span></li>
+            <li><b>Anthropic engineering blog and OpenAI's blog</b><span>primary sources from the labs</span></li>
+            <li><b><a href="https://huyenchip.com/blog/">Chip Huyen</a></b><span>production and evals</span></li>
+            <li><b><a href="https://hamel.dev">Hamel Husain</a></b><span>evals specifically</span></li>
+            <li><b><a href="https://www.youtube.com/c/JiaBinHuang">Jia-Bin Huang (YouTube)</a></b><span>technical, and very good for research ideas</span></li>
+            <li><b><a href="https://www.youtube.com/@aiexplained-official">AI Explained (YouTube)</a></b><span>AI news</span></li>
+          </ul>
+      </section>
+  </main>
+
+  <footer>
+    <div class="foot-line">
+      <span class="tag">2026 &middot; trevorbchen</span>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
+    </div>
+    <div class="plush-stage" id="plush-stage">
+      <canvas id="plush" aria-label="A penguin and a panda plush sitting in the corner of the page"></canvas>
+      <div class="bubble" id="bubble"></div>
+    </div>
+  </footer>
+
+  <div id="portal" aria-hidden="true"></div>
+  <script src="site.js"></script>
+  <script src="fx.js"></script>
+  <script src="plush.js"></script>
+  <script src="demos.js"></script>
+</body>
+</html>

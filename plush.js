@@ -10,9 +10,10 @@
   let W = 0, H = 0, dpr = 1;
 
   const LINES = {
-    penguin: ["squawk.", "I am a penguin. I have no opinions about diffusion models.", "poked. noted.", "waddle waddle.", "Trevor is learning to crochet things like me."],
-    panda: ["bamboo.exe has stopped responding.", "ow.", "I am load-bearing.", "yes, I am a panda. no, I will not elaborate.", "do not feed the sparse autoencoders."],
+    penguin: ["squawk.", "poked. noted."],
+    panda: ["ow.", "bamboo."],
   };
+
 
 
   class P {
@@ -38,7 +39,7 @@
   let plushes = [];
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = stage.clientWidth; H = stage.clientHeight;
+    W = canvas.clientWidth; H = canvas.clientHeight;
     canvas.width = W * dpr; canvas.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     if (!plushes.length) plushes = [makePlush("penguin", W * 0.32), makePlush("panda", W * 0.68)];
@@ -175,7 +176,7 @@
     const lines = LINES[pl.kind];
     bubble.textContent = lines[pl.line++ % lines.length];
     bubble.classList.add("show");
-    const x = Math.min(Math.max(pl.n.head.x - 40, 8), W - 260), y = Math.max(pl.n.head.y - 78, 26);
+    const x = canvas.offsetLeft + Math.min(Math.max(pl.n.head.x - 40, 4), W - 150), y = Math.max(pl.n.head.y - 74, 0);
     bubble.style.left = x + "px"; bubble.style.top = y + "px";
     clearTimeout(say.t); say.t = setTimeout(() => bubble.classList.remove("show"), 3000);
   }
@@ -214,7 +215,7 @@
   });
 
   let visible = true;
-  new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(stage);
+  new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(canvas);
   let last = 0;
   function frame(now) {
     requestAnimationFrame(frame);
@@ -224,8 +225,7 @@
     if (drag) { drag.node.px = drag.node.x; drag.node.py = drag.node.y; drag.node.x = drag.target.x; drag.node.y = drag.target.y; }
     if (!reduce || drag) step();
     ctx.clearRect(0, 0, W, H);
-    ctx.fillStyle = "rgba(17,16,21,0.08)";
-    ctx.beginPath(); ctx.ellipse(W / 2, H - 4, W * 0.4, 5, 0, 0, 6.2832); ctx.fill();
+    
     for (const pl of plushes) draw(pl, now);
   }
   requestAnimationFrame(frame);

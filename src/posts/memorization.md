@@ -49,4 +49,4 @@ I care about this part, so here are the limits stated plainly:
 
 It's a small piece of a bigger question I keep coming back to: *why do diffusion models generalize at all?* The exact optimal score function memorizes perfectly. Real networks don't, because of how they learn, not because they can't. Spectral timescales give a concrete handle on that. It's also the cleanest connection I've found between my diffusion work and the AI-for-science work, since in molecule and protein generation you are *always* operating where the training set is tiny and memorization is the failure mode you're trying not to fall into.
 
-The workshop version was with Ryan Shahbaba, Kevin Peng and Avni Garg. The extended ICLR 2027 submission (under review) is with Ryan.
+I presented the workshop version at ICML 2026 in Seoul, with Ryan Shahbaba, Kevin Peng and Avni Garg as coauthors. The extended ICLR 2027 submission (under review) is with Ryan.

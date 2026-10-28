@@ -6,7 +6,7 @@ tags: startups, research, personal
 blurb: Ascade, a YC acceptance I didn't take, and why my co-founder is still one of my closest friends. How I figured out I'm a researcher.
 ---
 
-For about a year I was a founder. I started **Ascade** in June 2025 with a close friend, Pius, and my time there ended in May 2026. I was accepted into Y Combinator's F25 batch, though I never went through the program. This isn't a story about something going badly, and it isn't a story about regret. It's about finding out which kind of problem I actually like.
+For about a year I was a founder. I started **Ascade** in June 2025 with a close friend, Pius, and my time there ended in May 2026. I was accepted into Y Combinator's F25 batch and chose not to go, because I wanted to do research. This isn't a story about something going badly, and it isn't a story about regret. It's about finding out which kind of problem I actually like.
 
 ## What we built
 
