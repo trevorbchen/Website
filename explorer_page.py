@@ -11,9 +11,9 @@ def build(page, panel):
         return
     data = DATA.read_text(encoding="utf-8").replace("</", "<\\/")
     intro = panel("interpretability explorer", """          <h2>interpretability explorer</h2>
-          <p class="small">Real activations from GPT-2 small (124M parameters), computed with PyTorch. Pick a prompt, click a token, and see what it attends to in every one of the 144 attention heads, how big its residual stream gets, and what the model would predict if you stopped reading after each layer (the <b>logit lens</b>). Everything is precomputed from the real model on these prompts. To try your own, run <code>python3 explorer/precompute.py "your prompt"</code> and rebuild.</p>
+          <p class="small">Real activations from GPT-2 small (124M parameters), computed with PyTorch: what a token attends to in each of the 144 heads, how large its residual stream gets, and what the model would predict if you stopped reading after each layer (the <b>logit lens</b>). Everything is precomputed on these prompts. For your own, run <code>python3 explorer/precompute.py "your prompt"</code> and rebuild.</p>
           <div class="xp-prompts" id="xp-prompts"></div>
-          <p class="small">Try it: on <b>Indirect object</b>, click the last token and pick head <b>9.6</b>. It reads from <b>"Mary"</b>, the answer. On <b>Induction</b>, head <b>5.5</b> puts 98% of its attention on <b>"Dave"</b>, the token that followed the previous "Carol", and the model predicts it.</p>
+          <p class="small">Worth trying: on <b>Indirect object</b>, click the last token and pick head <b>9.6</b>. It reads from <b>"Mary"</b>, the answer. On <b>Induction</b>, head <b>5.5</b> puts 98% of its attention on <b>"Dave"</b>, the token that followed the previous "Carol", and the model predicts it.</p>
           <p class="xp-label">1. click a token (the query)</p>
           <div class="xp-tokens" id="xp-tokens"></div>
           <p class="xp-attn" id="xp-attn"></p>

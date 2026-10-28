@@ -163,7 +163,7 @@ def build_posts(posts):
 {body_html}
       </article>"""
         page(f"posts/{p['slug']}.html", f"{p['title']} | Trevor Chen", inner, "blog.html",
-             extra_head=KATEX if math else "")
+             extra_head=KATEX if math else "", extra_js=tuple(p["js"].split()) if p.get("js") else ())
 
 
 # ---------------------------------------------------------------- home
@@ -171,8 +171,8 @@ def build_home():
     hero = panel("hi", """          <div class="hero">
           <div>
           <h2>hi, i'm trevor.</h2>
-          <p class="lede">I'm an undergrad at Caltech doing research on how generative models learn, what they represent inside, and how to use them to discover things.</p>
-          <p>Most of my work is on <b>diffusion models</b> and <b>AI for science</b>, especially biology: steering generative models toward molecules and proteins with very few expensive experiments, using reinforcement learning, active learning, and increasingly a closed loop with a real wet lab. I'm also interested in why diffusion models generalize instead of memorizing, in what's inside them (sparse autoencoders and interpretability), and in the theory underneath all of it. I started in physics and biology, so I like problems where the oracle is the real world.</p>
+          <p class="lede">I'm an undergrad at Caltech doing research in machine learning, mostly on diffusion models and AI for science.</p>
+          <p>I keep coming back to a few questions: how to explore and exploit most efficiently when every experiment is expensive, how to make reinforcement learning work in the sciences, and how to understand why a model fails rather than just that it does.</p>
           <p>I work with <a href="https://www.yisongyue.com/">Yisong Yue</a> and <a href="https://www.vision.caltech.edu/">Pietro Perona</a> at Caltech, <a href="https://las.inf.ethz.ch/">Andreas Krause</a>'s group at ETH Zurich, and <a href="https://cheme.caltech.edu/groups/fha/">Frances Arnold</a>'s lab. Before that, I co-founded <a href="https://ascade.co/">Ascade</a>.</p>
           </div>
           <div>
@@ -252,7 +252,7 @@ def build_research():
 
     intro = panel("research", """          <h2>research</h2>
           <p class="lede">I like problems where a model has to <em>find</em> something (a molecule, an enzyme, a feature, a failure mode) with as few expensive questions as possible.</p>
-          <p>Most of my current work is in <b>diffusion models</b> and <b>AI for science</b>, especially biology. I started in physics and moved through biology and then ML. Hover a row for a tiny live preview, click it for the write-up.</p>""", "gold")
+          <p>Underneath most of it are a few questions I keep returning to. How do you explore and exploit most efficiently when each experiment costs something? How do you make reinforcement learning work in AI for science? How do you interpret a model's failure modes instead of only measuring them? Right now that mostly means diffusion models and biology.</p>""", "gold")
     physics = area("physics", [
         row("Mid-IR gratings and a thermal camera for jet engines",
             "Diffraction gratings in use at national labs; an infrared borescope that survives flame.",
@@ -290,9 +290,9 @@ def build_research():
             ["essay"], "posts/diffusion-gaussians.html", "noise"),
     ], "")
     other = area("also", [
-        row("Formal verification at Ascade",
-            "Verified software for AI agents. Not research on this page, but the same itch.",
-            ["startup", "verification"], "https://ascade.co/", "graph"),
+        row("Specs, verifiers and counterexamples",
+            "Formal verification for AI agents at Ascade, and a loop you can break in the browser.",
+            ["verification", "demo"], "posts/verification-loop.html", "graph"),
     ], "gold")
     pubs = "\n".join(
         f'            <li>{t}<span class="who">{w}</span><span class="where{" soon" if soon else ""}">{v}</span></li>'
@@ -376,10 +376,11 @@ def build_learning():
     intro = panel("learning", """          <h2>learning</h2>
           <p class="lede">What I've worked through, and the roadmap I keep for learning modern AI engineering.</p>
           <p>I'm currently learning reinforcement learning, evals, operating systems and distributed computing. Gotta use Twitter/X to keep up, too.</p>""", "gold")
-    taken = sec("other universities", [
+    taken = sec("courses and books", [
         ("CMU 15-410, Operating System Design and Implementation", None, ""),
         ("Stanford CS 149, Parallel Computing", None, ""),
         ("Hands-On Modern RL", "https://walkinglabs.github.io/hands-on-modern-rl/preface/introduction", "reinforcement learning, hands on"),
+        ("Dive into Deep Learning", "https://d2l.ai/chapter_reinforcement-learning/value-iter.html", "the deep learning book, including its reinforcement learning chapters"),
     ], "pink")
     caltech = panel("caltech courses", """          <p class="k">machine learning and computer science</p>
           <ul class="reading">
