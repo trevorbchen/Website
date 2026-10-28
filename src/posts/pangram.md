@@ -4,6 +4,7 @@ date: 2026-08
 kind: project
 tags: AI safety, red-teaming, detection
 blurb: What I tried, why it worked, how Pangram's co-founder responded, and what I actually think about AI detection. I'm not releasing the code. Here's why.
+featured: yes
 ---
 
 In August I posted a long thread claiming I'd broken Pangram's AI-image detector "completely": I could turn any real image into one it flagged as AI, and any AI image into one it called real. This is the longer version: what I did, the reasoning, the reply from Pangram's co-founder, and where I've landed.

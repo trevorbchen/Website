@@ -22,7 +22,7 @@ NAV = [("index.html", "home"), ("research.html", "research"), ("blog.html", "blo
 # hobby "holes": slug, label, hover tip, margin position (left %, top %, px size)
 HOLES = [
     ("crochet", "crochet", "amigurumi. currently learning stitches.", -1.2, 21, 76),
-    ("guitar", "guitar", "currently learning Let Her Go.", 4.6, 43, 26),
+    ("guitar", "guitar", "currently learning Let Her Go and Stitches.", 4.6, 43, 26),
     ("skateboarding", "skateboarding", "", 0.6, 68, 44),
     ("movies", "movies", "favorites and unpopular opinions.", 5.6, 88, 20),
     ("badminton", "badminton", "", 98.2, 12, 56),
@@ -347,19 +347,23 @@ def build_hobbies():
     def hob(slug, name, inner=""):
         return f'          <li class="hob" id="{slug}"><h3>{name}</h3>{inner}</li>'
 
+    takes = [
+        ("Inception", "A clever premise and a great score. I never cared about anyone inside the dream."),
+        ("Interstellar", "The ideas are bigger than the people, and the film stops to tell you that love is a physical force."),
+        ("The Godfather", "I can see why it's loved. It just never grabbed me."),
+        ("Mission: Impossible", "Terrific stunts, and I've forgotten the plot before I leave the theatre."),
+        ("The Avengers films", "Enormous and fun, but a fight where nobody can really lose never holds my attention."),
+    ]
+    takes_html = '<ul class="takes">' + "".join(f"<li><b>{t}</b><span>{d}</span></li>" for t, d in takes) + "</ul>"
     items = [
-        hob("crochet", "Crochet", "<p>I crochet amigurumi. Currently learning stitches, and hoping to freehand dolls and design my own.</p>"),
-        hob("guitar", "Guitar", "<p>Currently learning <b>Let Her Go</b>.</p>"),
-        hob("skateboarding", "Skateboarding"),
         hob("movies", "Movies", f"""
             <p class="k">favorites</p>
             {shelf(["<b>Spider-Man: Into the Spider-Verse</b> (and Across)", "<b>Arcane</b> (show)", "<b>12 Angry Men</b>", "<b>The Truman Show</b>",
                     "<b>Avatar: The Last Airbender</b> (show)", "<b>A Clockwork Orange</b>", "<b>Fight Club</b>", "<b>The Battle of Algiers</b>",
                     "<b>Eternal Sunshine of the Spotless Mind</b>"])}
+            <p>Most of my favorites are about how people think, or how a system shapes them: a jury room, a town built around one man, a dystopia, an occupation, a relationship erased from memory.</p>
             <p class="k">unpopular opinions</p>
-            <p>I don't really like <b>Inception</b>, <b>Interstellar</b>, <b>The Godfather</b>, <b>Mission Impossible</b>, or the <b>Avengers</b> movies.</p>"""),
-        hob("badminton", "Badminton"),
-        hob("figure-skating", "Figure skating", "<p>I used to figure skate, not competitively. I can do an axel.</p>"),
+            {takes_html}"""),
         hob("anime", "Anime, manga &amp; light novels", f"""
             <p>I don't believe in real books.</p>
             <p class="k">anime / manga</p>
@@ -368,6 +372,15 @@ def build_hobbies():
                     "<b>Bungo Stray Dogs</b>", "<b>Steins;Gate</b>"])}
             <p class="k">(web) light novels</p>
             {shelf(["<b>Mother of Learning</b>", "<b>Lord of Mysteries</b>"])}"""),
+        hob("guitar", "Guitar", f"""
+            <p class="k">currently learning</p>
+            {shelf(["<b>Let Her Go</b> &middot; Passenger", "<b>Stitches</b> &middot; Shawn Mendes"])}
+            <p class="k">songs I can play</p>
+            {shelf(["<b>Blackbird</b> &middot; The Beatles", "<b>Wonderwall</b> &middot; Oasis", "<b>Riptide</b> &middot; Vance Joy", "a few <b>Lana Del Rey</b> songs"])}"""),
+        hob("crochet", "Crochet", "<p>I crochet amigurumi. Currently learning stitches, and hoping to freehand dolls and design my own.</p>"),
+        hob("figure-skating", "Figure skating", "<p>I used to figure skate, not competitively. I can do an axel.</p>"),
+        hob("skateboarding", "Skateboarding"),
+        hob("badminton", "Badminton"),
     ]
     body = panel("hobbies", "          <h2>hobbies</h2>\n          <ul class=\"hobs\">\n" + "\n".join(items) + "\n          </ul>", "violet")
     page("hobbies.html", "hobbies | Trevor Chen", body, "")

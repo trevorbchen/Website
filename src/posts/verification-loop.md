@@ -1,6 +1,6 @@
 ---
 title: Specs are the hard part
-date: 2026-10
+date: 2025-11
 kind: project
 tags: formal verification, AI agents, SMT solvers
 blurb: Most of formal verification isn't proving things. It's deciding what to prove, and a loop between a model that drafts specs and a verifier that refutes them. A small demo you can break.
@@ -31,7 +31,7 @@ Two things are worth noticing as it runs. First, the counterexample is the most 
 
 ## Why I like this for AI agents
 
-Verification is one of the rare places where the oracle is both cheap and exact. In my molecule work, one measurement can take weeks and tells you something noisy. A verifier answers in milliseconds and doesn't lie. That asymmetry is why reinforcement learning from verifiable rewards works so well on code and math, and it's why I think specs are going to matter more as agents write more of the code. A model that can write a program but can't say what the program is supposed to do has simply moved the bug.
+Verification is one of the rare places where the oracle is both cheap and exact. In biology, one measurement can take weeks and tells you something noisy. A verifier answers in milliseconds and doesn't lie. That asymmetry is why reinforcement learning from verifiable rewards works so well on code and math, and it's why I think specs are going to matter more as agents write more of the code. A model that can write a program but can't say what the program is supposed to do has simply moved the bug.
 
 Training the drafter against the verifier is the natural next step, because the reward is cheap and exact. It's the world the small model we built for formal-verification benchmarks lives in, and it's why a small model can compete there with much larger ones.
 

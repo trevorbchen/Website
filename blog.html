@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1793180517">
+  <link rel="stylesheet" href="style.css?v=1793180641">
 </head>
 <body data-root="">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -17,7 +17,7 @@
     <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
   </svg>
   <canvas id="dots" aria-hidden="true"></canvas>
-  <div class="holes" aria-label="hobbies"><a class="hole" href="hobbies.html#crochet" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:-1.2%;top:21%;width:76px;height:65px" aria-label="crochet"></a><a class="hole" href="hobbies.html#guitar" data-label="guitar" data-tip="currently learning Let Her Go." style="left:4.6%;top:43%;width:26px;height:22px" aria-label="guitar"></a><a class="hole" href="hobbies.html#skateboarding" data-label="skateboarding" data-tip="" style="left:0.6%;top:68%;width:44px;height:38px" aria-label="skateboarding"></a><a class="hole" href="hobbies.html#movies" data-label="movies" data-tip="favorites and unpopular opinions." style="left:5.6%;top:88%;width:20px;height:17px" aria-label="movies"></a><a class="hole" href="hobbies.html#badminton" data-label="badminton" data-tip="" style="left:98.2%;top:12%;width:56px;height:48px" aria-label="badminton"></a><a class="hole" href="hobbies.html#figure-skating" data-label="figure skating" data-tip="used to. I can do an axel." style="left:94.4%;top:37%;width:22px;height:19px" aria-label="figure skating"></a><a class="hole" href="hobbies.html#anime" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:97.8%;top:61%;width:84px;height:72px" aria-label="anime / manga / LN"></a></div>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="hobbies.html#crochet" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:-1.2%;top:21%;width:76px;height:65px" aria-label="crochet"></a><a class="hole" href="hobbies.html#guitar" data-label="guitar" data-tip="currently learning Let Her Go and Stitches." style="left:4.6%;top:43%;width:26px;height:22px" aria-label="guitar"></a><a class="hole" href="hobbies.html#skateboarding" data-label="skateboarding" data-tip="" style="left:0.6%;top:68%;width:44px;height:38px" aria-label="skateboarding"></a><a class="hole" href="hobbies.html#movies" data-label="movies" data-tip="favorites and unpopular opinions." style="left:5.6%;top:88%;width:20px;height:17px" aria-label="movies"></a><a class="hole" href="hobbies.html#badminton" data-label="badminton" data-tip="" style="left:98.2%;top:12%;width:56px;height:48px" aria-label="badminton"></a><a class="hole" href="hobbies.html#figure-skating" data-label="figure skating" data-tip="used to. I can do an axel." style="left:94.4%;top:37%;width:22px;height:19px" aria-label="figure skating"></a><a class="hole" href="hobbies.html#anime" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:97.8%;top:61%;width:84px;height:72px" aria-label="anime / manga / LN"></a></div>
   <div id="tip" class="tip" role="tooltip"></div>
 
   <header class="top">
@@ -43,14 +43,14 @@
             <a class="pill pink" href="renderer.html">tool: black hole renderer</a></p>
           <ul class="posts">
             <li data-kind="research"><span class="lvl">2026-10 &middot; research</span><a href="posts/interpretability.html">Looking inside a model</a> <span class="pill gold">featured</span><p>The interpretability tools I keep returning to, each one live on this page: the logit lens, attention, ablating heads on real GPT-2, and a sparse autoencoder that trains in your browser.</p></li>
+            <li data-kind="project"><span class="lvl">2026-08 &middot; project</span><a href="posts/pangram.html">I broke an AI-image detector, in both directions</a> <span class="pill gold">featured</span><p>What I tried, why it worked, how Pangram's co-founder responded, and what I actually think about AI detection. I'm not releasing the code. Here's why.</p></li>
             <li data-kind="research"><span class="lvl">2026-07 &middot; research</span><a href="posts/ddamo.html">Better molecules, fewer experiments</a> <span class="pill gold">featured</span><p>What it took to steer a molecule generator with only a few expensive measurements, and the one ingredient everything else turned out to depend on. NeurIPS 2026, with Genesis Molecular AI and ETH Zurich.</p></li>
             <li data-kind="research"><span class="lvl">2026-10 &middot; research</span><a href="posts/sae-families.html">Sparse autoencoders you can steer</a><p>Two sparse autoencoders trained on the same data can learn very different dictionaries, decided by things that have nothing to do with the data. We found a way to pick one on purpose. With Ilona Demler and Pietro Perona. CVPR 2027, under review.</p></li>
-            <li data-kind="project"><span class="lvl">2026-10 &middot; project</span><a href="posts/verification-loop.html">Specs are the hard part</a><p>Most of formal verification isn't proving things. It's deciding what to prove, and a loop between a model that drafts specs and a verifier that refutes them. A small demo you can break.</p></li>
             <li data-kind="research"><span class="lvl">2026-09 &middot; research</span><a href="posts/memorization.html">Why giving a diffusion model extra room delays memorization</a><p>Widen the latent space and a diffusion model starts copying its training set much later. A long look at the phenomenon, a spectral explanation, and an honest account of what we still can't show. ICML HiLD 2026, with an extended version under review at ICLR 2027.</p></li>
-            <li data-kind="project"><span class="lvl">2026-08 &middot; project</span><a href="posts/pangram.html">I broke an AI-image detector, in both directions</a><p>What I tried, why it worked, how Pangram's co-founder responded, and what I actually think about AI detection. I'm not releasing the code. Here's why.</p></li>
             <li data-kind="essay"><span class="lvl">2026-07 &middot; essay</span><a href="posts/connect4.html">i got good at connect 4 by farming a bot and then my roommate cooked me</a><p>a story about distribution shift, catastrophic forgetting, and why you should not grind a single opponent. also i lost to a roommate. it's fine.</p></li>
             <li data-kind="project"><span class="lvl">2026-06 &middot; project</span><a href="posts/black-hole.html">Rendering a black hole on the GPU</a><p>A real-time CUDA ray tracer that bends light through Schwarzschild spacetime, built with Kevin Peng. It started because I'd just met Kip Thorne.</p></li>
             <li data-kind="essay"><span class="lvl">2026-05 &middot; essay</span><a href="posts/leaving-startups.html">Why I left startups for now</a><p>I loved it, and I plan to go back. Why I stepped away from Ascade to do research, and why my co-founder is still one of my closest friends.</p></li>
+            <li data-kind="project"><span class="lvl">2025-11 &middot; project</span><a href="posts/verification-loop.html">Specs are the hard part</a><p>Most of formal verification isn't proving things. It's deciding what to prove, and a loop between a model that drafts specs and a verifier that refutes them. A small demo you can break.</p></li>
             <li data-kind="essay"><span class="lvl">2025-10 &middot; essay</span><a href="posts/diffusion-gaussians.html">A theory of diffusion models that turned out to be wrong, and why I&#x27;m glad I wrote it down</a><p>After reading Yang Song's diffusion work I got a clean theory in my head and tested it with seven small experiments. It was wrong in an instructive way.</p></li>
             <li data-kind="essay"><span class="lvl">2025-09 &middot; essay</span><a href="posts/high-school-research.html">Doing research in high school was a mistake (mostly)</a><p>I don't regret any of it, but I'd tell my younger self to do olympiads and build things instead. Hyperspecializing early is overrated.</p></li>
             <li data-kind="project"><span class="lvl">2025-08 &middot; project</span><a href="posts/prediction-markets.html">I over-engineered an arbitrage machine, and simple methods still won</a><p>Binary prediction markets in the early days: fragmented, thin, and full of degenerate gamblers. Notes on what worked and what was embarrassing.</p></li>
@@ -72,9 +72,9 @@
   <div class="bubble" id="bubble"></div>
 
   <div id="portal" aria-hidden="true"></div>
-  <script src="site.js?v=1793180517"></script>
-  <script src="fx.js?v=1793180517"></script>
-  <script src="plush.js?v=1793180517"></script>
-  <script src="demos.js?v=1793180517"></script>
+  <script src="site.js?v=1793180641"></script>
+  <script src="fx.js?v=1793180641"></script>
+  <script src="plush.js?v=1793180641"></script>
+  <script src="demos.js?v=1793180641"></script>
 </body>
 </html>

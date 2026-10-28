@@ -652,3 +652,7 @@ a.portal:hover::after, a.portal:focus-visible::after { opacity: 1; }
 .pipe i { position: absolute; top: -13px; left: 8px; background: var(--ink); color: #fff; font-family: var(--display); font-style: normal; font-size: 15px; padding: 0 8px; }
 .pipe b { display: block; font-size: 15px; line-height: 1.25; } .pipe span { display: block; font-size: 12.5px; margin-top: 4px; }
 .pipe-cap { font-family: var(--mono); font-size: 12.5px; color: var(--muted); margin: 8px 0 18px; }
+.takes { list-style: none; padding: 0; margin: 6px 0 4px; display: grid; gap: 8px; }
+.takes li { background: #fff; border: 3px solid var(--ink); padding: 8px 12px; box-shadow: 4px 4px 0 var(--pink); }
+.takes li:nth-child(2n) { box-shadow: 4px 4px 0 var(--cyan); }
+.takes b { display: block; } .takes span { display: block; color: var(--muted); font-size: 14.5px; }

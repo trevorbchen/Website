@@ -1,5 +1,5 @@
-// two round plush toys (a penguin and a panda) as squishy verlet blobs that live in the viewport.
-// They sit still. Grab one anywhere on the page and toss it around; once it's been handled,
+// a round plush penguin as a squishy verlet blob that lives in the viewport.
+// It sits still. Grab it anywhere on the page and toss it around; once it's been handled,
 // nearby black holes pull on it, and it will cling to one.
 (() => {
   const canvas = document.getElementById("plush");
@@ -11,7 +11,7 @@
   const INK = "#111015", WHITE = "#fbf9f3", ORANGE = "#ff9f1c";
   let W = 0, H = 0, dpr = 1;
 
-  const LINES = { penguin: ["squawk.", "poked."], panda: ["ow.", "bamboo."] };
+  const LINES = { penguin: ["squawk.", "poked."] };
 
   class P {
     constructor(x, y, r, g) { this.x = x; this.y = y; this.px = x; this.py = y; this.r = r; this.g = g; this.pin = false; }
@@ -40,7 +40,7 @@
     W = window.innerWidth; H = window.innerHeight;
     canvas.width = W * dpr; canvas.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    if (!plushes.length) plushes = [makePlush("penguin", W - 190), makePlush("panda", W - 90)];
+    if (!plushes.length) plushes = [makePlush("penguin", W - 100)];
     else if (oldH) for (const p of plushes) for (const k in p.n) {
       p.n[k].y += H - oldH; p.n[k].py += H - oldH;
       p.n[k].x = Math.min(Math.max(p.n[k].x, 20), W - 20); p.n[k].px = p.n[k].x;
@@ -129,13 +129,6 @@
         }
       }
     }
-    const [a, b] = plushes;
-    const dx = b.n.c.x - a.n.c.x, dy = b.n.c.y - a.n.c.y, d = Math.hypot(dx, dy) || 1;
-    if (d < 84) {
-      const push = (84 - d) / 2;
-      for (const k in a.n) if (!a.n[k].pin) { a.n[k].x -= (dx / d) * push; a.n[k].y -= (dy / d) * push; }
-      for (const k in b.n) if (!b.n[k].pin) { b.n[k].x += (dx / d) * push; b.n[k].y += (dy / d) * push; }
-    }
   }
 
   // ---------------------------------------------------------------- drawing: simple, round, clean
@@ -154,8 +147,8 @@
 
   function draw(pl) {
     const n = pl.n, pen = pl.kind === "penguin";
-    const RX = Math.min(Math.max(33 * Math.hypot(n.r.x - n.l.x, n.r.y - n.l.y) / 52, 26), 42);
-    const RY = Math.min(Math.max(43 * Math.hypot(n.t.x - n.b.x, n.t.y - n.b.y) / 52, 34), 54);
+    const RX = Math.min(Math.max(40 * Math.hypot(n.r.x - n.l.x, n.r.y - n.l.y) / 52, 31), 50);
+    const RY = Math.min(Math.max(36 * Math.hypot(n.t.x - n.b.x, n.t.y - n.b.y) / 52, 28), 46);
     const rot = Math.atan2(n.t.x - n.b.x, -(n.t.y - n.b.y));
     const blink = pl.blink > 0;
     ctx.save(); ctx.translate(n.c.x, n.c.y + 3); ctx.rotate(rot);
@@ -167,18 +160,6 @@
       eye(-RX * 0.3, -RY * 0.3, 6.5, blink, true); eye(RX * 0.3, -RY * 0.3, 6.5, blink, true);
       ell(0, -RY * 0.06, 6.5, 4.2, 0, ORANGE);                                                         // beak
       blush(-RX * 0.62, -RY * 0.02); blush(RX * 0.62, -RY * 0.02);
-    } else {
-      const hy = -RY * 0.52, hr = RX * 0.8;                                                               // head sits on a round body
-      ell(-RX * 0.5, RY * 0.9, 13, 10, 0, INK); ell(RX * 0.5, RY * 0.9, 13, 10, 0, INK);                 // legs
-      ell(-RX * 0.86, RY * 0.22, 9, 16, 0.45, INK); ell(RX * 0.86, RY * 0.22, 9, 16, -0.45, INK);        // arms
-      ell(0, RY * 0.3, RX * 0.84, RY * 0.74, 0, WHITE);                                                  // body
-      ell(-hr * 0.78, hy - hr * 0.78, 9.5, 9.5, 0, INK); ell(hr * 0.78, hy - hr * 0.78, 9.5, 9.5, 0, INK); // ears
-      ell(0, hy, hr, hr * 0.92, 0, WHITE);                                                               // head
-      ell(-hr * 0.46, hy, 7, 9, 0.45, INK, false); ell(hr * 0.46, hy, 7, 9, -0.45, INK, false); // eye patches
-      eye(-hr * 0.46, hy - 1, 3.4, blink, false); eye(hr * 0.46, hy - 1, 3.4, blink, false);
-      ell(0, hy + hr * 0.42, 4.6, 3.2, 0, INK, false);                                                      // nose
-      ctx.strokeStyle = INK; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.arc(-3, hy + hr * 0.5, 3.2, 0.1, 1.5); ctx.stroke(); ctx.beginPath(); ctx.arc(3, hy + hr * 0.5, 3.2, 1.64, 3.0); ctx.stroke();
-      blush(-hr * 0.74, hy + hr * 0.5); blush(hr * 0.74, hy + hr * 0.5);
     }
     ctx.restore();
     if (pl.blink > 0) pl.blink--;
@@ -189,7 +170,7 @@
   function pick(p) {
     for (const pl of plushes) {
       const c = pl.n.c;
-      if (((p.x - c.x) / 42) ** 2 + ((p.y - c.y) / 50) ** 2 > 1) continue;
+      if (((p.x - c.x) / 46) ** 2 + ((p.y - c.y) / 42) ** 2 > 1) continue;
       let best = c, bd = Math.hypot(p.x - c.x, p.y - c.y) - 12;
       for (const k of ["t", "b", "l", "r"]) { const d = Math.hypot(p.x - pl.n[k].x, p.y - pl.n[k].y); if (d < bd) { bd = d; best = pl.n[k]; } }
       return { pl, node: best };
