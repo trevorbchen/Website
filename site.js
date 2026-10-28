@@ -1,18 +1,89 @@
-// trevor's homepage — tiny bits of javascript, no frameworks
+// trevor's site — tiny bits of javascript, no frameworks
 
-// ---------- visit counter (stored only in your own browser) ----------
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// ---------- line boil: re-seed the ink turbulence "on twos" (~12fps) ----------
 (() => {
-  const el = document.getElementById("visits");
-  if (!el) return;
-  let n = 1;
-  try {
-    n = Number(localStorage.getItem("visits") || 0) + 1;
-    localStorage.setItem("visits", String(n));
-  } catch (_) {}
-  el.textContent = String(n).padStart(6, "0");
+  const turb = document.getElementById("boil-noise");
+  if (!turb || reduceMotion) return;
+  let seed = 0;
+  setInterval(() => {
+    seed = (seed + 1) % 4;
+    turb.setAttribute("seed", String(seed));
+  }, 1000 / 12);
 })();
 
-// ---------- black_hole.cam: gravitational lensing of a starfield ----------
+// ---------- random slice glitch on the name ----------
+(() => {
+  const logo = document.querySelector(".logo");
+  if (!logo || reduceMotion) return;
+  function glitch() {
+    logo.classList.remove("glitching");
+    void logo.offsetWidth;
+    logo.classList.add("glitching");
+    setTimeout(glitch, 2500 + Math.random() * 4500);
+  }
+  setTimeout(glitch, 1200);
+  logo.addEventListener("mouseenter", () => {
+    logo.classList.remove("glitching");
+    void logo.offsetWidth;
+    logo.classList.add("glitching");
+  });
+})();
+
+// ---------- spot portals: page transitions open from where you clicked ----------
+(() => {
+  const portal = document.getElementById("portal");
+  if (!portal) return;
+
+  const saved = sessionStorage.getItem("portal");
+  if (saved && !reduceMotion) {
+    sessionStorage.removeItem("portal");
+    portal.style.clipPath = `circle(150% at ${saved})`;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      portal.classList.add("open");
+      portal.style.clipPath = `circle(0 at ${saved})`;
+    }));
+  }
+
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a");
+    if (!a || reduceMotion || e.metaKey || e.ctrlKey || e.shiftKey || a.target === "_blank") return;
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin || !url.pathname.endsWith(".html") || url.pathname === location.pathname) return;
+    e.preventDefault();
+    const at = `${(e.clientX / innerWidth) * 100}% ${(e.clientY / innerHeight) * 100}%`;
+    sessionStorage.setItem("portal", at);
+    portal.classList.remove("open");
+    portal.style.clipPath = `circle(0 at ${at})`;
+    requestAnimationFrame(() => {
+      portal.classList.add("open");
+      portal.style.clipPath = `circle(150% at ${at})`;
+    });
+    setTimeout(() => { location.href = a.href; }, 430);
+  });
+
+  // back/forward cache: never come back to a closed portal
+  window.addEventListener("pageshow", (e) => {
+    if (e.persisted) { portal.classList.remove("open"); portal.style.clipPath = "circle(0 at 50% 50%)"; }
+  });
+})();
+
+// ---------- konami code: enter the spot's dimension ----------
+(() => {
+  const code = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+  let i = 0;
+  window.addEventListener("keydown", (e) => {
+    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+    i = key === code[i] ? i + 1 : (key === code[0] ? 1 : 0);
+    if (i === code.length) {
+      i = 0;
+      document.body.classList.toggle("inverted");
+    }
+  });
+})();
+
+// ---------- the spot portal: gravitational lensing of a starfield ----------
 // Each pixel maps back to the source plane with the thin-lens equation
 //   beta = theta - theta_E^2 * theta / |theta|^2
 // so background stars stretch into arcs and an Einstein ring around the hole.
@@ -20,10 +91,7 @@
   const canvas = document.getElementById("cam");
   if (!canvas) return;
   const gl = canvas.getContext("webgl");
-  if (!gl) {
-    canvas.style.background = "radial-gradient(circle, #000 30%, #ff2e88 34%, #0c0a1d 46%)";
-    return;
-  }
+  if (!gl) return;
 
   const vert = `attribute vec2 p; void main() { gl_Position = vec4(p, 0.0, 1.0); }`;
 
@@ -39,33 +107,20 @@
       return fract(p.x * p.y);
     }
 
-    float noise(vec2 p) {
-      vec2 i = floor(p), f = fract(p);
-      vec2 u = f * f * (3.0 - 2.0 * f);
-      return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x),
-                 mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
-    }
-
-    float fbm(vec2 p) {
-      float v = 0.0, a = 0.5;
-      for (int i = 0; i < 5; i++) { v += a * noise(p); p *= 2.03; a *= 0.5; }
-      return v;
-    }
-
     vec3 stars(vec2 p) {
       vec3 col = vec3(0.0);
       for (int layer = 0; layer < 3; layer++) {
-        float scale = 14.0 + float(layer) * 16.0;
+        float scale = 12.0 + float(layer) * 14.0;
         vec2 q = p * scale + float(layer) * 17.0;
         vec2 cell = floor(q);
         float h = hash(cell);
-        if (h > 0.88) {
+        if (h > 0.86) {
           vec2 off = vec2(hash(cell + 1.3), hash(cell + 7.1)) - 0.5;
           float d = length(fract(q) - 0.5 - off * 0.6);
-          float tw = 0.7 + 0.3 * sin(u_time * (1.0 + h * 3.0) + h * 40.0);
-          float b = smoothstep(0.1, 0.0, d) * (h - 0.88) * 8.0 * tw;
-          vec3 tint = mix(vec3(0.24, 0.94, 1.0), vec3(1.0, 0.18, 0.53), hash(cell + 3.7));
-          col += mix(vec3(1.0), tint, 0.55) * b;
+          float b = smoothstep(0.11, 0.0, d) * (h - 0.86) * 7.0;
+          float pick = hash(cell + 3.7);
+          vec3 tint = pick < 0.33 ? vec3(1.0, 0.18, 0.53) : (pick < 0.66 ? vec3(0.1, 0.83, 0.9) : vec3(1.0, 0.88, 0.23));
+          col += mix(vec3(1.0), tint, 0.6) * b;
         }
       }
       return col;
@@ -77,21 +132,21 @@
       vec2 d = uv - hole;
       float r = length(d);
 
-      float rE = 0.16;
+      float rE = 0.17;
       vec2 src = uv - rE * rE * d / (r * r + 1e-4);
 
-      float n = fbm(src * 2.2 + vec2(u_time * 0.02, 0.0));
-      vec3 col = stars(src)
-               + vec3(0.36, 0.14, 0.62) * pow(n, 2.0) * 1.2
-               + vec3(0.05, 0.25, 0.32) * pow(fbm(src * 3.7 - 5.0), 3.0);
+      // halftone-ish dot field so the void reads like printed ink
+      vec2 g = fract(src * 26.0) - 0.5;
+      float dots = smoothstep(0.22, 0.18, length(g)) * 0.07;
+
+      vec3 col = stars(src) + vec3(dots);
 
       float horizon = smoothstep(rE * 0.62, rE * 0.52, r);
       col *= 1.0 - horizon;
 
-      float ang = atan(d.y, d.x);
-      vec3 ringCol = mix(vec3(1.0, 0.18, 0.53), vec3(0.24, 0.94, 1.0), 0.5 + 0.5 * sin(ang * 2.0 + u_time));
-      col += ringCol * exp(-pow((r - rE * 0.68) / 0.014, 2.0)) * 0.9;
-      col += vec3(0.96, 0.76, 0.29) * exp(-r * 8.0) * 0.15 * (1.0 - horizon);
+      // misregistered pink / cyan rings, comic-print style
+      col += vec3(1.0, 0.18, 0.53) * exp(-pow((r - rE * 0.70) / 0.010, 2.0)) * 0.95;
+      col += vec3(0.1, 0.83, 0.9) * exp(-pow((length(d + vec2(0.012, -0.008)) - rE * 0.70) / 0.010, 2.0)) * 0.95;
 
       gl_FragColor = vec4(col, 1.0);
     }
@@ -121,7 +176,6 @@
   const uHole = gl.getUniformLocation(prog, "u_hole");
   const uTime = gl.getUniformLocation(prog, "u_time");
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const hole = { x: 0, y: 0 };
   const target = { x: 0, y: 0 };
   let hovering = false;
@@ -135,71 +189,37 @@
     hole.y = target.y = canvas.height / 2;
   }
 
-  function aim(clientX, clientY) {
-    const rect = canvas.getBoundingClientRect();
-    target.x = ((clientX - rect.left) / rect.width) * canvas.width;
-    target.y = ((rect.bottom - clientY) / rect.height) * canvas.height;
-  }
-
   canvas.addEventListener("pointerenter", () => { hovering = true; });
   canvas.addEventListener("pointerleave", () => { hovering = false; });
-  canvas.addEventListener("pointermove", (e) => aim(e.clientX, e.clientY));
+  canvas.addEventListener("pointermove", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    target.x = ((e.clientX - rect.left) / rect.width) * canvas.width;
+    target.y = ((rect.bottom - e.clientY) / rect.height) * canvas.height;
+  });
   window.addEventListener("resize", resize);
   resize();
 
   let visible = true;
   new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(canvas);
 
+  // animate "on twos" like the films: update the scene at ~12fps, not 60
+  let last = 0;
   const start = performance.now();
   function frame(now) {
     requestAnimationFrame(frame);
-    if (!visible) return;
+    if (!visible || now - last < 1000 / 12) return;
+    last = now;
     const t = reduceMotion ? 0 : (now - start) / 1000;
     if (!hovering && !reduceMotion) {
-      target.x = canvas.width * (0.5 + 0.18 * Math.cos(t * 0.4));
-      target.y = canvas.height * (0.5 + 0.18 * Math.sin(t * 0.55));
+      target.x = canvas.width * (0.5 + 0.16 * Math.cos(t * 0.5));
+      target.y = canvas.height * (0.5 + 0.16 * Math.sin(t * 0.7));
     }
-    hole.x += (target.x - hole.x) * 0.1;
-    hole.y += (target.y - hole.y) * 0.1;
+    hole.x += (target.x - hole.x) * 0.45;
+    hole.y += (target.y - hole.y) * 0.45;
     gl.uniform2f(uRes, canvas.width, canvas.height);
     gl.uniform2f(uHole, hole.x, hole.y);
     gl.uniform1f(uTime, t);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
   requestAnimationFrame(frame);
-})();
-
-// ---------- arcade controls: 1–4 jump stages, konami code = turbo ----------
-(() => {
-  const root = document.body.dataset.root || "";
-  const stages = ["index.html", "research.html", "blog.html", "Trevor_Chen_Resume.pdf"];
-  const konami = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
-  const toast = document.getElementById("toast");
-  let progress = 0;
-
-  function flash(msg) {
-    if (!toast) return;
-    toast.textContent = msg;
-    toast.classList.add("show");
-    setTimeout(() => toast.classList.remove("show"), 1400);
-  }
-
-  window.addEventListener("keydown", (e) => {
-    if (e.metaKey || e.ctrlKey || e.altKey) return;
-    if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName)) return;
-
-    const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
-    progress = key === konami[progress] ? progress + 1 : (key === konami[0] ? 1 : 0);
-    if (progress === konami.length) {
-      progress = 0;
-      const on = document.body.classList.toggle("turbo");
-      flash(on ? "TURBO MODE!" : "TURBO OFF");
-      return;
-    }
-
-    const n = Number(e.key);
-    if (n >= 1 && n <= stages.length && progress === 0) {
-      window.location.href = root + stages[n - 1];
-    }
-  });
 })();

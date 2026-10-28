@@ -5,74 +5,36 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>I broke an AI-image detector (both ways) — Trevor Chen</title>
   <meta name="description" content="Trevor Chen — Caltech researcher and founder. Generative models, AI for science, interpretability.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a0818'/><circle cx='50' cy='50' r='30' fill='none' stroke='%23ff2e88' stroke-width='8'/><circle cx='50' cy='50' r='20' fill='black'/></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style.css">
 </head>
-<body data-root="../">
-  <div class="floor" aria-hidden="true"></div>
+<body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="boil"><feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="0"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+  </svg>
+  <div class="spots" aria-hidden="true"><span class="spot" style="left:4%;top:18%;width:46px;height:40px"></span><span class="spot" style="left:93%;top:12%;width:30px;height:26px"></span><span class="spot" style="left:88%;top:56%;width:70px;height:60px"></span><span class="spot" style="left:2%;top:72%;width:26px;height:22px"></span><span class="spot" style="left:47%;top:94%;width:38px;height:33px"></span><span class="spot" style="left:70%;top:33%;width:16px;height:14px"></span><span class="spot" style="left:20%;top:46%;width:14px;height:12px"></span><span class="spot" style="left:96%;top:86%;width:22px;height:19px"></span></div>
 
-  <div class="hud" aria-hidden="true">
-    <div class="p1">1UP<b>Trevor</b></div>
-    <div class="hi">Hi-score<b>58× combo</b></div>
-    <div class="cr">Credits<b>99</b></div>
-  </div>
-
-  <header class="banner">
-    <p class="logo"><a href="../index.html">TREVOR CHEN</a></p>
-    <div class="press">
-      <span class="start blink">▶ Press start</span>
-      <span class="tags">generative models · ai for science · interpretability</span>
+  <header class="top">
+    <div>
+      <p class="logo"><a href="../index.html">TREVOR CHEN</a></p>
+      <p class="tagline">generative models / ai for science / interpretability</p>
     </div>
-    <div class="ticker" aria-label="news"><div class="track"><span>★ NeurIPS 2026 accepted ★ ICLR 2027 + CVPR 2027 under review ★ now: closed-loop LLM-guided discovery with ETH Zurich + the Arnold Lab ★ Ascade accepted to YC F25 ★ this site contains zero photos and always will ★ best viewed with a cursor ★</span><span aria-hidden="true">★ NeurIPS 2026 accepted ★ ICLR 2027 + CVPR 2027 under review ★ now: closed-loop LLM-guided discovery with ETH Zurich + the Arnold Lab ★ Ascade accepted to YC F25 ★ this site contains zero photos and always will ★ best viewed with a cursor ★</span></div></div>
+    <nav class="nav" aria-label="site">
+      <a href="../index.html">home</a>
+      <a href="../research.html">research</a>
+      <a href="../blog.html" aria-current="page">blog</a>
+      <a href="../Trevor_Chen_Resume.pdf">cv</a>
+    </nav>
   </header>
 
-  <div class="site">
-    <aside>
-      <nav class="panel pink" aria-label="site">
-        <span class="label">Stage select</span>
-        <div class="body nav">
-          <a href="../index.html"><span class="cur">▶</span><span class="key">1</span>home</a>
-          <a href="../research.html"><span class="cur">▶</span><span class="key">2</span>research</a>
-          <a href="../blog.html" aria-current="page"><span class="cur">▶</span><span class="key">3</span>blog</a>
-          <a href="../Trevor_Chen_Resume.pdf"><span class="cur">▶</span><span class="key">4</span>cv</a>
-        </div>
-      </nav>
-
-      <div class="panel cyan">
-        <span class="label">Bonus stage</span>
-        <canvas id="cam" aria-label="Animated black hole bending starlight"></canvas>
-        <div class="cam-caption"><span>Boss: black hole</span><span class="hp"><i></i><i></i><i></i><i></i><i></i></span></div>
-      </div>
-
-      <div class="panel gold">
-        <span class="label">Player 1</span>
-        <div class="body player">
-          <p class="name">TREVOR CHEN</p>
-          <p class="cls">class: researcher / founder<br>guild: caltech '29</p>
-          <div class="stat"><span>ML</span><div class="bar-meter"><i style="width:92%"></i></div></div>
-          <div class="stat"><span>SCIENCE</span><div class="bar-meter"><i style="width:85%"></i></div></div>
-          <div class="stat"><span>SYSTEMS</span><div class="bar-meter"><i style="width:80%"></i></div></div>
-          <div class="stat"><span>INTERP</span><div class="bar-meter"><i style="width:84%"></i></div></div>
-          <div class="stat"><span>SHIP IT</span><div class="bar-meter"><i style="width:88%"></i></div></div>
-          <ul class="controls">
-            <li><a href="mailto:trevorbchen@gmail.com">email</a></li>
-            <li><a href="https://github.com/trevorbchen">github</a></li>
-            <li><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a></li>
-            <li><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></li>
-          </ul>
-          <p class="plays">plays<span class="counter" id="visits">000001</span></p>
-        </div>
-      </div>
-    </aside>
-
-    <main>
+  <main>
       <article class="panel pink post">
-        <span class="label">Dev log · pangram</span>
+        <span class="caption">Blog</span>
         <div class="body">
-          <p class="back"><a href="../blog.html">◀ back to dev log</a></p>
+          <p class="back"><a href="../blog.html">← all posts</a></p>
           <h1>I broke an AI-image detector (both ways)</h1>
           <p class="meta">2026-08-03 · <span class="pill pink">AI safety</span><span class="pill">red-teaming</span></p>
           <p>Pangram is one of the most popular AI-content detectors, and a lot of people online treat its verdict as
@@ -104,15 +66,14 @@
           important work. For now, though, a detector's output should be one piece of evidence, not the final word.</p>
         </div>
       </article>
-    </main>
-  </div>
+  </main>
 
   <footer>
-    <p class="coin blink">Insert coin to continue</p>
-    <p>© 2026 trevor chen · press 1–4 to jump stages · no photos, ever</p>
+    <span>© 2026 trevor chen · no photos, only spots</span>
+    <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
   </footer>
 
-  <div class="toast" id="toast" aria-live="polite"></div>
+  <div id="portal" aria-hidden="true"></div>
   <script src="../site.js"></script>
 </body>
 </html>
