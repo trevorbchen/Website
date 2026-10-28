@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>I broke an AI-image detector (both ways) — Trevor Chen</title>
+  <meta name="description" content="Trevor Chen — Caltech researcher and founder. Generative models, AI for science, interpretability.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230c0a1d'/><circle cx='50' cy='50' r='30' fill='none' stroke='%23ff2e88' stroke-width='8'/><circle cx='50' cy='50' r='20' fill='black'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header class="banner">
+    <p class="logo"><a href="../index.html">TREVOR CHEN</a></p>
+    <p class="subtitle">generative models // ai for science // interpretability</p>
+    <div class="ticker" aria-label="news"><div class="track"><span>★ NeurIPS 2026 accepted ★ ICLR 2027 + CVPR 2027 under review ★ now: closed-loop LLM-guided discovery with ETH Zurich + the Arnold Lab ★ Ascade accepted to YC F25 ★ this site contains zero photos and always will ★ best viewed with a cursor ★</span><span aria-hidden="true">★ NeurIPS 2026 accepted ★ ICLR 2027 + CVPR 2027 under review ★ now: closed-loop LLM-guided discovery with ETH Zurich + the Arnold Lab ★ Ascade accepted to YC F25 ★ this site contains zero photos and always will ★ best viewed with a cursor ★</span></div></div>
+  </header>
+
+  <div class="site">
+    <aside>
+      <nav class="panel pink" aria-label="site">
+        <div class="bar"><span>nav.exe</span><span class="dots">■■■</span></div>
+        <div class="body nav">
+        <a href="../index.html">home</a>
+        <a href="../research.html">research</a>
+        <a href="../blog.html" aria-current="page">blog</a>
+        <a href="../Trevor_Chen_Resume.pdf">cv.pdf</a>
+        </div>
+      </nav>
+
+      <div class="panel cyan">
+        <div class="bar"><span>black_hole.cam</span><span class="dots">● REC</span></div>
+        <canvas id="cam" aria-label="Animated black hole bending starlight"></canvas>
+        <div class="cam-caption">hover me. live gravitational lensing.</div>
+      </div>
+
+      <div class="panel">
+        <div class="bar"><span>status.txt</span><span class="dots">■■■</span></div>
+        <dl class="body status">
+          <dt>building</dt><dd>closed-loop discovery @ ETH Zurich + Arnold Lab</dd>
+          <dt>studying</dt><dd>applied + computational math @ Caltech</dd>
+          <dt>shipping</dt><dd>formally verified infra @ Ascade</dd>
+          <dt>links</dt>
+          <dd><a href="mailto:trevorbchen@gmail.com">email</a> · <a href="https://github.com/trevorbchen">github</a> · <a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a> · <a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></dd>
+          <dt>you've visited</dt><dd><span class="counter" id="visits">000001</span> times</dd>
+        </dl>
+      </div>
+    </aside>
+
+    <main>
+      <article class="panel pink post">
+        <div class="bar"><span>posts/pangram.html</span><span class="dots">■■■</span></div>
+        <div class="body">
+          <p class="back"><a href="../blog.html">← all posts</a></p>
+          <h1>I broke an AI-image detector (both ways)</h1>
+          <p class="meta">2026-08-03 · <span class="pill pink">AI safety</span><span class="pill">red-teaming</span></p>
+          <p>Pangram is one of the most popular AI-content detectors, and a lot of people online treat its verdict as
+          final. I wanted to know how much weight that verdict can actually carry, so I spent some time poking at
+          the image detector.</p>
+
+          <h3>1. Ordinary upscaling looks "AI"</h3>
+          <p>Upsampling a real image from 128×128 to 512×512 consistently got it flagged as AI-generated. That isn't
+          an extreme transformation; plenty of everyday image pipelines upscale without the user ever knowing. My
+          worry is less about this one setting and more about honest people getting flagged for using normal tools.</p>
+
+          <h3>2. It can be pushed in both directions</h3>
+          <p>Using out-of-distribution loss functions, I trained a VAE that makes <em>real</em> photos get flagged as AI,
+          and a GAN-VAE that makes <em>AI-generated</em> images pass as human. Same family of models, opposite failure
+          modes — which means a verdict alone can't be treated as proof either way.</p>
+
+          <div class="callout">I'm not releasing the code or the training details. A turnkey "make AI images undetectable" tool
+          is a misuse risk, and the point was to show the gap, not to widen it. I shared details with Pangram directly.</div>
+
+          <h3>3. Where the line should be</h3>
+          <p>Pangram's co-founder replied to my thread with a fair question: if heavy upscaling hallucinates new
+          detail, should that count as AI? I think there's a real taxonomy problem here — "AI-generated", "AI-edited",
+          and "touched by a standard upscaler" probably shouldn't share one label.</p>
+
+          <h3>Why I'm still optimistic about detection</h3>
+          <blockquote>Detecting AI has an infinite stream of data to learn from, while bypassing detectors is a very
+          low-data, sparse-reward task.</blockquote>
+          <p>Long term, I think detectors should keep the advantage (short of truly inhuman mimicry). AI detection is
+          important work. For now, though, a detector's output should be one piece of evidence, not the final word.</p>
+        </div>
+      </article>
+    </main>
+  </div>
+
+  <footer>
+    <div class="badges" aria-hidden="true">
+      <span class="badge b1">cuda<br>inside</span>
+      <span class="badge b2">no photos<br>allowed</span>
+      <span class="badge b3">hand-coded<br>html</span>
+      <span class="badge b4">best viewed<br>w/ cursor</span>
+      <span class="badge b5">lensing<br>enabled</span>
+    </div>
+    <p>© 2026 trevor chen · last updated oct 2026 · no frameworks were harmed</p>
+  </footer>
+
+  <script src="../site.js"></script>
+</body>
+</html>

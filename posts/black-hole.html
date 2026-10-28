@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rendering a black hole on the GPU — Trevor Chen</title>
+  <meta name="description" content="Trevor Chen — Caltech researcher and founder. Generative models, AI for science, interpretability.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230c0a1d'/><circle cx='50' cy='50' r='30' fill='none' stroke='%23ff2e88' stroke-width='8'/><circle cx='50' cy='50' r='20' fill='black'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header class="banner">
+    <p class="logo"><a href="../index.html">TREVOR CHEN</a></p>
+    <p class="subtitle">generative models // ai for science // interpretability</p>
+    <div class="ticker" aria-label="news"><div class="track"><span>★ NeurIPS 2026 accepted ★ ICLR 2027 + CVPR 2027 under review ★ now: closed-loop LLM-guided discovery with ETH Zurich + the Arnold Lab ★ Ascade accepted to YC F25 ★ this site contains zero photos and always will ★ best viewed with a cursor ★</span><span aria-hidden="true">★ NeurIPS 2026 accepted ★ ICLR 2027 + CVPR 2027 under review ★ now: closed-loop LLM-guided discovery with ETH Zurich + the Arnold Lab ★ Ascade accepted to YC F25 ★ this site contains zero photos and always will ★ best viewed with a cursor ★</span></div></div>
+  </header>
+
+  <div class="site">
+    <aside>
+      <nav class="panel pink" aria-label="site">
+        <div class="bar"><span>nav.exe</span><span class="dots">■■■</span></div>
+        <div class="body nav">
+        <a href="../index.html">home</a>
+        <a href="../research.html">research</a>
+        <a href="../blog.html" aria-current="page">blog</a>
+        <a href="../Trevor_Chen_Resume.pdf">cv.pdf</a>
+        </div>
+      </nav>
+
+      <div class="panel cyan">
+        <div class="bar"><span>black_hole.cam</span><span class="dots">● REC</span></div>
+        <canvas id="cam" aria-label="Animated black hole bending starlight"></canvas>
+        <div class="cam-caption">hover me. live gravitational lensing.</div>
+      </div>
+
+      <div class="panel">
+        <div class="bar"><span>status.txt</span><span class="dots">■■■</span></div>
+        <dl class="body status">
+          <dt>building</dt><dd>closed-loop discovery @ ETH Zurich + Arnold Lab</dd>
+          <dt>studying</dt><dd>applied + computational math @ Caltech</dd>
+          <dt>shipping</dt><dd>formally verified infra @ Ascade</dd>
+          <dt>links</dt>
+          <dd><a href="mailto:trevorbchen@gmail.com">email</a> · <a href="https://github.com/trevorbchen">github</a> · <a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a> · <a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></dd>
+          <dt>you've visited</dt><dd><span class="counter" id="visits">000001</span> times</dd>
+        </dl>
+      </div>
+    </aside>
+
+    <main>
+      <article class="panel cyan post">
+        <div class="bar"><span>posts/black-hole.html</span><span class="dots">■■■</span></div>
+        <div class="body">
+          <p class="back"><a href="../blog.html">← all posts</a></p>
+          <h1>Rendering a black hole on the GPU</h1>
+          <p class="meta">2026-06-12 · <span class="pill">CUDA</span><span class="pill gold">physics</span></p>
+          <p>For my CS 179 (GPU programming) final, Kevin Peng and I built a real-time renderer for a Schwarzschild
+          black hole. Kevin wrote the geodesic integrator; I wrote the camera, the shading, and the CUDA rendering
+          kernels. <a href="https://github.com/trevorbchen/CS_179_final">Code on GitHub.</a></p>
+
+          <h3>The trick: stay in the plane</h3>
+          <p>Schwarzschild spacetime is spherically symmetric, so every photon's path lies in one fixed plane.
+          Instead of integrating the full 8-dimensional phase space, each ray integrates three numbers in polar
+          coordinates (r, φ) — which halves memory bandwidth on the GPU:</p>
+          <pre>dr/dλ   = v_r
+dv_r/dλ = L²(r − 3) / r⁴     ← exact Schwarzschild geodesic
+dφ/dλ   = L / r²</pre>
+          <p>Near the photon sphere (r = 3) curvature gets intense, so the RK4 step size shrinks adaptively. Each ray
+          ends up captured by the horizon, hitting the accretion disk (shaded as a blackbody), or escaping to the
+          starfield skybox.</p>
+
+          <h3>On the GPU</h3>
+          <p>Every pixel is independent, so the double loop becomes a CUDA kernel with one thread per pixel in 16×16
+          blocks. On top of that: bloom and HDR tone mapping as post-processing kernels, Doppler beaming on the disk,
+          and a browser viewer where you can orbit, zoom, and tweak the physics live.</p>
+
+          <h3>Keeping it honest</h3>
+          <p>Pretty pictures are easy to fake, so we wrote a physics test suite against general relativity:</p>
+          <table>
+            <tr><th>test</th><th>result</th></tr>
+            <tr><td>weak-field deflection vs. GR (b = 50)</td><td>0.44% error</td></tr>
+            <tr><td>photon sphere capture at b = 3√3</td><td>captured / escaped correctly at ±0.1</td></tr>
+            <tr><td>energy + angular momentum drift</td><td>~10⁻⁶</td></tr>
+            <tr><td>time reversal</td><td>retraces within 0.16%</td></tr>
+            <tr><td>spherical symmetry</td><td>1.8 × 10⁻⁷ max error</td></tr>
+          </table>
+          <p>Plus CPU–GPU parity tests so the CUDA port matches the reference implementation.</p>
+          <p>The little <em>black_hole.cam</em> in the sidebar is a much simpler cousin: a thin-lens approximation in a
+          WebGL shader, not real geodesics. Still fun to hover.</p>
+        </div>
+      </article>
+    </main>
+  </div>
+
+  <footer>
+    <div class="badges" aria-hidden="true">
+      <span class="badge b1">cuda<br>inside</span>
+      <span class="badge b2">no photos<br>allowed</span>
+      <span class="badge b3">hand-coded<br>html</span>
+      <span class="badge b4">best viewed<br>w/ cursor</span>
+      <span class="badge b5">lensing<br>enabled</span>
+    </div>
+    <p>© 2026 trevor chen · last updated oct 2026 · no frameworks were harmed</p>
+  </footer>
+
+  <script src="../site.js"></script>
+</body>
+</html>

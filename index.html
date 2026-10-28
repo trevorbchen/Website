@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trevor Chen</title>
+  <meta name="description" content="Trevor Chen — Caltech researcher and founder. Generative models, AI for science, interpretability.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230c0a1d'/><circle cx='50' cy='50' r='30' fill='none' stroke='%23ff2e88' stroke-width='8'/><circle cx='50' cy='50' r='20' fill='black'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="banner">
+    <p class="logo"><a href="index.html">TREVOR CHEN</a></p>
+    <p class="subtitle">generative models // ai for science // interpretability</p>
+    <div class="ticker" aria-label="news"><div class="track"><span>★ NeurIPS 2026 accepted ★ ICLR 2027 + CVPR 2027 under review ★ now: closed-loop LLM-guided discovery with ETH Zurich + the Arnold Lab ★ Ascade accepted to YC F25 ★ this site contains zero photos and always will ★ best viewed with a cursor ★</span><span aria-hidden="true">★ NeurIPS 2026 accepted ★ ICLR 2027 + CVPR 2027 under review ★ now: closed-loop LLM-guided discovery with ETH Zurich + the Arnold Lab ★ Ascade accepted to YC F25 ★ this site contains zero photos and always will ★ best viewed with a cursor ★</span></div></div>
+  </header>
+
+  <div class="site">
+    <aside>
+      <nav class="panel pink" aria-label="site">
+        <div class="bar"><span>nav.exe</span><span class="dots">■■■</span></div>
+        <div class="body nav">
+        <a href="index.html" aria-current="page">home</a>
+        <a href="research.html">research</a>
+        <a href="blog.html">blog</a>
+        <a href="Trevor_Chen_Resume.pdf">cv.pdf</a>
+        </div>
+      </nav>
+
+      <div class="panel cyan">
+        <div class="bar"><span>black_hole.cam</span><span class="dots">● REC</span></div>
+        <canvas id="cam" aria-label="Animated black hole bending starlight"></canvas>
+        <div class="cam-caption">hover me. live gravitational lensing.</div>
+      </div>
+
+      <div class="panel">
+        <div class="bar"><span>status.txt</span><span class="dots">■■■</span></div>
+        <dl class="body status">
+          <dt>building</dt><dd>closed-loop discovery @ ETH Zurich + Arnold Lab</dd>
+          <dt>studying</dt><dd>applied + computational math @ Caltech</dd>
+          <dt>shipping</dt><dd>formally verified infra @ Ascade</dd>
+          <dt>links</dt>
+          <dd><a href="mailto:trevorbchen@gmail.com">email</a> · <a href="https://github.com/trevorbchen">github</a> · <a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a> · <a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></dd>
+          <dt>you've visited</dt><dd><span class="counter" id="visits">000001</span> times</dd>
+        </dl>
+      </div>
+    </aside>
+
+    <main>
+      <section class="panel gold">
+        <div class="bar"><span>hello.txt</span><span class="dots">■■■</span></div>
+        <div class="body">
+          <h2>hi, i'm trevor.</h2>
+          <p class="lede">I'm an undergrad at Caltech building learning systems that discover things.</p>
+          <p>I work with <a href="https://las.inf.ethz.ch/">Andreas Krause</a> (ETH Zurich) and
+          <a href="https://cheme.caltech.edu/groups/fha/">Frances Arnold</a> on closed-loop, LLM-guided scientific
+          discovery; with <a href="https://www.yisongyue.com/">Yisong Yue</a> on sample-efficient generative design and
+          diffusion theory; and with <a href="https://www.vision.caltech.edu/">Pietro Perona</a> on interpretability.</p>
+          <p>I also founded <a href="https://ascade.co/">Ascade</a> (accepted to YC F25), where we build formally
+          verified infrastructure for AI agents. Before all that I spent years in optics labs and supercomputer
+          clusters, which is why there are laser gratings in my <a href="research.html#pubs">publication list</a>.</p>
+        </div>
+      </section>
+
+      <section class="panel pink">
+        <div class="bar"><span>now.log</span><span class="dots">■■■</span></div>
+        <div class="body">
+          <ul class="log">
+            <li><time>2026</time>started closed-loop discovery with ETH Zurich (Krause group) and the Arnold Lab</li>
+            <li><time>2026</time><span class="pill gold">NeurIPS</span> design space of online adaptation for molecular diffusion models — accepted</li>
+            <li><time>2026</time><span class="pill">ICLR</span><span class="pill pink">CVPR</span> memorization + sparse autoencoder papers under review</li>
+            <li><time>Aug 2026</time><a href="posts/pangram.html">broke an AI-image detector in both directions</a></li>
+            <li><time>Jun 2026</time><a href="posts/black-hole.html">wrote a real-time black hole renderer in CUDA</a></li>
+            <li><time>Jun 2026</time>SURF fellowship in the Perona Vision Lab</li>
+            <li><time>2025</time>Ascade accepted to Y Combinator F25</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="panel cyan">
+        <div class="bar"><span>highlights</span><span class="dots">■■■</span></div>
+        <div class="body">
+          <div class="grid grid-3">
+            <a class="comic" href="research.html">
+              <span class="pow">58×!</span>
+              <span class="pill gold">NeurIPS 2026</span>
+              <h3>Sample-efficient molecule design</h3>
+              <p>RL fine-tuning for diffusion molecule generators that needs 58× fewer oracle calls.</p>
+            </a>
+            <a class="comic" href="posts/pangram.html">
+              <span class="pow">BOTH WAYS</span>
+              <span class="pill pink">AI safety</span>
+              <h3>Breaking an AI detector</h3>
+              <p>AI images passing as human; real photos flagged as AI.</p>
+            </a>
+            <a class="comic" href="posts/black-hole.html">
+              <span class="pow">CUDA</span>
+              <span class="pill">GPU</span>
+              <h3>Black hole renderer</h3>
+              <p>Bending light through curved spacetime, one pixel per thread.</p>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <div class="badges" aria-hidden="true">
+      <span class="badge b1">cuda<br>inside</span>
+      <span class="badge b2">no photos<br>allowed</span>
+      <span class="badge b3">hand-coded<br>html</span>
+      <span class="badge b4">best viewed<br>w/ cursor</span>
+      <span class="badge b5">lensing<br>enabled</span>
+    </div>
+    <p>© 2026 trevor chen · last updated oct 2026 · no frameworks were harmed</p>
+  </footer>
+
+  <script src="site.js"></script>
+</body>
+</html>
