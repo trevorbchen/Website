@@ -51,6 +51,43 @@
   resize();
   window.addEventListener("resize", resize);
 
+  // ---------------------------------------------------------------- black holes pull on the plushes
+  const holeEls = Array.from(document.querySelectorAll(".hole"));
+  const portalEl = document.querySelector("a.portal");
+  const lastTouch = new WeakMap();
+  let masses = [];
+  function readMasses() {
+    masses = [];
+    for (const el of holeEls) {
+      const r = el.getBoundingClientRect();
+      if (!r.width) continue;
+      masses.push({ el, x: r.left + r.width / 2, y: r.top + r.height / 2, rho: Math.max(r.width, r.height) / 2, A: 2.2 });
+    }
+    if (portalEl) {
+      const r = portalEl.getBoundingClientRect();
+      if (r.width && r.bottom > 0 && r.top < H) masses.push({ el: null, x: r.left + r.width / 2, y: r.top + r.height / 2, rho: 46, A: 1.4 });
+    }
+  }
+  readMasses();
+  function pull(p) {              // acceleration of node p toward every hole, with a little swirl
+    let ax = 0, ay = 0, near = false;
+    for (const m of masses) {
+      const dx = m.x - p.x, dy = m.y - p.y, r = Math.hypot(dx, dy) || 1, R = 320 + m.rho * 3;
+      if (r > R) continue;
+      let a = m.A * Math.pow(1 - r / R, 1.3);
+      if (r < m.rho + 10) { a *= 0.5; near = true; }
+      ax += (dx / r) * a - (dy / r) * a * 0.18;
+      ay += (dy / r) * a + (dx / r) * a * 0.18;
+      if (m.el && r < m.rho + 16) {                                  // touching it: the hole jiggles
+        const now = performance.now();
+        if (now - (lastTouch.get(m.el) || 0) > 900) { lastTouch.set(m.el, now); m.el.classList.remove("wobble"); void m.el.offsetWidth; m.el.classList.add("wobble"); }
+      }
+    }
+    const mag = Math.hypot(ax, ay);
+    if (mag > 3) { ax *= 3 / mag; ay *= 3 / mag; }
+    return { ax, ay, near };
+  }
+
   // ---------------------------------------------------------------- physics
   function step() {
     const g = 0.55;
@@ -58,12 +95,17 @@
       const nodes = Object.values(pl.n);
       for (const p of nodes) {
         if (p.pin) continue;
-        const vx = (p.x - p.px) * 0.992, vy = (p.y - p.py) * 0.992;
-        p.px = p.x; p.py = p.y; p.x += vx; p.y += vy + g;
+        const f = pull(p), damp = f.near ? 0.93 : 0.992;
+        const grip = p.y >= H - p.r - 1 && f.ay > -0.2 ? 0.7 : 1;          // friction while resting on the floor
+        let vx = (p.x - p.px) * damp * grip; const vy = (p.y - p.py) * damp;
+        if (grip < 1 && Math.abs(vx) < 0.25) vx = 0;                        // static friction: no creeping
+        p.px = p.x; p.py = p.y; p.x += vx + f.ax; p.y += vy + g + f.ay;
       }
       const grounded = pl.n.footL.y > H - 36 || pl.n.footR.y > H - 36;
       if (grounded && !pl.n.head.pin) {            // stuffing: gently self-right when standing
-        pl.n.head.x += (pl.n.hip.x - pl.n.head.x) * 0.03;
+        const dx = (pl.n.hip.x - pl.n.head.x) * 0.03;       // a torque, so equal and opposite: no net sideways push
+        pl.n.head.x += dx;
+        if (!pl.n.hip.pin) pl.n.hip.x -= dx;
         pl.n.head.y += ((pl.n.hip.y - 76) - pl.n.head.y) * 0.04;
       }
       for (let it = 0; it < 8; it++) {
@@ -217,6 +259,7 @@
     if (document.hidden || now - last < 1000 / 60) return;
     last = now;
     if (drag) { drag.node.px = drag.node.x; drag.node.py = drag.node.y; drag.node.x = drag.target.x; drag.node.y = drag.target.y; }
+    readMasses();
     step();
     ctx.clearRect(0, 0, W, H);
     for (const pl of plushes) draw(pl, now);

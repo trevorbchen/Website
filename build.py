@@ -387,23 +387,13 @@ def build_learning():
             <li><b>EE/CNS/CS 148 A and B</b> Deep Learning</li>
             <li><b>CS/CNS/EE/IDS 159</b> Advanced Topics in Machine Learning</li>
             <li><b>CS 179</b> GPU Programming</li>
-            <li><b>CS 1x</b> Intermediate Computer Programming</li>
-            <li><b>CS 19a</b> Introduction to Computer Science in Industry</li>
-            <li><b>CMS 9</b> Introduction to Research in Computing and Mathematical Sciences</li>
           </ul>
           <p class="k">statistics, mathematics and economics</p>
           <ul class="reading">
             <li><b>ACM/EE/IDS 116</b> Introduction to Probability Models</li>
             <li><b>IDS/ACM/CS 157</b> Statistical Inference</li>
             <li><b>PS/Ec 172</b> Game Theory</li>
-            <li><b>Ma 17</b> How to Solve It</li>
             <li><b>Ec 11</b> Introduction to Economics</li>
-          </ul>
-          <p class="k">also</p>
-          <ul class="reading">
-            <li><b>ME 8</b> Introduction to Robotics</li>
-            <li><b>Ch 1a, 1b</b> General Chemistry</li>
-            <li><b>Hum/VC 50</b> Introduction to Film</li>
           </ul>
           <p class="k">this term</p>
           <ul class="reading">
