@@ -154,8 +154,8 @@
 
   function draw(pl) {
     const n = pl.n, pen = pl.kind === "penguin";
-    const RX = Math.min(Math.max(40 * Math.hypot(n.r.x - n.l.x, n.r.y - n.l.y) / 52, 31), 50);
-    const RY = Math.min(Math.max(36 * Math.hypot(n.t.x - n.b.x, n.t.y - n.b.y) / 52, 28), 46);
+    const RX = Math.min(Math.max(33 * Math.hypot(n.r.x - n.l.x, n.r.y - n.l.y) / 52, 26), 42);
+    const RY = Math.min(Math.max(43 * Math.hypot(n.t.x - n.b.x, n.t.y - n.b.y) / 52, 34), 54);
     const rot = Math.atan2(n.t.x - n.b.x, -(n.t.y - n.b.y));
     const blink = pl.blink > 0;
     ctx.save(); ctx.translate(n.c.x, n.c.y + 3); ctx.rotate(rot);
@@ -168,15 +168,17 @@
       ell(0, -RY * 0.06, 6.5, 4.2, 0, ORANGE);                                                         // beak
       blush(-RX * 0.62, -RY * 0.02); blush(RX * 0.62, -RY * 0.02);
     } else {
-      ell(-RX * 0.68, -RY * 0.8, 11, 11, 0, INK); ell(RX * 0.68, -RY * 0.8, 11, 11, 0, INK);          // ears
-      ell(-RX * 0.97, RY * 0.2, 9, 16, 0.45, INK); ell(RX * 0.97, RY * 0.2, 9, 16, -0.45, INK);       // arms
-      ell(-RX * 0.52, RY * 0.92, 13, 10, 0, INK); ell(RX * 0.52, RY * 0.92, 13, 10, 0, INK);          // legs
-      ell(0, 0, RX, RY, 0, WHITE);
-      ell(-RX * 0.32, -RY * 0.1, 8.5, 11, 0.45, INK, false); ell(RX * 0.32, -RY * 0.1, 8.5, 11, -0.45, INK, false);
-      eye(-RX * 0.32, -RY * 0.12, 3.8, blink, false); eye(RX * 0.32, -RY * 0.12, 3.8, blink, false);
-      ell(0, RY * 0.16, 5.5, 3.6, 0, INK, false);
-      ctx.strokeStyle = INK; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.arc(-3, RY * 0.2, 3.2, 0.1, 1.5); ctx.stroke(); ctx.beginPath(); ctx.arc(3, RY * 0.2, 3.2, 1.64, 3.0); ctx.stroke();
-      blush(-RX * 0.64, RY * 0.24); blush(RX * 0.64, RY * 0.24);
+      const hy = -RY * 0.52, hr = RX * 0.8;                                                               // head sits on a round body
+      ell(-RX * 0.5, RY * 0.9, 13, 10, 0, INK); ell(RX * 0.5, RY * 0.9, 13, 10, 0, INK);                 // legs
+      ell(-RX * 0.86, RY * 0.22, 9, 16, 0.45, INK); ell(RX * 0.86, RY * 0.22, 9, 16, -0.45, INK);        // arms
+      ell(0, RY * 0.3, RX * 0.84, RY * 0.74, 0, WHITE);                                                  // body
+      ell(-hr * 0.78, hy - hr * 0.78, 9.5, 9.5, 0, INK); ell(hr * 0.78, hy - hr * 0.78, 9.5, 9.5, 0, INK); // ears
+      ell(0, hy, hr, hr * 0.92, 0, WHITE);                                                               // head
+      ell(-hr * 0.46, hy, 7, 9, 0.45, INK, false); ell(hr * 0.46, hy, 7, 9, -0.45, INK, false); // eye patches
+      eye(-hr * 0.46, hy - 1, 3.4, blink, false); eye(hr * 0.46, hy - 1, 3.4, blink, false);
+      ell(0, hy + hr * 0.42, 4.6, 3.2, 0, INK, false);                                                      // nose
+      ctx.strokeStyle = INK; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.arc(-3, hy + hr * 0.5, 3.2, 0.1, 1.5); ctx.stroke(); ctx.beginPath(); ctx.arc(3, hy + hr * 0.5, 3.2, 1.64, 3.0); ctx.stroke();
+      blush(-hr * 0.74, hy + hr * 0.5); blush(hr * 0.74, hy + hr * 0.5);
     }
     ctx.restore();
     if (pl.blink > 0) pl.blink--;
@@ -187,7 +189,7 @@
   function pick(p) {
     for (const pl of plushes) {
       const c = pl.n.c;
-      if (((p.x - c.x) / 46) ** 2 + ((p.y - c.y) / 42) ** 2 > 1) continue;
+      if (((p.x - c.x) / 42) ** 2 + ((p.y - c.y) / 50) ** 2 > 1) continue;
       let best = c, bd = Math.hypot(p.x - c.x, p.y - c.y) - 12;
       for (const k of ["t", "b", "l", "r"]) { const d = Math.hypot(p.x - pl.n[k].x, p.y - pl.n[k].y); if (d < bd) { bd = d; best = pl.n[k]; } }
       return { pl, node: best };

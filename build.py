@@ -197,6 +197,12 @@ def build_home():
               <h3>Better molecules, fewer experiments</h3>
               <p>What it took to steer a molecule generator with a handful of expensive measurements, and the one ingredient everything else depended on.</p>
             </a>
+            <a class="comic" href="posts/interpretability.html">
+              <span class="pow">TRY IT</span>
+              <span class="pill">interpretability</span>
+              <h3>Looking inside a model</h3>
+              <p>Logit lens, attention, head ablation and a sparse autoencoder that trains in your browser.</p>
+            </a>
             <div class="comic soon">
               <span class="pow">SOON</span>
               <span class="pill violet">theory</span>
@@ -275,9 +281,9 @@ def build_research():
         row("Sparse autoencoders you can steer",
             "A family of objectives that choose which features a model learns. CVPR 2027, under review.",
             ["SAEs", "CVPR"], "posts/sae-families.html", "heat"),
-        row("Interpretability explorer",
-            "Click a token in a real transformer and trace its attention and logit lens across layers.",
-            ["tool", "GPT-2"], "explorer.html", "heat"),
+        row("Looking inside a model",
+            "Logit lens, attention, head ablation and a sparse autoencoder you can train live, all in the browser.",
+            ["demos", "GPT-2", "SAEs"], "posts/interpretability.html", "heat"),
     ], "violet")
     theory = area("theory", [
         row("Why diffusion models memorize late",
@@ -322,7 +328,7 @@ def build_blog(posts):
     body = panel("blog", f"""          <h2>blog</h2>
           <p>Write-ups of my research, projects, and a few opinions. Filter:
             <button class="filter on" data-f="">all</button><button class="filter" data-f="research">research</button><button class="filter" data-f="project">projects</button><button class="filter" data-f="essay">essays</button>
-            <a class="pill" href="explorer.html">tool: interpretability explorer</a> <a class="pill pink" href="renderer.html">tool: black hole renderer</a></p>
+            <a class="pill pink" href="renderer.html">tool: black hole renderer</a></p>
           <ul class="posts">
 {chr(10).join(items)}
           </ul>""", "pink")
