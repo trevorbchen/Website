@@ -133,7 +133,7 @@
   document.querySelectorAll(".hole").forEach((h) => {
     function show() {
       if (!tip) return;
-      tip.innerHTML = `<b>${h.dataset.label}</b>${h.dataset.tip}`;
+      tip.innerHTML = `<b>${h.dataset.label}</b>${h.dataset.tip || ""}`;
       const r = h.getBoundingClientRect();
       const left = r.left + r.width / 2 > innerWidth / 2 ? r.left - 250 : r.right + 10;
       tip.style.left = Math.max(8, Math.min(innerWidth - 250, left)) + "px";

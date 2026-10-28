@@ -8,10 +8,12 @@ import html
 import pathlib
 import re
 import sys
+import time
 
 import markdown
 
 ROOT = pathlib.Path(__file__).parent
+V = int(time.time())
 OUT = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT
 
 NAV = [("index.html", "home"), ("research.html", "research"), ("blog.html", "blog"),
@@ -19,18 +21,14 @@ NAV = [("index.html", "home"), ("research.html", "research"), ("blog.html", "blo
 
 # hobby "holes": slug, label, hover tip, margin position (left %, top %, px size)
 HOLES = [
-    ("crochet", "crochet", "amigurumi. currently learning stitches.", -1.2, 21, 76),
-    ("guitar", "guitar", "currently learning Let Her Go.", 4.6, 43, 26),
-    ("skateboarding", "skateboarding", "falling is part of the curriculum.", 0.6, 68, 44),
-    ("movies", "movies", "Spider-Verse, 12 Angry Men, some unpopular opinions.", 5.6, 88, 20),
-    ("badminton", "badminton", "ask me for a game.", 98.2, 12, 56),
-    ("figure-skating", "figure skating", "not competitive. I can do an axel.", 94.4, 37, 22),
+    ("crochet", "crochet", "amigurumi. learning to freehand dolls.", -1.2, 21, 76),
+    ("guitar", "guitar", "learning Let Her Go.", 4.6, 43, 26),
+    ("skateboarding", "skateboarding", "", 0.6, 68, 44),
+    ("movies", "movies", "favorites and unpopular opinions.", 5.6, 88, 20),
+    ("badminton", "badminton", "", 98.2, 12, 56),
+    ("figure-skating", "figure skating", "used to. I can do an axel.", 94.4, 37, 22),
     ("anime", "anime / manga / LN", "I don't believe in real books.", 97.8, 61, 84),
 ]
-
-TICKER = ("working on closed-loop discovery with Krause (ETH Zurich) and Arnold (Caltech) *** "
-          "NeurIPS 2026 accepted *** ICLR + CVPR under review *** "
-          "currently learning RL, evals, operating systems, distributed computing *** ")
 
 KATEX = """  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
@@ -44,10 +42,10 @@ def page(path, title, body, current="", extra_head="", extra_js=()):
         f'      <a href="{root}{href}"{" aria-current=\"page\"" if href == current else ""}>{label}</a>'
         for href, label in NAV)
     holes_margin = "".join(
-        f'<a class="hole" href="{root}hobbies/{slug}.html" data-label="{label}" data-tip="{tip}" '
+        f'<a class="hole" href="{root}hobbies.html#{slug}" data-label="{label}" data-tip="{tip}" '
         f'style="left:{x}%;top:{y}%;width:{s}px;height:{round(s * 0.86)}px" aria-label="{label}"></a>'
         for slug, label, tip, x, y, s in HOLES)
-    scripts = "".join(f'  <script src="{root}{s}"></script>\n' for s in extra_js)
+    scripts = "".join(f'  <script src="{root}{s}?v={V}"></script>\n' for s in extra_js)
     doc = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -59,7 +57,7 @@ def page(path, title, body, current="", extra_head="", extra_js=()):
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{root}style.css">
+  <link rel="stylesheet" href="{root}style.css?v={V}">
 {extra_head}</head>
 <body data-root="{root}">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -79,7 +77,6 @@ def page(path, title, body, current="", extra_head="", extra_js=()):
 {nav}
     </nav>
   </header>
-  <div class="ticker" aria-hidden="true"><div class="track"><span>{TICKER}</span><span>{TICKER}</span></div></div>
 
   <main>
 {body}
@@ -88,19 +85,18 @@ def page(path, title, body, current="", extra_head="", extra_js=()):
   <footer>
     <div class="foot-line">
       <span class="tag">2026 &middot; trevorbchen</span>
-      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a></span>
-    </div>
-    <div class="plush-stage" id="plush-stage">
-      <canvas id="plush" aria-label="A penguin and a panda plush sitting in the corner of the page"></canvas>
-      <div class="bubble" id="bubble"></div>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a><a href="{root}hobbies.html">hobbies</a></span>
     </div>
   </footer>
 
+  <canvas id="plush" aria-hidden="true"></canvas>
+  <div class="bubble" id="bubble"></div>
+
   <div id="portal" aria-hidden="true"></div>
-  <script src="{root}site.js"></script>
-  <script src="{root}fx.js"></script>
-  <script src="{root}plush.js"></script>
-  <script src="{root}demos.js"></script>
+  <script src="{root}site.js?v={V}"></script>
+  <script src="{root}fx.js?v={V}"></script>
+  <script src="{root}plush.js?v={V}"></script>
+  <script src="{root}demos.js?v={V}"></script>
 {scripts}</body>
 </html>
 """
@@ -338,50 +334,41 @@ def shelf(items):
     return '<ul class="shelf">' + "".join(f"<li>{i}</li>" for i in items) + "</ul>"
 
 
-HOBBY_PAGES = {
-    "crochet": ("Crochet", "Hole 01", """
-          <p class="lede">I crochet amigurumi, the small stuffed creatures.</p>
-          <p>Right now I'm learning stitches.</p>"""),
-    "guitar": ("Guitar", "Hole 02", """
-          <p class="lede">I play guitar.</p>
-          <p>Currently learning <b>Let Her Go</b>.</p>"""),
-    "skateboarding": ("Skateboarding", "Hole 03", """
-          <p class="lede">I skateboard.</p>"""),
-    "movies": ("Movies", "Hole 04", f"""
-          <h3>favorites</h3>
-          {shelf(["<b>Spider-Man: Into the Spider-Verse</b> (and Across)", "<b>Arcane</b> (show)", "<b>12 Angry Men</b>", "<b>The Truman Show</b>",
-                  "<b>Avatar: The Last Airbender</b> (show)", "<b>A Clockwork Orange</b>", "<b>Fight Club</b>", "<b>The Battle of Algiers</b>",
-                  "<b>Eternal Sunshine of the Spotless Mind</b>"])}
-          <h3>unpopular opinions</h3>
-          <p>I don't really like <b>Inception</b>, <b>Interstellar</b>, <b>The Godfather</b>, <b>Mission Impossible</b>, or the <b>Avengers</b> movies.</p>"""),
-    "badminton": ("Badminton", "Hole 05", """
-          <p class="lede">I play badminton.</p>"""),
-    "figure-skating": ("Figure skating", "Hole 06", """
-          <p class="lede">I used to figure skate, not competitively. I can do an axel.</p>"""),
-    "anime": ("Anime, manga &amp; light novels", "Hole 07", f"""
-          <p class="lede">I don't believe in real books.</p>
-          <h3>anime / manga</h3>
-          {shelf(["<b>A Silent Voice</b>", "<b>Takopi's Original Sin</b>", "<b>Goodnight Punpun</b>", "<b>Three Days of Happiness</b>",
-                  "<b>Princess Tutu</b>", "<b>Code Geass</b>", "<b>Vagabond</b>", "<b>Monster</b>", "<b>Jujutsu Kaisen</b>", "<b>Medalist</b>",
-                  "<b>Bungo Stray Dogs</b>", "<b>Steins;Gate</b>"])}
-          <h3>(web) light novels</h3>
-          {shelf(["<b>Mother of Learning</b>", "<b>Lord of Mysteries</b>"])}"""),
-}
-
-
 def build_hobbies():
-    for slug, (title, hole, inner) in HOBBY_PAGES.items():
-        body = panel(hole, f"""          <p class="back"><a href="../index.html">&larr; home</a></p>
-          <h2>{title}</h2>{inner}""", "violet")
-        page(f"hobbies/{slug}.html", f"{title} | Trevor Chen", body, "")
+    def hob(slug, name, inner=""):
+        return f'          <li class="hob" id="{slug}"><h3>{name}</h3>{inner}</li>'
 
+    items = [
+        hob("crochet", "Crochet", "<p>I crochet amigurumi. Right now I'm learning to freehand dolls, and hopefully design my own. Also learning new stitches.</p>"),
+        hob("guitar", "Guitar", "<p>Currently learning <b>Let Her Go</b>.</p>"),
+        hob("skateboarding", "Skateboarding"),
+        hob("movies", "Movies", f"""
+            <p class="k">favorites</p>
+            {shelf(["<b>Spider-Man: Into the Spider-Verse</b> (and Across)", "<b>Arcane</b> (show)", "<b>12 Angry Men</b>", "<b>The Truman Show</b>",
+                    "<b>Avatar: The Last Airbender</b> (show)", "<b>A Clockwork Orange</b>", "<b>Fight Club</b>", "<b>The Battle of Algiers</b>",
+                    "<b>Eternal Sunshine of the Spotless Mind</b>"])}
+            <p class="k">unpopular opinions</p>
+            <p>I don't really like <b>Inception</b>, <b>Interstellar</b>, <b>The Godfather</b>, <b>Mission Impossible</b>, or the <b>Avengers</b> movies.</p>"""),
+        hob("badminton", "Badminton"),
+        hob("figure-skating", "Figure skating", "<p>I used to figure skate, not competitively. I can do an axel.</p>"),
+        hob("anime", "Anime, manga &amp; light novels", f"""
+            <p>I don't believe in real books.</p>
+            <p class="k">anime / manga</p>
+            {shelf(["<b>A Silent Voice</b>", "<b>Takopi's Original Sin</b>", "<b>Goodnight Punpun</b>", "<b>Three Days of Happiness</b>",
+                    "<b>Princess Tutu</b>", "<b>Code Geass</b>", "<b>Vagabond</b>", "<b>Monster</b>", "<b>Jujutsu Kaisen</b>", "<b>Medalist</b>",
+                    "<b>Bungo Stray Dogs</b>", "<b>Steins;Gate</b>"])}
+            <p class="k">(web) light novels</p>
+            {shelf(["<b>Mother of Learning</b>", "<b>Lord of Mysteries</b>"])}"""),
+    ]
+    body = panel("hobbies", "          <h2>hobbies</h2>\n          <ul class=\"hobs\">\n" + "\n".join(items) + "\n          </ul>", "violet")
+    page("hobbies.html", "hobbies | Trevor Chen", body, "")
 
 
 # ---------------------------------------------------------------- learning
 def build_learning():
     def item(title, url=None, note=""):
         t = f'<a href="{url}">{title}</a>' if url else title
-        return f'            <li><b>{t}</b>' + (f'<span>{note}</span>' if note else "") + "</li>"
+        return f'            <li><b>{t}</b>' + (f' <span>{note}</span>' if note else "") + "</li>"
 
     def sec(name, items, color=""):
         return panel(name, '          <ul class="reading">\n' + "\n".join(item(*i) for i in items) + "\n          </ul>", color)

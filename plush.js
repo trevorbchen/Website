@@ -1,20 +1,16 @@
-// two plush toys (a penguin and a panda) as verlet ragdolls. drag, throw, and poke them.
+// two plush toys (a penguin and a panda) as verlet ragdolls that live in the viewport.
+// They stay put while you scroll. Grab one anywhere on the page and toss it around.
 (() => {
   const canvas = document.getElementById("plush");
-  const stage = document.getElementById("plush-stage");
   const bubble = document.getElementById("bubble");
-  if (!canvas || !stage) return;
+  if (!canvas) return;
+  if (window.matchMedia("(pointer: coarse)").matches) { canvas.remove(); if (bubble) bubble.remove(); return; }
   const ctx = canvas.getContext("2d");
-  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const root = document.documentElement;
   const INK = "#111015", PINK = "#ff2e88", CYAN = "#19d3e6";
   let W = 0, H = 0, dpr = 1;
 
-  const LINES = {
-    penguin: ["squawk.", "poked. noted."],
-    panda: ["ow.", "bamboo."],
-  };
-
-
+  const LINES = { penguin: ["squawk.", "poked."], panda: ["ow.", "bamboo."] };
 
   class P {
     constructor(x, y, r) { this.x = x; this.y = y; this.px = x; this.py = y; this.r = r; this.pin = false; }
@@ -38,12 +34,19 @@
 
   let plushes = [];
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    W = canvas.clientWidth; H = canvas.clientHeight;
+    const oldH = H;
+    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    W = window.innerWidth; H = window.innerHeight;
     canvas.width = W * dpr; canvas.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    if (!plushes.length) plushes = [makePlush("penguin", W * 0.32), makePlush("panda", W * 0.68)];
-    for (const p of plushes) for (const k in p.n) { p.n[k].x = Math.min(Math.max(p.n[k].x, 20), W - 20); }
+    if (!plushes.length) {
+      plushes = [makePlush("penguin", W - 190), makePlush("panda", W - 90)];
+    } else if (oldH) {
+      for (const p of plushes) for (const k in p.n) {   // keep them standing on the bottom edge
+        p.n[k].y += H - oldH; p.n[k].py += H - oldH;
+        p.n[k].x = Math.min(Math.max(p.n[k].x, 20), W - 20); p.n[k].px = p.n[k].x;
+      }
+    }
   }
   resize();
   window.addEventListener("resize", resize);
@@ -58,9 +61,8 @@
         const vx = (p.x - p.px) * 0.992, vy = (p.y - p.py) * 0.992;
         p.px = p.x; p.py = p.y; p.x += vx; p.y += vy + g;
       }
-      // plush "stuffing": gentle self-righting when standing
       const grounded = pl.n.footL.y > H - 36 || pl.n.footR.y > H - 36;
-      if (grounded && !pl.n.head.pin) {
+      if (grounded && !pl.n.head.pin) {            // stuffing: gently self-right when standing
         pl.n.head.x += (pl.n.hip.x - pl.n.head.x) * 0.03;
         pl.n.head.y += ((pl.n.hip.y - 76) - pl.n.head.y) * 0.04;
       }
@@ -81,7 +83,6 @@
         }
       }
     }
-    // keep the two plushes from overlapping at the hips and heads
     const [a, b] = plushes;
     for (const k of ["hip", "head"]) {
       const dx = b.n[k].x - a.n[k].x, dy = b.n[k].y - a.n[k].y, d = Math.hypot(dx, dy) || 1, min = k === "hip" ? 62 : 52;
@@ -109,31 +110,33 @@
     ctx.strokeStyle = fill; ctx.lineWidth = w;
     ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
   }
+  function eyes(blink, x, y, col, r = 3.4) {
+    ctx.fillStyle = col; ctx.strokeStyle = col; ctx.lineWidth = 2.5;
+    for (const sx of [x, -x]) {
+      if (blink) { ctx.beginPath(); ctx.moveTo(sx - 4, y); ctx.lineTo(sx + 4, y); ctx.stroke(); }
+      else { ctx.beginPath(); ctx.arc(sx, y, r, 0, 6.2832); ctx.fill(); }
+    }
+  }
 
   function draw(pl, t) {
     const n = pl.n, pen = pl.kind === "penguin";
-    const limbCol = pen ? INK : INK;
     const skin = pen ? INK : "#fbf9f3";
-    // legs behind the body
     if (pen) { for (const f of [n.footL, n.footR]) inkEllipse(f.x, f.y, 13, 6, 0, "#ff9f1c"); }
     else { limb(n.hip, n.footL, 15, INK); limb(n.hip, n.footR, 15, INK); }
-    // body
     const mx = (n.neck.x + n.hip.x) / 2, my = (n.neck.y + n.hip.y) / 2 + 4;
     const bAng = Math.atan2(-(n.hip.x - n.neck.x), n.hip.y - n.neck.y);
     inkEllipse(mx, my, 31, 46, bAng, pen ? INK : "#fbf9f3");
     ctx.save(); ctx.translate(mx, my + 5); ctx.rotate(bAng);
     if (pen) { ctx.beginPath(); ctx.ellipse(0, 4, 19, 33, 0, 0, 6.2832); ctx.fillStyle = "#fbf9f3"; ctx.fill(); }
     ctx.restore();
-    // arms / flippers
-    limb(n.neck, n.handL, 14, limbCol); limb(n.neck, n.handR, 14, limbCol);
-    // head
+    limb(n.neck, n.handL, 14, INK); limb(n.neck, n.handR, 14, INK);
     const hAng = Math.atan2(n.head.x - n.neck.x, -(n.head.y - n.neck.y));
     ctx.save(); ctx.translate(n.head.x, n.head.y); ctx.rotate(hAng);
     if (!pen) {
       for (const sx of [-1, 1]) { ctx.beginPath(); ctx.arc(sx * 19, -19, 9, 0, 6.2832); ctx.fillStyle = INK; ctx.fill(); }
     }
     inkEllipse(0, 0, 25, 23, 0, skin);
-    const blink = Math.sin(t / 700 + pl.n.head.x) > 0.985 || pl.blink > 0;
+    const blink = Math.sin(t / 700 + n.head.x) > 0.985 || pl.blink > 0;
     if (pen) {
       ctx.beginPath(); ctx.ellipse(0, 3, 17, 15, 0, 0, 6.2832); ctx.fillStyle = "#fbf9f3"; ctx.fill();
       ctx.beginPath(); ctx.moveTo(-5, 4); ctx.lineTo(5, 4); ctx.lineTo(0, 12); ctx.closePath();
@@ -147,54 +150,52 @@
     ctx.restore();
     if (pl.blink > 0) pl.blink--;
   }
-  function eyes(blink, x, y, col, r = 3.4) {
-    ctx.fillStyle = col; ctx.strokeStyle = col; ctx.lineWidth = 2.5;
-    for (const sx of [x, -x]) {
-      if (blink) { ctx.beginPath(); ctx.moveTo(sx - 4, y); ctx.lineTo(sx + 4, y); ctx.stroke(); }
-      else { ctx.beginPath(); ctx.arc(sx, y, r, 0, 6.2832); ctx.fill(); }
-    }
-  }
 
-  // ---------------------------------------------------------------- interaction
-  let drag = null, down = null;
-  function local(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+  // ---------------------------------------------------------------- interaction (page-wide)
+  let drag = null, down = null, swallowClick = false;
   function pick(p) {
     let best = null, bd = 1e9;
     for (const pl of plushes) {
       for (const k in pl.n) {
         const d = Math.hypot(pl.n[k].x - p.x, pl.n[k].y - p.y) - pl.n[k].r;
-        if (d < 22 && d < bd) { bd = d; best = { pl, node: pl.n[k] }; }
+        if (d < 18 && d < bd) { bd = d; best = { pl, node: pl.n[k] }; }
       }
       const a = pl.n.neck, b = pl.n.hip;
       const ab = { x: b.x - a.x, y: b.y - a.y }, t = Math.max(0, Math.min(1, ((p.x - a.x) * ab.x + (p.y - a.y) * ab.y) / (ab.x * ab.x + ab.y * ab.y || 1)));
       const d = Math.hypot(a.x + ab.x * t - p.x, a.y + ab.y * t - p.y);
-      if (d < 32 && d < bd + 10 && !best) best = { pl, node: pl.n.hip };
+      if (d < 30 && !best) best = { pl, node: pl.n.hip };
     }
     return best;
   }
   function say(pl) {
+    if (!bubble) return;
     const lines = LINES[pl.kind];
     bubble.textContent = lines[pl.line++ % lines.length];
     bubble.classList.add("show");
-    const x = canvas.offsetLeft + Math.min(Math.max(pl.n.head.x - 40, 4), W - 150), y = Math.max(pl.n.head.y - 74, 0);
-    bubble.style.left = x + "px"; bubble.style.top = y + "px";
-    clearTimeout(say.t); say.t = setTimeout(() => bubble.classList.remove("show"), 3000);
+    bubble.style.left = Math.min(Math.max(pl.n.head.x - 40, 8), W - 240) + "px";
+    bubble.style.top = Math.max(pl.n.head.y - 70, 8) + "px";
+    clearTimeout(say.t); say.t = setTimeout(() => bubble.classList.remove("show"), 2200);
   }
 
-  canvas.addEventListener("pointerdown", (e) => {
-    const p = local(e), hit = pick(p);
+  document.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    const hit = pick({ x: e.clientX, y: e.clientY });
     if (!hit) return;
-    canvas.setPointerCapture(e.pointerId);
+    e.preventDefault();
     hit.node.pin = true;
-    drag = { ...hit, off: { x: hit.node.x - p.x, y: hit.node.y - p.y }, target: { x: hit.node.x, y: hit.node.y } };
-    down = { x: p.x, y: p.y, t: performance.now(), moved: 0 };
-    canvas.style.cursor = "grabbing";
-  });
-  canvas.addEventListener("pointermove", (e) => {
-    const p = local(e);
-    if (!drag) { canvas.style.cursor = pick(p) ? "grab" : "default"; return; }
-    drag.target = { x: Math.min(Math.max(p.x + drag.off.x, 10), W - 10), y: Math.min(Math.max(p.y + drag.off.y, 10), H - 10) };
-    down.moved = Math.max(down.moved, Math.hypot(p.x - down.x, p.y - down.y));
+    drag = { ...hit, off: { x: hit.node.x - e.clientX, y: hit.node.y - e.clientY }, target: { x: hit.node.x, y: hit.node.y } };
+    down = { x: e.clientX, y: e.clientY, t: performance.now(), moved: 0 };
+    swallowClick = true;
+    root.classList.add("plush-drag");
+  }, true);
+  document.addEventListener("mousedown", (e) => { if (pick({ x: e.clientX, y: e.clientY })) e.preventDefault(); }, true);
+  document.addEventListener("selectstart", (e) => { if (drag) e.preventDefault(); });
+  document.addEventListener("click", (e) => { if (swallowClick) { e.preventDefault(); e.stopPropagation(); swallowClick = false; } }, true);
+
+  window.addEventListener("pointermove", (e) => {
+    if (!drag) { root.classList.toggle("plush-hover", !!pick({ x: e.clientX, y: e.clientY })); return; }
+    drag.target = { x: Math.min(Math.max(e.clientX + drag.off.x, 10), W - 10), y: Math.min(Math.max(e.clientY + drag.off.y, 10), H - 10) };
+    down.moved = Math.max(down.moved, Math.hypot(e.clientX - down.x, e.clientY - down.y));
   });
   function release() {
     if (!drag) return;
@@ -204,28 +205,20 @@
       for (const k in pl.n) pl.n[k].py = pl.n[k].y + 9;   // boing
       pl.blink = 8; say(pl);
     }
-    drag = null; canvas.style.cursor = "grab";
+    drag = null; root.classList.remove("plush-drag");
+    setTimeout(() => { swallowClick = false; }, 0);
   }
-  canvas.addEventListener("pointerup", release);
-  canvas.addEventListener("pointercancel", release);
+  window.addEventListener("pointerup", release);
+  window.addEventListener("pointercancel", release);
 
-  // konami code makes them jump
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "p") for (const pl of plushes) for (const k in pl.n) pl.n[k].py = pl.n[k].y + 14;
-  });
-
-  let visible = true;
-  new IntersectionObserver(([en]) => { visible = en.isIntersecting; }).observe(canvas);
   let last = 0;
   function frame(now) {
     requestAnimationFrame(frame);
-    if (!visible || document.hidden) return;
-    if (now - last < 1000 / 60) return;
+    if (document.hidden || now - last < 1000 / 60) return;
     last = now;
     if (drag) { drag.node.px = drag.node.x; drag.node.py = drag.node.y; drag.node.x = drag.target.x; drag.node.y = drag.target.y; }
-    if (!reduce || drag) step();
+    step();
     ctx.clearRect(0, 0, W, H);
-    
     for (const pl of plushes) draw(pl, now);
   }
   requestAnimationFrame(frame);
