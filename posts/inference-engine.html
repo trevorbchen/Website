@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Building a tiny vLLM | Trevor Chen</title>
+  <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css?v=1793181999">
+</head>
+<body data-root="../">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="boil"><feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="0"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+    <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
+  </svg>
+  <canvas id="dots" aria-hidden="true"></canvas>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="../hobbies.html#crochet" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:-1.2%;top:21%;width:76px;height:65px" aria-label="crochet"></a><a class="hole" href="../hobbies.html#guitar" data-label="guitar" data-tip="currently learning Let Her Go and Stitches." style="left:4.6%;top:43%;width:26px;height:22px" aria-label="guitar"></a><a class="hole" href="../hobbies.html#skateboarding" data-label="skateboarding" data-tip="" style="left:0.6%;top:68%;width:44px;height:38px" aria-label="skateboarding"></a><a class="hole" href="../hobbies.html#movies" data-label="movies" data-tip="favorites and unpopular opinions." style="left:5.6%;top:88%;width:20px;height:17px" aria-label="movies"></a><a class="hole" href="../hobbies.html#badminton" data-label="badminton" data-tip="" style="left:98.2%;top:12%;width:56px;height:48px" aria-label="badminton"></a><a class="hole" href="../hobbies.html#figure-skating" data-label="figure skating" data-tip="used to. I can do an axel." style="left:94.4%;top:37%;width:22px;height:19px" aria-label="figure skating"></a><a class="hole" href="../hobbies.html#anime" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:97.8%;top:61%;width:84px;height:72px" aria-label="anime / manga / LN"></a></div>
+  <div id="tip" class="tip" role="tooltip"></div>
+
+  <header class="top">
+    <div>
+      <p class="logo"><a href="../index.html">TREVOR CHEN</a></p>
+      <p class="tagline">diffusion / ai for science / interpretability</p>
+    </div>
+    <nav class="nav" aria-label="site">
+      <a href="../index.html">home</a>
+      <a href="../research.html">research</a>
+      <a href="../blog.html" aria-current="page">blog</a>
+      <a href="../learning.html">learning</a>
+      <a href="../Trevor_Chen_Resume.pdf">cv</a>
+    </nav>
+  </header>
+
+  <main>
+      <article class="panel post">
+        <span class="caption">project</span>
+        <p class="back"><a href="../blog.html">&larr; all posts</a></p>
+        <h1>Building a tiny vLLM</h1>
+        <p class="meta">2026-10 &middot; <span class="pill pink">inference</span> <span class="pill pink">GPU</span> <span class="pill pink">systems</span></p>
+<p>Serving a language model is mostly a memory and scheduling problem. The arithmetic for one token is small. What makes a server fast or slow is how many requests it can keep in flight at once, and that is limited by something unglamorous: the <strong>KV cache</strong>.</p>
+<p>I wanted to understand that properly, so I built the core of a modern serving engine from scratch and measured it against Hugging Face on the same requests. This page is a tour of it. Nothing here runs a model in your browser or on a server of mine. The numbers come from runs I recorded on real hardware, saved as data files, and <strong>replayed</strong> below.</p>
+<h2>The cache is the whole game</h2>
+<p>When a transformer generates token number <em>n</em>, it needs the keys and values of all <em>n&minus;1</em> earlier tokens at every layer. Recomputing them each step would be absurdly wasteful, so they are kept: that's the KV cache. It grows by one entry per token per layer, and it is held for as long as the request is alive.</p>
+<p>For the 1.1B-parameter model I used (TinyLlama, 22 layers, 4 key-value heads of size 64, in half precision), each token costs 2 &times; 22 &times; 4 &times; 64 &times; 2 bytes = <strong>22,528 bytes</strong>. A 2,048-token request holds about 46 MB. A GPU that holds the weights and has a few gigabytes left over can only keep so many of those alive, and that number is what sets throughput.</p>
+<h3>Paged blocks</h3>
+<p>The obvious implementation gives each request one contiguous slab of cache sized for the longest sequence it might ever reach. Most requests never get anywhere near that length, so most of the slab sits empty, and empty cache means fewer requests in the batch. The vLLM paper measured that earlier systems used only about 20 to 38 percent of their cache memory for real token state.</p>
+<p>The fix is the one operating systems use for memory: <strong>paging</strong>. Cut the cache into fixed blocks of 16 tokens, hand them out on demand, and keep a per-request <em>block table</em> that maps a sequence's logical blocks to wherever they landed physically. The only waste is the unused tail of each request's last block.</p>
+<div class="demo light" data-demo="paging"></div>
+
+<p>Switch the policy and watch how many requests fit. In paged mode the pool fills with tokens; in the reserve-the-maximum mode, most of it is stranded and the queue backs up.</p>
+<h2>Continuous batching</h2>
+<p>The second idea is about <em>when</em> requests join the batch. The simple approach, <strong>static batching</strong>, collects a batch, runs it until the slowest sequence finishes, and only then takes the next batch. Every sequence that finished early sits there generating padding, and everything waiting behind it waits for the stragglers too.</p>
+<p><strong>Continuous batching</strong> (Orca called it iteration-level scheduling) makes the decision every step instead. After each forward pass, finished sequences leave and waiting ones take their place. The engine's scheduler is short enough to quote:</p>
+<ol>
+<li>If a request is waiting and the cache has room for its prompt, run its <strong>prefill</strong> (one pass over the whole prompt) and emit its first token.</li>
+<li>Otherwise run one <strong>decode</strong> step for every running sequence.</li>
+<li>If a decode step needs a new block and none are free, <strong>preempt</strong> the most recently admitted sequence: free its blocks and put it back at the front of the queue to be recomputed later.</li>
+</ol>
+<p>Here is every request in a recorded run, with the engine and with Hugging Face's <code>generate</code> in static batches of 8, 16 and 32. Press play, or click anywhere on the chart to move the playhead.</p>
+<div class="demo light" data-demo="timeline"></div>
+
+<p>In the static-batch views, the grey portion of each bar is decode work spent on a sequence that had already finished. That is the straggler tax, and it is why larger batches help so little: a bigger batch has a longer slowest member.</p>
+<h3>What the cache is doing</h3>
+<p>The same run, from the engine's own trace. Each point is one scheduler step.</p>
+<div class="demo light" data-demo="cache"></div>
+
+<h2>Results</h2>
+<div class="demo light" data-demo="results"></div>
+
+<p>Two things are worth being careful about. The workload is synthetic (random prompt tokens, lengths drawn from a skewed distribution, and every request runs for exactly its target length so both systems do the same useful work). And these are single-GPU numbers on a laptop card, which says something about scheduling and memory, not about how the engine behaves at scale.</p>
+<h2>How I know it's right</h2>
+<p>A fast server that returns different tokens is not a faster server. The engine loads weights straight from a Hugging Face model, and every claim is tested against Hugging Face's own <code>generate</code> on a small random Llama in full precision, so there's no tolerance to hide behind:</p>
+<ul>
+<li>prefill logits match the reference exactly</li>
+<li>single-request greedy decoding through the paged cache matches token for token, at several prompt lengths</li>
+<li>nine requests of different lengths batched together all match, with no leaked blocks</li>
+<li>under deliberate memory pressure the engine preempts and recomputes eight times, and every output still matches</li>
+<li>generation stops correctly at the end-of-sequence token</li>
+<li>requests arriving over time are never served before they arrive</li>
+</ul>
+<p>On the real model in half precision, 6 of 6 sampled requests produced 24-token outputs identical to Hugging Face at batch size one. That is a small sample. With enough requests, near-ties will eventually come out differently, because floating-point sums are added in a different order depending on what else is in the batch.</p>
+<h2>The kernels</h2>
+<p>The attention in the recorded runs is plain PyTorch: gather each sequence's blocks into a padded tensor, mask, and call scaled-dot-product attention. That's the readable reference version, and it leaves a lot of speed on the table. I wrote the fused versions in Triton, each with a test against a float32 reference:</p>
+<ul>
+<li><strong>add + RMSNorm</strong> in one pass over the residual stream</li>
+<li><strong>RoPE and the cache write</strong> in one kernel, so keys and values go straight into their physical blocks</li>
+<li><strong>SwiGLU</strong> from the fused gate/up projection</li>
+<li><strong>FlashAttention-2</strong> style causal attention for prefill, with grouped-query attention and an online softmax</li>
+<li><strong>PagedAttention v2</strong> for decode: a block-table gather with an online softmax, split across the context (flash-decoding), handling all the query heads that share one key-value head together, followed by a small reduction kernel</li>
+</ul>
+<p>They are written to avoid host synchronization, so a whole decode step could be captured in a CUDA graph. <strong>They have not run yet.</strong> Triton needs a C compiler to build its launcher, and the machine I developed on doesn't have one, so the runs on this page all use the reference attention path, and each run is labelled with which path it used. Once the kernels compile and pass their tests, the fused-kernel runs will show up in the same replay as another dataset, and this paragraph will change.</p>
+<h2>Where it ran</h2>
+<p>The recorded runs are labelled with the GPU. The first is a laptop RTX 4060. I'd like numbers from A100s too, but the lab machines I have access to are shared and busy, and I only run on GPUs that nobody else is using. When one is genuinely idle, the same script runs there and a second dataset appears here.</p>
+<h2>What it doesn't do yet</h2>
+<p>Greedy decoding only (no sampling), one GPU, prompts that are fully prefilled in one pass, and no prefix caching, chunked prefill, speculative decoding or tensor parallelism. Those are the natural next steps, and each is a well-known idea I'd like to build rather than just cite.</p>
+      </article>
+  </main>
+
+  <footer>
+    <div class="foot-line">
+      <span class="tag">2026 &middot; trevorbchen</span>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a><a href="../hobbies.html">hobbies</a></span>
+    </div>
+  </footer>
+
+  <canvas id="plush" aria-hidden="true"></canvas>
+  <div class="bubble" id="bubble"></div>
+
+  <div id="portal" aria-hidden="true"></div>
+  <script src="../site.js?v=1793181999"></script>
+  <script src="../fx.js?v=1793181999"></script>
+  <script src="../plush.js?v=1793181999"></script>
+  <script src="../demos.js?v=1793181999"></script>
+  <script src="../replay.js?v=1793181999"></script>
+</body>
+</html>

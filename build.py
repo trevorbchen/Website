@@ -295,6 +295,9 @@ def build_research():
             ["essay"], "posts/diffusion-gaussians.html", "noise"),
     ], "")
     other = area("also", [
+        row("Building a tiny vLLM",
+            "A paged KV cache, continuous batching and fused Triton kernels, checked against Hugging Face, with recorded runs you can replay.",
+            ["inference", "GPU", "systems"], "posts/inference-engine.html", None),
         row("Specs, verifiers and counterexamples",
             "Formal verification for AI agents at Ascade, and a loop you can break in the browser.",
             ["verification", "demo"], "posts/verification-loop.html", "graph"),

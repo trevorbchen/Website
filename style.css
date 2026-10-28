@@ -656,3 +656,7 @@ a.portal:hover::after, a.portal:focus-visible::after { opacity: 1; }
 .takes li { background: #fff; border: 3px solid var(--ink); padding: 8px 12px; box-shadow: 4px 4px 0 var(--pink); }
 .takes li:nth-child(2n) { box-shadow: 4px 4px 0 var(--cyan); }
 .takes b { display: block; } .takes span { display: block; color: var(--muted); font-size: 14.5px; }
+
+.rr-key { font-family: var(--mono); font-size: 11.5px; } .rr-key i { display: inline-block; width: 11px; height: 11px; border: 2px solid var(--ink); margin: 0 4px 0 10px; vertical-align: -1px; } .rr-key i:first-child { margin-left: 0; }
+.rr-tab { overflow-x: auto; } .rr-tab table { min-width: 640px; }
+.demo.light canvas#pc, .demo.light canvas#tc, .demo.light canvas#cc { width: 100%; }
