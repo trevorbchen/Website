@@ -10,11 +10,10 @@
   let W = 0, H = 0, dpr = 1;
 
   const LINES = {
-    penguin: ["squawk.", "Yisong Yue's lab: diffusion, RL, molecules.", "Andreas Krause's group at ETH: sample-efficient discovery.",
-      "I am a penguin. I have no opinions about diffusion models.", "poked. noted."],
-    panda: ["bamboo.exe has stopped responding.", "Pietro Perona's lab: where the sparse autoencoders live.",
-      "Frances Arnold's lab: where the enzymes live.", "Trevor is learning to crochet things like me.", "ow."],
+    penguin: ["squawk.", "I am a penguin. I have no opinions about diffusion models.", "poked. noted.", "waddle waddle.", "Trevor is learning to crochet things like me."],
+    panda: ["bamboo.exe has stopped responding.", "ow.", "I am load-bearing.", "yes, I am a panda. no, I will not elaborate.", "do not feed the sparse autoencoders."],
   };
+
 
   class P {
     constructor(x, y, r) { this.x = x; this.y = y; this.px = x; this.py = y; this.r = r; this.pin = false; }

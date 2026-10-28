@@ -183,8 +183,8 @@ def build_home():
           <h2>hi, i'm trevor.</h2>
           <p class="lede">I'm an undergrad at Caltech doing research in diffusion models and AI for science, mostly bio, with side quests in interpretability and theory.</p>
           <p>I'm lucky to work with <a href="https://www.yisongyue.com/">Yisong Yue</a> and <a href="https://www.vision.caltech.edu/">Pietro Perona</a> at Caltech,
-          <a href="https://cheme.caltech.edu/groups/fha/">Frances Arnold</a>'s lab, and <a href="https://las.inf.ethz.ch/">Andreas Krause</a>'s group at ETH Zurich.
-          I co-founded <a href="https://ascade.co/">Ascade</a>, which was accepted to YC F25, and later chose research (<a href="posts/leaving-startups.html">here's why</a>).</p>
+          <a href="https://las.inf.ethz.ch/">Andreas Krause</a>'s group at ETH Zurich, and <a href="https://cheme.caltech.edu/groups/fha/">Frances Arnold</a>'s lab.
+          Before that I co-founded <a href="https://ascade.co/">Ascade</a>, which was accepted to YC F25, until May 2026, then went back to research (<a href="posts/leaving-startups.html">here's why</a>).</p>
           <p class="small">This is also where I put the things that don't fit in a paper: failed theories, bad bets, and hobbies. The black holes on the sides are doors.</p>
           </div>
           <div>
@@ -193,7 +193,7 @@ def build_home():
           </div>
           </div>""")
     now = panel("currently", """          <ul class="now">
-            <li><b>Working on</b> closed-loop discovery with Andreas Krause's group (ETH) and Frances Arnold's lab: language models propose hypotheses, generative models turn them into designs, and the wet lab says yes or no.</li>
+            <li><b>Working on</b> closed-loop discovery with Andreas Krause's group (ETH Zurich) and Frances Arnold's lab: language models propose hypotheses, generative models turn them into designs, and the wet lab says yes or no.</li>
             <li><b>Writing</b> two submissions: sparse-autoencoder dictionaries (<a href="posts/sae-families.html">CVPR</a>) and why diffusion models memorize late (<a href="posts/memorization.html">ICLR</a>).</li>
             <li><b>Learning</b> reinforcement learning, evals, operating systems and distributed computing.</li>
           </ul>""", "pink")
