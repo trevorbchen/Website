@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bending light for a living (kind of): mid-IR gratings and a jet-engine camera | Trevor Chen</title>
+  <title>Bending light for a living: mid-IR gratings for ultrafast lasers | Trevor Chen</title>
   <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../style.css?v=1793180264">
+  <link rel="stylesheet" href="../style.css?v=1793180517">
 </head>
 <body data-root="../">
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -38,7 +38,7 @@
       <article class="panel post">
         <span class="caption">research</span>
         <p class="back"><a href="../blog.html">&larr; all posts</a></p>
-        <h1>Bending light for a living (kind of): mid-IR gratings and a jet-engine camera</h1>
+        <h1>Bending light for a living: mid-IR gratings for ultrafast lasers</h1>
         <p class="meta">2024-05 &middot; <span class="pill cyan">physics</span> <span class="pill cyan">optics</span> <span class="pill cyan">nanofabrication</span></p>
 <div class="stats">
 <div><b>&gt;90%</b><span>efficiency designed across 3.6 to 6.6 &micro;m</span></div>
@@ -47,7 +47,7 @@
 <div><b>10 gratings</b><span>deployed at 5+ national labs, supporting over $1.3M of R&amp;D contracts</span></div>
 </div>
 
-<p>My first real research was in physics, in optics, and I did it for years, so it deserves a proper write-up. There are two projects here. The first is about making a piece of glass-and-metal that bends mid-infrared light very efficiently. The second is a camera that can read the temperature of a turbine blade while a flame is burning next to it. The thread connecting them, which I only noticed later, is that in both cases the real world, not the simulation, was the judge.</p>
+<p>My first real research was in physics, in optics, and I did it for years, so it deserves a proper write-up. This is the project I spent the most time on: making a piece of patterned glass and metal that bends mid-infrared light very efficiently, so that an ultrafast laser can be amplified without destroying itself.</p>
 <h2>1. Why anyone needs a grating</h2>
 <p>Ultrafast lasers fire pulses a few hundred femtoseconds long. If you try to amplify one of those pulses directly, the peak power is so high that it destroys the amplifier. The fix, which won a Nobel Prize in 2018, is called <strong>chirped pulse amplification</strong>: stretch the pulse in time so its power is spread out, amplify the long pulse safely, and then compress it back to its original duration.</p>
 <p>The stretcher and the compressor are both built from <strong>diffraction gratings</strong>. A grating is a surface with a periodic pattern fine enough to send each wavelength in a slightly different direction. The pulse is made of many wavelengths, so a pair of gratings can make the short-wavelength light travel a different distance than the long-wavelength light, which stretches it, and the mirror-image arrangement undoes it.</p>
@@ -68,7 +68,8 @@
 <p>This is easy to say and hard to build, especially for mid-infrared light. Conventional manufacturing for gratings is mechanical ruling, where a diamond tool drags grooves across a surface, and holographic recording, where interference fringes expose a photosensitive layer. Both struggle to produce the <em>accurate</em> sawtooth profile that a broadband, high-efficiency mid-IR grating needs: ruled grooves have tool and surface roughness, and holographic ones tend toward rounded sinusoidal profiles.</p>
 <h2>3. Our approach</h2>
 <p>The goal of the project was a grating for a 100-femtosecond laser at 4.3 µm that stayed efficient across a very wide band, with tolerance for that pulse's own spectrum.</p>
-<figure><img src="../img/optics/pipeline.svg" alt="Pipeline from global optimization through lithography, etching, coating and testing"><figcaption>From design to a working grating. Each step constrains the one before it, which is why putting the fabrication limits into the design simulation mattered so much.</figcaption></figure>
+<div class="pipe"><div><i>1</i><b>global optimization</b><span>find the groove profile</span></div><div><i>2</i><b>e-beam lithography</b><span>write the pattern</span></div><div><i>3</i><b>anisotropic wet etch</b><span>smooth blazed facets</span></div><div><i>4</i><b>Au + Al<sub>2</sub>O<sub>3</sub> coating</b><span>low loss, high damage threshold</span></div><div><i>5</i><b>test at 4.3 &micro;m</b><span>92% efficient</span></div></div>
+<p class="pipe-cap">From design to a working grating. Each step constrains the one before it, which is why putting the fabrication limits into the design simulation mattered so much.</p>
 
 <p><strong>Design.</strong> We ran a global optimization over the groove geometry and the coating stack for efficiency above 90% over a very wide range, 3.6 to 6.6 µm. The search space has lots of local optima, which is why a global method matters here.</p>
 <p><strong>Fabrication.</strong> Instead of ruling or holography, we combined <strong>electron-beam lithography</strong> with <strong>anisotropic wet etching</strong>. The lithography writes a precise pattern. The anisotropic etch then eats the material along crystal planes at very different rates in different directions, which is what makes the facets come out smooth and flat at a fixed angle, the near-perfect blazed grooves that the other methods struggle to produce. We developed this process with the Penn State nanofabrication lab, and it improved efficiency by about 30%.</p>
@@ -80,11 +81,7 @@
 <p>Two things stand out when I look back at this project.</p>
 <p><strong>A feature found in simulation.</strong> Working in simulation, I independently discovered a "double-blazing" groove feature, an extra structure in the profile that widened the usable bandwidth by roughly 50% and raised the efficiency by about 20%. It's the kind of result you only get by searching a large design space with a computer and then working out why a candidate is good.</p>
 <p><strong>Putting the constraints in the model.</strong> A design optimizer will happily propose a groove that no etch can produce. Once the fabrication limits were built directly into the design simulations, prototype iterations dropped from 7 to 2 and manufacturing error fell by about 80%. That's the lesson I carry to every domain since: put the constraints of reality into the model rather than discovering them at the bench.</p>
-<p>The gratings from this work are now in use at five or more national labs, supporting over $1.3 million of R&amp;D contracts. It was published in <em>Optical Materials Express</em>, with a companion paper in SPIE on extending the design to single-cycle infrared lasers.</p>
-<h2>5. A thermal camera for a jet engine</h2>
-<p>The second project is almost a different field. Measuring the surface temperature of a turbine blade or combustor liner is hard because the flame around it glows at the same time. If you look in the visible or near-infrared, the flame lights up everything and swamps what you're trying to measure. Working in the <strong>long-wave infrared (8 to 14 µm)</strong> sidesteps most of that interference, because hot combustion gases and soot emit little there.</p>
-<p>With Paul Hsu and Tim Lieuwen's group, I worked on a compact LWIR borescope: a slim probe that goes inside the engine. It sits in a custom water-cooled housing, about 19 millimetres across, designed to survive flame temperatures up to roughly 2,400 K at 50 bar. We demonstrated it by imaging a V-gutter bluff body, a standard flame-holding shape, cooled with nitrogen in a lab combustion rig. It measured the surface temperature accurately with little background noise, and it tracked the transient cooling as the nitrogen came on.</p>
-<p>My part was the optimization that designed the sensing system and the calibration against a blackbody. That produced a journal paper in <em>Measurement Science and Technology</em> and three conference papers.</p>
+<p>The gratings from this work are now in use at five or more national labs, supporting over $1.3 million of R&amp;D contracts. It was published in <em>Optical Materials Express</em>, with a companion paper at SPIE on extending the design to single-cycle infrared lasers.</p>
 <h2>What I took from it</h2>
 <p>Optics taught me to distrust my own simulations, and to treat the real world as the final judge. That instinct, that an expensive, honest measurement is what actually tells you the truth and everything else is a guess about it, is the thread that runs through everything I do now, from <a href="ddamo.html">molecule design</a> to <a href="../research.html">AI for science with wet-lab feedback</a>. I just didn't know yet that I was practicing it.</p>
       </article>
@@ -101,9 +98,9 @@
   <div class="bubble" id="bubble"></div>
 
   <div id="portal" aria-hidden="true"></div>
-  <script src="../site.js?v=1793180264"></script>
-  <script src="../fx.js?v=1793180264"></script>
-  <script src="../plush.js?v=1793180264"></script>
-  <script src="../demos.js?v=1793180264"></script>
+  <script src="../site.js?v=1793180517"></script>
+  <script src="../fx.js?v=1793180517"></script>
+  <script src="../plush.js?v=1793180517"></script>
+  <script src="../demos.js?v=1793180517"></script>
 </body>
 </html>

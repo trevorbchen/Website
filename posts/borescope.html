@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A thermal camera that survives a flame | Trevor Chen</title>
+  <meta name="description" content="Trevor Chen: Caltech researcher. Diffusion models, AI for science, interpretability.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><ellipse cx='52' cy='50' rx='40' ry='34' fill='%23ff2e88'/><ellipse cx='48' cy='50' rx='40' ry='34' fill='%2319d3e6'/><ellipse cx='50' cy='50' rx='38' ry='32' fill='%23111015'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css?v=1793180517">
+</head>
+<body data-root="../">
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="boil"><feTurbulence id="boil-noise" type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="0"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+    <filter id="warp"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.05" numOctaves="1" seed="3"/><feDisplacementMap in="SourceGraphic" scale="9"/></filter>
+  </svg>
+  <canvas id="dots" aria-hidden="true"></canvas>
+  <div class="holes" aria-label="hobbies"><a class="hole" href="../hobbies.html#crochet" data-label="crochet" data-tip="amigurumi. currently learning stitches." style="left:-1.2%;top:21%;width:76px;height:65px" aria-label="crochet"></a><a class="hole" href="../hobbies.html#guitar" data-label="guitar" data-tip="currently learning Let Her Go." style="left:4.6%;top:43%;width:26px;height:22px" aria-label="guitar"></a><a class="hole" href="../hobbies.html#skateboarding" data-label="skateboarding" data-tip="" style="left:0.6%;top:68%;width:44px;height:38px" aria-label="skateboarding"></a><a class="hole" href="../hobbies.html#movies" data-label="movies" data-tip="favorites and unpopular opinions." style="left:5.6%;top:88%;width:20px;height:17px" aria-label="movies"></a><a class="hole" href="../hobbies.html#badminton" data-label="badminton" data-tip="" style="left:98.2%;top:12%;width:56px;height:48px" aria-label="badminton"></a><a class="hole" href="../hobbies.html#figure-skating" data-label="figure skating" data-tip="used to. I can do an axel." style="left:94.4%;top:37%;width:22px;height:19px" aria-label="figure skating"></a><a class="hole" href="../hobbies.html#anime" data-label="anime / manga / LN" data-tip="I don't believe in real books." style="left:97.8%;top:61%;width:84px;height:72px" aria-label="anime / manga / LN"></a></div>
+  <div id="tip" class="tip" role="tooltip"></div>
+
+  <header class="top">
+    <div>
+      <p class="logo"><a href="../index.html">TREVOR CHEN</a></p>
+      <p class="tagline">diffusion / ai for science / interpretability</p>
+    </div>
+    <nav class="nav" aria-label="site">
+      <a href="../index.html">home</a>
+      <a href="../research.html">research</a>
+      <a href="../blog.html" aria-current="page">blog</a>
+      <a href="../learning.html">learning</a>
+      <a href="../Trevor_Chen_Resume.pdf">cv</a>
+    </nav>
+  </header>
+
+  <main>
+      <article class="panel post">
+        <span class="caption">research</span>
+        <p class="back"><a href="../blog.html">&larr; all posts</a></p>
+        <h1>A thermal camera that survives a flame</h1>
+        <p class="meta">2023-03 &middot; <span class="pill cyan">optics</span> <span class="pill cyan">sensing</span> <span class="pill cyan">thermal imaging</span></p>
+<div class="stats">
+<div><b>8&ndash;14 &micro;m</b><span>the long-wave infrared band the camera looks in</span></div>
+<div><b>2,400 K</b><span>flame temperature the water-cooled housing is designed to survive, at 50 bar</span></div>
+<div><b>10&times;</b><span>the spatial resolution of competing designs</span></div>
+<div><b>98%</b><span>accuracy of the temperature readings after calibration against a blackbody</span></div>
+</div>
+
+<p>Inside a running gas turbine, the hardware that matters most is also the hardest to measure. A combustor liner or turbine blade has to be hot enough to be efficient and not so hot that it fails, and the margin between the two is small. If you want to know where the hot spots are, a thermocouple gives you a handful of points and disturbs the flow around them. What you want is an <em>image</em> of the surface temperature, taken from inside the engine, while it runs.</p>
+<p>That is what this project was: a compact camera on the end of a probe, with the optics, the housing and the calibration to turn pixels into temperatures.</p>
+<h2>Why the long-wave infrared</h2>
+<p>Every warm surface glows, and how brightly it glows at each wavelength follows from its temperature. That is the principle of thermal imaging: measure the glow, invert for the temperature. The difficulty here is that the flame glows too. Hot combustion gases and soot emit strongly across much of the visible and near-infrared, which swamps the signal from the surface you actually care about.</p>
+<p>The <strong>long-wave infrared (8 to 14 micrometres)</strong> is a quieter region. Looking there reduces the interference from hot gases and soot, so the surface can be seen through the flame instead of being drowned by it.</p>
+<h2>A borescope in a water jacket</h2>
+<p>A <strong>borescope</strong> is a long, thin optical probe, the kind a mechanic uses to look inside an engine without taking it apart. This one is a compact long-wave infrared design. The probe sits inside a custom water-cooled housing, about 19 millimetres across on the outside and 10 on the inside, designed to survive flame temperatures up to about 2,400 K at a pressure of 50 bar. The camera stays alive because the water carries the heat away from the optics while the front of the probe looks into the flame.</p>
+<h2>My part: design and calibration</h2>
+<p>My work on the project was twofold. The first half was the <strong>design</strong>: I developed optimization algorithms to design a robust sensing system. The design we arrived at has about ten times the spatial resolution of competing designs.</p>
+<p>The second half was <strong>calibration</strong>. A camera produces counts, not temperatures. To turn one into the other you point it at a <strong>blackbody</strong>, a source whose temperature you know exactly, record what each pixel reports across a range of temperatures, and fit a curve. The wrinkle is that no two pixels respond identically, so a single global curve leaves visible structure in the image. We calibrated <strong>pixel by pixel</strong>, fitting a regression for each one, and the resulting temperature readings were accurate to about 98%.</p>
+<h2>The demonstration</h2>
+<p>We tested the camera on a <strong>V-gutter bluff body</strong>, a standard flame-holding shape, cooled with nitrogen in a laboratory combustion testbed. The camera measured the surface temperature accurately with little background noise, and it followed the transient cooling as the nitrogen came on, which is exactly the kind of event you can't see with a handful of thermocouples.</p>
+<p>The work produced a journal paper, <a href="https://doi.org/10.1088/1361-6501/acc048"><em>A compact LWIR borescope sensor for 2D engine component surface temperature measurement</em></a> in <em>Measurement Science and Technology</em>, and conference papers at <a href="https://doi.org/10.2514/6.2023-3580">AIAA AVIATION</a>, <a href="https://doi.org/10.1117/12.2672622">SPIE</a>, and <a href="https://opg.optica.org/abstract.cfm?uri=LACSEA-2022-LM1B.5">Optica</a>. It was with Paul Hsu and Tim Lieuwen's group.</p>
+<h2>What I took from it</h2>
+<p>An image sensor doesn't measure temperature; it measures counts and a model tells you what they mean. Most of the accuracy in the final result came from being careful about that model: the blackbody, the per-pixel fits, the cooling jacket. I think about this every time I work with an expensive oracle now. The number you get back is only as good as the process that turns the raw signal into a number.</p>
+      </article>
+  </main>
+
+  <footer>
+    <div class="foot-line">
+      <span class="tag">2026 &middot; trevorbchen</span>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a><a href="../hobbies.html">hobbies</a></span>
+    </div>
+  </footer>
+
+  <canvas id="plush" aria-hidden="true"></canvas>
+  <div class="bubble" id="bubble"></div>
+
+  <div id="portal" aria-hidden="true"></div>
+  <script src="../site.js?v=1793180517"></script>
+  <script src="../fx.js?v=1793180517"></script>
+  <script src="../plush.js?v=1793180517"></script>
+  <script src="../demos.js?v=1793180517"></script>
+</body>
+</html>

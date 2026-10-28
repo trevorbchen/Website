@@ -260,9 +260,12 @@ def build_research():
           <p class="lede">I like problems where a model has to <em>find</em> something (a molecule, an enzyme, a feature, a failure mode) with as few expensive questions as possible.</p>
           <p>Underneath most of it are a few questions I keep returning to. How do you explore and exploit most efficiently when each experiment costs something? How do you make reinforcement learning work in AI for science? How do you interpret a model's failure modes instead of only measuring them? Right now that mostly means diffusion models and biology.</p>""", "gold")
     physics = area("physics", [
-        row("Mid-IR gratings and a thermal camera for jet engines",
-            "Diffraction gratings in use at national labs; an infrared borescope that survives flame.",
+        row("Mid-IR gratings for ultrafast lasers",
+            "Broadband diffraction gratings, now in use at national labs.",
             ["optics", "nanofabrication"], "posts/optics.html", "grating"),
+        row("A thermal camera that survives a flame",
+            "A compact long-wave infrared borescope for imaging engine hardware from inside a running flame.",
+            ["optics", "sensing"], "posts/borescope.html", None),
     ], "")
     bio = area("biology", [
         row("Drug discovery on a supercomputer",

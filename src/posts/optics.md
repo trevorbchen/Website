@@ -1,9 +1,9 @@
 ---
-title: Bending light for a living (kind of): mid-IR gratings and a jet-engine camera
+title: Bending light for a living: mid-IR gratings for ultrafast lasers
 date: 2024-05
 kind: research
 tags: physics, optics, nanofabrication
-blurb: Years of optics research before I touched ML. How you make a grating that works across an octave of mid-infrared light, why it matters for ultrafast lasers, and a thermal camera that survives a flame. Optical Materials Express, SPIE, and a few more.
+blurb: Years of optics research before I touched ML. How you make a grating that stays efficient across an octave of mid-infrared light, and why it matters for ultrafast lasers. Optical Materials Express and SPIE.
 ---
 
 <div class="stats">
@@ -13,7 +13,7 @@ blurb: Years of optics research before I touched ML. How you make a grating that
 <div><b>10 gratings</b><span>deployed at 5+ national labs, supporting over $1.3M of R&amp;D contracts</span></div>
 </div>
 
-My first real research was in physics, in optics, and I did it for years, so it deserves a proper write-up. There are two projects here. The first is about making a piece of glass-and-metal that bends mid-infrared light very efficiently. The second is a camera that can read the temperature of a turbine blade while a flame is burning next to it. The thread connecting them, which I only noticed later, is that in both cases the real world, not the simulation, was the judge.
+My first real research was in physics, in optics, and I did it for years, so it deserves a proper write-up. This is the project I spent the most time on: making a piece of patterned glass and metal that bends mid-infrared light very efficiently, so that an ultrafast laser can be amplified without destroying itself.
 
 ## 1. Why anyone needs a grating
 
@@ -47,7 +47,8 @@ This is easy to say and hard to build, especially for mid-infrared light. Conven
 
 The goal of the project was a grating for a 100-femtosecond laser at 4.3 µm that stayed efficient across a very wide band, with tolerance for that pulse's own spectrum.
 
-<figure><img src="../img/optics/pipeline.svg" alt="Pipeline from global optimization through lithography, etching, coating and testing"><figcaption>From design to a working grating. Each step constrains the one before it, which is why putting the fabrication limits into the design simulation mattered so much.</figcaption></figure>
+<div class="pipe"><div><i>1</i><b>global optimization</b><span>find the groove profile</span></div><div><i>2</i><b>e-beam lithography</b><span>write the pattern</span></div><div><i>3</i><b>anisotropic wet etch</b><span>smooth blazed facets</span></div><div><i>4</i><b>Au + Al<sub>2</sub>O<sub>3</sub> coating</b><span>low loss, high damage threshold</span></div><div><i>5</i><b>test at 4.3 &micro;m</b><span>92% efficient</span></div></div>
+<p class="pipe-cap">From design to a working grating. Each step constrains the one before it, which is why putting the fabrication limits into the design simulation mattered so much.</p>
 
 **Design.** We ran a global optimization over the groove geometry and the coating stack for efficiency above 90% over a very wide range, 3.6 to 6.6 µm. The search space has lots of local optima, which is why a global method matters here.
 
@@ -67,15 +68,7 @@ Two things stand out when I look back at this project.
 
 **Putting the constraints in the model.** A design optimizer will happily propose a groove that no etch can produce. Once the fabrication limits were built directly into the design simulations, prototype iterations dropped from 7 to 2 and manufacturing error fell by about 80%. That's the lesson I carry to every domain since: put the constraints of reality into the model rather than discovering them at the bench.
 
-The gratings from this work are now in use at five or more national labs, supporting over $1.3 million of R&D contracts. It was published in *Optical Materials Express*, with a companion paper in SPIE on extending the design to single-cycle infrared lasers.
-
-## 5. A thermal camera for a jet engine
-
-The second project is almost a different field. Measuring the surface temperature of a turbine blade or combustor liner is hard because the flame around it glows at the same time. If you look in the visible or near-infrared, the flame lights up everything and swamps what you're trying to measure. Working in the **long-wave infrared (8 to 14 µm)** sidesteps most of that interference, because hot combustion gases and soot emit little there.
-
-With Paul Hsu and Tim Lieuwen's group, I worked on a compact LWIR borescope: a slim probe that goes inside the engine. It sits in a custom water-cooled housing, about 19 millimetres across, designed to survive flame temperatures up to roughly 2,400 K at 50 bar. We demonstrated it by imaging a V-gutter bluff body, a standard flame-holding shape, cooled with nitrogen in a lab combustion rig. It measured the surface temperature accurately with little background noise, and it tracked the transient cooling as the nitrogen came on.
-
-My part was the optimization that designed the sensing system and the calibration against a blackbody. That produced a journal paper in *Measurement Science and Technology* and three conference papers.
+The gratings from this work are now in use at five or more national labs, supporting over $1.3 million of R&D contracts. It was published in *Optical Materials Express*, with a companion paper at SPIE on extending the design to single-cycle infrared lasers.
 
 ## What I took from it
 
