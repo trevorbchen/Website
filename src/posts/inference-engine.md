@@ -82,7 +82,9 @@ They are written to avoid host synchronization, so a whole decode step could be 
 
 ## Where it ran
 
-The recorded runs are labelled with the GPU. The first is a laptop RTX 4060. I'd like numbers from A100s too, but the lab machines I have access to are shared and busy, and I only run on GPUs that nobody else is using. When one is genuinely idle, the same script runs there and a second dataset appears here.
+Each recorded run is labelled with its GPU, and you can switch between them above. The first is a laptop RTX 4060. The second is one A100 80GB on a shared lab machine, which I used only after checking that nothing else was running on it and that it was idle (0 MiB used, 0% utilization) before and after.
+
+The A100 gap is smaller: 970 tokens/s against 771 for the best static batch, about 1.26&times;, versus 1.44&times; on the laptop. A 1.1B model barely loads an A100, so with the reference attention path both systems spend much of their time on per-step overhead, and the larger static batches recover more of the idle time. The latency picture is the same on both cards: with requests arriving over time, the engine's median latency was 0.7 s against 3.6 to 9.2 s for static batching.
 
 ## What it doesn't do yet
 
