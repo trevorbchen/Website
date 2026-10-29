@@ -17,7 +17,7 @@ V = int(time.time())
 OUT = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT
 
 NAV = [("index.html", "home"), ("research.html", "research"), ("blog.html", "blog"),
-       ("learning.html", "learning"), ("Trevor_Chen_Resume.pdf", "cv")]
+       ("learning.html", "learning"), ("Trevor_Chen_CV.pdf", "cv")]
 
 # hobby "holes": slug, label, hover tip, margin position (left %, top %, px size)
 HOLES = [
@@ -85,7 +85,7 @@ def page(path, title, body, current="", extra_head="", extra_js=()):
   <footer>
     <div class="foot-line">
       <span class="tag">2026 &middot; trevorbchen</span>
-      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a><a href="{root}hobbies.html">hobbies</a></span>
+      <span class="links"><a href="mailto:trevorbchen@gmail.com">email</a><a href="https://github.com/trevorbchen">github</a><a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">scholar</a><a href="https://www.linkedin.com/in/trevorbchen/">linkedin</a><a href="{root}Trevor_Chen_CV.pdf">cv</a><a href="{root}Trevor_Chen_Resume.pdf">resume</a><a href="{root}hobbies.html">hobbies</a></span>
     </div>
   </footer>
 
@@ -307,7 +307,7 @@ def build_research():
         for t, w, v, soon in PUBS)
     pubpanel = f"""      <section class="panel cyan" id="pubs">
         <span class="caption">publications</span>
-          <p class="small">* equal contribution &middot; also on <a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">google scholar</a> &middot; <a href="Trevor_Chen_Resume.pdf">cv</a></p>
+          <p class="small">* equal contribution &middot; also on <a href="https://scholar.google.com/citations?user=N_DNZMUAAAAJ">google scholar</a> &middot; <a href="Trevor_Chen_CV.pdf">cv</a> &middot; <a href="Trevor_Chen_Resume.pdf">resume</a></p>
           <ol class="pubs">
 {pubs}
           </ol>
