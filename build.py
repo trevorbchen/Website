@@ -16,7 +16,7 @@ ROOT = pathlib.Path(__file__).parent
 V = int(time.time())
 OUT = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT
 
-NAV = [("index.html", "home"), ("research.html", "research"), ("blog.html", "blog"),
+NAV = [("index.html", "home"), ("research.html", "research"),
        ("learning.html", "learning"), ("Trevor_Chen_CV.pdf", "cv")]
 
 # hobby "holes": slug, label, hover tip, margin position (left %, top %, px size)
@@ -151,18 +151,20 @@ KIND_PILL = {"research": "cyan", "project": "pink", "essay": "gold"}
 
 def build_posts(posts):
     for p in posts:
+        if p.get("kind") == "essay":
+            continue
         math = p.get("math", "no") == "yes"
         body_html = render_md(p["md"], math=math)
         pill = KIND_PILL.get(p.get("kind", ""), "")
         tags = " ".join(f'<span class="pill {pill}">{t.strip()}</span>' for t in p.get("tags", "").split(","))
         inner = f"""      <article class="panel post">
         <span class="caption">{p.get("kind", "post")}</span>
-        <p class="back"><a href="../blog.html">&larr; all posts</a></p>
+        <p class="back"><a href="../research.html">&larr; back to research</a></p>
         <h1>{html.escape(p["title"])}</h1>
         <p class="meta">{p["date"]} &middot; {tags}</p>
 {body_html}
       </article>"""
-        page(f"posts/{p['slug']}.html", f"{p['title']} | Trevor Chen", inner, "blog.html",
+        page(f"posts/{p['slug']}.html", f"{p['title']} | Trevor Chen", inner, "research.html",
              extra_head=KATEX if math else "", extra_js=tuple(p["js"].split()) if p.get("js") else ())
 
 
@@ -290,9 +292,6 @@ def build_research():
             ["diffusion", "generalization"], "posts/memorization.html", "noise"),
         row("A theory of reasoning",
             "Coming soon.", ["in progress"], None, None, soon=True),
-        row("A diffusion theory that was wrong",
-            "My first mental model of why diffusion works, seven toy experiments, and why it failed.",
-            ["essay"], "posts/diffusion-gaussians.html", "noise"),
     ], "")
     other = area("also", [
         row("Building a tiny vLLM",
@@ -314,52 +313,6 @@ def build_research():
       </section>"""
     page("research.html", "research | Trevor Chen", "\n\n".join([intro, sci, interp, theory, bio, physics, other, pubpanel]),
          "research.html")
-
-
-# ---------------------------------------------------------------- blog index
-def build_blog(posts):
-    def key(p):
-        y, _, m = p["date"].partition("-")
-        return (p.get("featured") != "yes", -int(y), -int(m or 0))
-    items = []
-    for p in sorted(posts, key=key):
-        star = ' <span class="pill gold">featured</span>' if p.get("featured") == "yes" else ""
-        items.append(
-            f'            <li data-kind="{p.get("kind", "")}"><span class="lvl">{p["date"]} &middot; {p.get("kind", "")}</span>'
-            f'<a href="posts/{p["slug"]}.html">{html.escape(p["title"])}</a>{star}<p>{p.get("blurb", "")}</p></li>')
-    body = panel("blog", f"""          <h2>blog</h2>
-          <p>Write-ups of my research, projects, and a few opinions. Filter:
-            <button class="filter on" data-f="">all</button><button class="filter" data-f="research">research</button><button class="filter" data-f="project">projects</button><button class="filter" data-f="essay">essays</button>
-           </p>
-          <ul class="posts">
-{chr(10).join(items)}
-          </ul>""", "pink")
-    page("blog.html", "blog | Trevor Chen", body, "blog.html")
-
-
-# ---------------------------------------------------------------- hobbies
-def shelf(items):
-    return '<ul class="shelf">' + "".join(f"<li>{i}</li>" for i in items) + "</ul>"
-
-
-def build_hobbies():
-    def hob(slug, name, inner=""):
-        return f'          <li class="hob" id="{slug}"><h3>{name}</h3>{inner}</li>'
-
-    items = []
-    for p in sorted(posts, key=key):
-        star = ' <span class="pill gold">featured</span>' if p.get("featured") == "yes" else ""
-        items.append(
-            f'            <li data-kind="{p.get("kind", "")}"><span class="lvl">{p["date"]} &middot; {p.get("kind", "")}</span>'
-            f'<a href="posts/{p["slug"]}.html">{html.escape(p["title"])}</a>{star}<p>{p.get("blurb", "")}</p></li>')
-    body = panel("blog", f"""          <h2>blog</h2>
-          <p>Write-ups of my research, projects, and a few opinions. Filter:
-            <button class="filter on" data-f="">all</button><button class="filter" data-f="research">research</button><button class="filter" data-f="project">projects</button><button class="filter" data-f="essay">essays</button>
-           </p>
-          <ul class="posts">
-{chr(10).join(items)}
-          </ul>""", "pink")
-    page("blog.html", "blog | Trevor Chen", body, "blog.html")
 
 
 # ---------------------------------------------------------------- hobbies
@@ -540,7 +493,6 @@ if __name__ == "__main__":
     build_posts(posts)
     build_home()
     build_research()
-    build_blog(posts)
     build_hobbies()
     build_renderer()
     build_learning()
