@@ -17,7 +17,7 @@ V = int(time.time())
 OUT = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT
 
 NAV = [("index.html", "home"), ("research.html", "research"),
-       ("learning.html", "learning"), ("Trevor_Chen_CV.pdf", "cv")]
+       ("learning.html", "learning"), ("Trevor_Chen_CV.pdf", "cv"), ("Trevor_Chen_Resume.pdf", "resume")]
 
 # hobby "holes": slug, label, hover tip, margin position (left %, top %, px size)
 HOLES = [
