@@ -111,11 +111,13 @@
     \resumeItem{Ran distributed training on multi-node GPU clusters (Slurm) with fault-tolerant scheduling}
   \resumeItemListEnd
 
-  \resumeSubheading{Caltech SURF Fellow, Perona Vision Lab}{Jun. 2026 -- Aug. 2026}
-    {Summer Undergraduate Research Fellow, advised by Prof. Pietro Perona}{Pasadena, CA}
+  \resumeSubheading{Perona Vision Lab, Caltech}{Jun. 2026 -- Present}
+    {Undergraduate Researcher and SURF Fellow, advised by Prof. Pietro Perona}{Pasadena, CA}
   \resumeItemListStart
-    \resumeItem{Found a family of training objectives for sparse autoencoders (SAEs) that choose which features the SAE learns, so the dictionary can be picked on purpose instead of left to the random seed; linear probes and planted-signal recovery show the dictionaries differ measurably (\textbf{CVPR 2027}, under review)}
-    \resumeItem{Trained a diffusion transformer from scratch and \textbf{36} SAEs (\textbf{220K+} features) on every layer's residual stream and attention/MLP outputs, then ablated features across denoising steps to trace how they drive generation}
+    \resumeItem{Building a hill-climbable \textbf{meta-interpretability} benchmark and RL environments (JAX) with ground-truth latent state}
+    \resumeItem{Planting backdoors and shortcuts with clean controls; interpreter agents scored by causal interventions vs. black-box baselines}
+    \resumeItem{Found a family of SAE training objectives that choose which features the dictionary learns instead of leaving it to the random seed; probes and planted-signal recovery show the dictionaries differ (\textbf{CVPR 2027}, under review)}
+    \resumeItem{Trained a diffusion transformer and \textbf{36} SAEs (\textbf{220K+} features) on every layer; ablated features across denoising steps}
   \resumeItemListEnd
 
   \resumeSubheading{\href{https://www.sdsc.edu/}{UCSD San Diego Supercomputer Center}}{Oct. 2020 -- May 2025}
@@ -129,12 +131,6 @@
 % ---------- projects ----------
 \section{Projects}
 \resumeSubHeadingListStart
-  \resumeProjectHeading{\textbf{Meta-Interpretability Benchmark} $|$ \emph{Independent Research}}{Nov. 2026 -- Present}
-  \resumeItemListStart
-    \resumeItem{Building procedurally generated rule-based games (JAX) with known latent state to train models that interpret other models}
-    \resumeItem{Planting deviations (shortcuts, triggers, backdoors) with clean controls; observers must recover what the model learned}
-  \resumeItemListEnd
-
   \resumeProjectHeading{\textbf{Breaking Pangram's AI-Image Detector} $|$ \emph{Independent Red-Teaming}}{Aug. 2026}
   \resumeItemListStart
     \resumeItem{Broke a commercial AI-image detector in both directions: an adversarially trained autoencoder (VAE + GAN) makes arbitrary AI images read as real, and ordinary resizing makes real photos read as AI}
