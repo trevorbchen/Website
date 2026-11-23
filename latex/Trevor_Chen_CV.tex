@@ -119,9 +119,11 @@ I led an 11-author study with Genesis Molecular AI on online adaptation of discr
 I also studied why extra latent dimensions delay memorization in diffusion models. With the intrinsic dimension fixed at 5, widening the latent space from 5 to 40 dimensions reduces memorization from 30\% to 0.1\%, and the onset of score overfitting is delayed by more than 25 times out to width 240. A spectral analysis of the score network's feature-correlation matrix explains the effect, and on real image latents memorization begins 3.6 times later on CelebA and 1.4 times later on CIFAR-10 (ICML 2026 HiLD; ICLR 2027, under review). Both projects ran on multi-node GPU clusters with Slurm and fault-tolerant scheduling.
 \end{cvBody}
 
-\cvEntry{Caltech SURF Fellow, Perona Vision Lab}{Jun. 2026 -- Aug. 2026}
-  {Summer Undergraduate Research Fellow, advised by Prof. Pietro Perona}{Pasadena, CA}
+\cvEntry{Perona Vision Lab, Caltech}{Jun. 2026 -- Present}
+  {Undergraduate Researcher and SURF Fellow, advised by Prof. Pietro Perona}{Pasadena, CA}
 \begin{cvBody}
+I am building a hill-climbable meta-interpretability benchmark and verifiable RL environments for training interpreter agents and activation oracles. Small transformers are trained on procedurally generated rule-based worlds (JAX), so their latent state is known exactly, and backdoors, triggers and shortcuts are planted alongside matched clean controls. Interpreters must recover the mechanism the model actually learned, scored by causal interventions and compared against budget-matched black-box baselines.
+
 I found a family of training objectives for sparse autoencoders (SAEs) that choose which features the SAE learns, so that the dictionary can be picked on purpose instead of being left to the random seed. Linear probes, planted-signal recovery and hard-image overlap show that dictionaries from different objectives differ measurably, and combining four objectives in one model costs about 1.3 points of reconstruction (CVPR 2027, under review). Separately, I trained a diffusion transformer from scratch and 36 SAEs with more than 220,000 features on every layer's residual stream and attention and MLP outputs, then ablated features across denoising steps to trace how they drive generation.
 \end{cvBody}
 
@@ -191,11 +193,6 @@ I built a filtering model with a custom cost function that cut water-vapor noise
 
 % ---------- projects ----------
 \section{Projects}
-\cvProject{\textbf{Meta-Interpretability Benchmark} $|$ \small{Independent Research}}{Nov. 2026 -- Present}
-\begin{cvBody}
-I am building procedurally generated rule-based games where small transformers learn a known internal state, with planted deviations (shortcuts, triggers, backdoors) and clean controls. An observer model has to recover what a network learned and where it lives, graded by causal interventions against black-box baselines.
-\end{cvBody}
-
 \cvProject{\textbf{Breaking Pangram's AI-Image Detector} $|$ \small{Independent Red-Teaming}}{Aug. 2026}
 \begin{cvBody}
 I attacked a commercial AI-image detector in both directions, using only the free plan because API access was never granted. Resizing a real photo from 128 by 128 to 512 by 512 with an ordinary resampler was enough for the detector to call it AI, and so was re-encoding it through a variational autoencoder. Matching the frequency statistics of real images did not fool it, which suggests it relies on local patterns and not the global spectrum.
