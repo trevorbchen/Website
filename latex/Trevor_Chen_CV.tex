@@ -36,7 +36,7 @@
   \par\ifafterhead\vspace{5.2pt}\else\vspace{5pt}\fi\global\afterheadfalse\hspace*{0.15in}%
   \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
     \textbf{#1} & #2 \\
-    {\small #3} & \\
+    \makebox[0pt][l]{\small #3} & \\
   \end{tabular*}\par\vspace{3pt}}
 % Project heading: one line
 \newcommand{\cvProject}[2]{%
@@ -191,6 +191,11 @@ I built a filtering model with a custom cost function that cut water-vapor noise
 
 % ---------- projects ----------
 \section{Projects}
+\cvProject{\textbf{Meta-Interpretability Benchmark} $|$ \small{Independent Research}}{Nov. 2026 -- Present}
+\begin{cvBody}
+I am building procedurally generated rule-based games where small transformers learn a known internal state, with planted deviations (shortcuts, triggers, backdoors) and clean controls. An observer model has to recover what a network learned and where it lives, graded by causal interventions against black-box baselines.
+\end{cvBody}
+
 \cvProject{\textbf{Breaking Pangram's AI-Image Detector} $|$ \small{Independent Red-Teaming}}{Aug. 2026}
 \begin{cvBody}
 I attacked a commercial AI-image detector in both directions, using only the free plan because API access was never granted. Resizing a real photo from 128 by 128 to 512 by 512 with an ordinary resampler was enough for the detector to call it AI, and so was re-encoding it through a variational autoencoder. Matching the frequency statistics of real images did not fool it, which suggests it relies on local patterns and not the global spectrum.
