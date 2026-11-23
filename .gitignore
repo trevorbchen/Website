@@ -1,2 +1,8 @@
 __pycache__/
 *.pyc
+
+# LaTeX build files
+latex/*.aux
+latex/*.log
+latex/*.out
+latex/*.pdf
