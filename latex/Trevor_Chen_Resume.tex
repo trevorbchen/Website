@@ -1,0 +1,194 @@
+% Trevor Chen -- Resume (2 pages). Compile with: xelatex Trevor_Chen_Resume.tex
+\documentclass[letterpaper,10pt]{article}
+
+\usepackage{fontspec}            % Latin Modern by default
+\usepackage[left=0.45in,right=0.45in,top=0.4in,bottom=0.4in]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{tabularx}
+\usepackage{amsmath}
+
+\pagestyle{empty}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+\setlength{\parindent}{0pt}
+
+% Section headings: bold, large, ruled
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\vspace{-4pt}\titlerule]
+\titlespacing*{\section}{0pt}{7.2pt}{9pt}
+
+% ---------- macros ----------
+\newcommand{\resumeItem}[1]{\item\small{#1}}
+\newcommand{\resumeSubheading}[4]{%
+  \vspace{-1pt}\item
+  \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+    \textbf{#1} & #2 \\
+    \textit{\small #3} & \textit{\small #4} \\
+  \end{tabular*}\vspace{-6pt}}
+\newcommand{\resumeProjectHeading}[2]{%
+  \vspace{0.4pt}\item
+  \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+    \small#1 & #2 \\
+  \end{tabular*}\vspace{-6pt}}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}, itemsep=1.6pt, topsep=0pt]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=0.3045in, labelsep=5pt, itemsep=0pt, topsep=3.5pt, parsep=0pt, label=$\vcenter{\hbox{\tiny$\bullet$}}$]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-3pt}}
+
+\begin{document}
+
+% ---------- header ----------
+\begin{center}
+  {\Huge\textbf{Trevor Chen}} \\ \vspace{6pt}
+  \small +1-858-366-3389 $|$ \href{mailto:trevorbchen@gmail.com}{trevorbchen@gmail.com} $|$
+  \href{https://trevorbchen.github.io/Website/}{Website} $|$
+  \href{https://github.com/trevorbchen}{GitHub} $|$
+  \href{https://www.linkedin.com/in/trevorbchen/}{LinkedIn} $|$
+  \href{https://scholar.google.com/citations?user=N_DNZMUAAAAJ}{Google Scholar}
+\end{center}
+\vspace{-6.9pt}
+
+% ---------- education ----------
+\section{Education}
+\resumeSubHeadingListStart
+  \resumeSubheading{California Institute of Technology}{Pasadena, CA}
+    {B.S. in Applied and Computational Mathematics $|$ GPA: 4.0/4.0}{Expected Jun. 2029}
+  \resumeItemListStart
+    \resumeItem{\textbf{Relevant Coursework:} Agentic Systems, Diffusion Models, Generative Models, Deep Learning, ML \& Data Mining, GPU Programming (CUDA), Operating Systems, Statistical Inference, Probability Models, Applied Linear Algebra}
+    \resumeItem{\textbf{Honors:} Y Combinator F25 Acceptance; YC AI Startup School; USACO Platinum; Regeneron STS Scholar; SPIE Scholarship; AIME Qualifier; National Merit Scholar; International Logic Olympiad Silver; Outstanding Presentation Award, Dayton-Cincinnati Aerospace Sciences Conference}
+  \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+% ---------- experience ----------
+\section{Experience}
+\resumeSubHeadingListStart
+  \resumeSubheading{\href{https://ascade.co/}{Ascade} (Accepted to Y Combinator F25)}{Jun. 2025 -- May 2026}
+    {Founder \& CTO}{San Diego, CA}
+  \resumeItemListStart
+    \resumeItem{Built custom tooling and internal verifiable-reward environments (RLVR) for long-horizon tasks}
+    \resumeItem{Trained an 8B model on them with \textbf{GRPO}; it beats \textbf{Claude Opus 4.6} and other frontier models on public formal-verification benchmarks}
+    \resumeItem{Built an \textbf{autoformalization} pipeline that translates English requirements into formal specs, checked by Z3 in a counterexample-guided refinement loop}
+    \resumeItem{Used it to ship a formally verified payment processor (\textbf{\$25K MRR}) and win a \textbf{DARPA ERIS} contract and other federal work on verified access control for AI agents}
+  \resumeItemListEnd
+
+  \resumeSubheading{\href{https://www.daylightsolutions.com/}{Leonardo DRS Daylight Solutions}}{Jun. 2025 -- Aug. 2025}
+    {Machine Learning Engineer}{San Diego, CA}
+  \resumeItemListStart
+    \resumeItem{Built a filtering model with a custom cost function that cut water-vapor noise in laser spectroscopy data by \textbf{98\%+}}
+    \resumeItem{Replaced the cost function with a piecewise approximation, making the software \textbf{50\%} faster than the legacy version}
+    \resumeItem{Shipped the model in Daylight's MIRcat laser software, improving signal-to-noise by \textbf{99\%} in humid conditions}
+    \resumeItem{Built custom software for Daylight's laser research team, including user interfaces and real-time sensor analysis}
+  \resumeItemListEnd
+
+  \resumeSubheading{\href{https://spectralenergies.com/}{Spectral Energies}}{Feb. 2022 -- Jul. 2025}
+    {R\&D Intern}{Remote}
+  \resumeItemListStart
+    \resumeItem{Designed broadband mid-IR diffraction gratings for ultrafast lasers with \textbf{\textgreater90\%} efficiency over 3.6--6.6\,\textmu m; prototypes measured \textbf{92\%} against 94.2\% theoretical}
+    \resumeItem{Co-developed the fabrication process with Penn State Nanofab (electron-beam lithography and anisotropic wet etching) for smooth blazed grooves, a \textbf{30\%} efficiency gain; tuned Au--Al$_2$O$_3$ coatings for damage threshold}
+    \resumeItem{Found ``double-blazing'' and sawtooth groove features in simulation (\textbf{+50\%} bandwidth, \textbf{+80\%} efficiency); simulation pipelines cut prototype cycles by \textbf{70\%} and manufacturing error by \textbf{80\%}}
+    \resumeItem{Delivered 10 gratings to 5+ national labs, supporting \textbf{\$1.3M+} in R\&D contracts}
+  \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+% ---------- research ----------
+\section{Research Experience}
+\resumeSubHeadingListStart
+  \resumeSubheading{ETH Zurich AI Center, Krause Group \normalfont{(joint with Arnold Lab, Caltech)}}{Oct. 2026 -- Present}
+    {Researcher, with Prof. Andreas Krause and Prof. Frances Arnold}{Remote}
+  \resumeItemListStart
+    \resumeItem{Building a closed-loop discovery system for enzyme and protein design: an LLM proposes mechanistic hypotheses, each is distilled into a flow model that generates designs, and wet-lab results confirm or refute it}
+    \resumeItem{Developing signed distillation, which folds confirmed hypotheses into the generator and suppresses refuted ones, anchored to the previous model, for campaigns of only $\sim$10$^2$ wet-lab measurements}
+    \resumeItem{Benchmarking against active search, reward-based fine-tuning and agentic LLM loops, with wet-lab validation at Arnold Lab}
+  \resumeItemListEnd
+
+  \resumeSubheading{\href{https://www.yisongyue.com/research}{Yue Lab, Caltech}}{Jan. 2026 -- Present}
+    {Undergraduate Researcher, advised by Prof. Yisong Yue}{Pasadena, CA}
+  \resumeItemListStart
+    \resumeItem{Led an 11-author study with Genesis Molecular AI on online adaptation of discrete diffusion models for molecular optimization (RL fine-tuning, Thompson sampling, replay); it matches the best baseline with \textbf{58$\times$} fewer oracle calls (\textbf{NeurIPS 2026})}
+    \resumeItem{Showed that extra latent dimensions delay memorization in diffusion models (\textbf{3.6$\times$} later on CelebA) and explained it through training dynamics (\textbf{ICML 2026 HiLD}; \textbf{ICLR 2027} under review)}
+    \resumeItem{Ran distributed training on multi-node GPU clusters (Slurm) with fault-tolerant scheduling}
+  \resumeItemListEnd
+
+  \resumeSubheading{Caltech SURF Fellow, Perona Vision Lab}{Jun. 2026 -- Aug. 2026}
+    {Summer Undergraduate Research Fellow, advised by Prof. Pietro Perona}{Pasadena, CA}
+  \resumeItemListStart
+    \resumeItem{Found a family of training objectives for sparse autoencoders (SAEs) that choose which features the SAE learns, so the dictionary can be picked on purpose instead of left to the random seed; linear probes and planted-signal recovery show the dictionaries differ measurably (\textbf{CVPR 2027}, under review)}
+    \resumeItem{Trained a diffusion transformer from scratch and \textbf{36} SAEs (\textbf{220K+} features) on every layer's residual stream and attention/MLP outputs, then ablated features across denoising steps to trace how they drive generation}
+  \resumeItemListEnd
+
+  \resumeSubheading{\href{https://www.sdsc.edu/}{UCSD San Diego Supercomputer Center}}{Oct. 2020 -- May 2025}
+    {Computational Biology Research Intern}{San Diego, CA}
+  \resumeItemListStart
+    \resumeItem{Built ML models that predict protein--ligand binding at \textbf{87\%} accuracy and screened \textbf{50K+} compounds on HPC clusters for HIV and diabetic-cataract drugs}
+    \resumeItem{Raised binding-prediction accuracy by \textbf{20\%} with docking-simulation data augmentation (3 papers); mentored 3 interns, validating their ML models with docking}
+  \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+% ---------- projects ----------
+\section{Projects}
+\resumeSubHeadingListStart
+  \resumeProjectHeading{\textbf{Meta-Interpretability Benchmark} $|$ \emph{Independent Research}}{Nov. 2026 -- Present}
+  \resumeItemListStart
+    \resumeItem{Building procedurally generated rule-based games (JAX) with known latent state to train models that interpret other models}
+    \resumeItem{Planting deviations (shortcuts, triggers, backdoors) with clean controls; observers must recover what the model learned}
+  \resumeItemListEnd
+
+  \resumeProjectHeading{\textbf{Breaking Pangram's AI-Image Detector} $|$ \emph{Independent Red-Teaming}}{Aug. 2026}
+  \resumeItemListStart
+    \resumeItem{Broke a commercial AI-image detector in both directions: an adversarially trained autoencoder (VAE + GAN) makes arbitrary AI images read as real, and ordinary resizing makes real photos read as AI}
+    \resumeItem{Disclosed the findings to Pangram's co-founder and withheld the attack code}
+  \resumeItemListEnd
+
+  \resumeProjectHeading{\textbf{Real-Time CUDA Black Hole Renderer} $|$ \emph{CS 179 GPU Programming}}{Jun. 2026}
+  \resumeItemListStart
+    \resumeItem{Co-built a CUDA/C++ ray tracer that bends light through curved spacetime per pixel, rendering gravitational lensing, Einstein rings and a Doppler-shifted accretion disk in real time}
+    \resumeItem{Wrote the CUDA rendering and post-processing kernels (bloom, HDR tone mapping) and a browser viewer with live controls and FPS profiling}
+    \resumeItem{Validated against general relativity: light deflection within \textbf{0.44\%} of theory, energy drift \textbf{\textless10$^{-6}$}, a 12-test physics suite and CPU--GPU parity tests}
+  \resumeItemListEnd
+
+  \resumeProjectHeading{\textbf{LLM Inference Engine from Scratch} $|$ \emph{PyTorch, Triton}}{Oct. 2026}
+  \resumeItemListStart
+    \resumeItem{Built a vLLM-style serving engine with a paged KV cache, continuous batching and preemption by recomputation; outputs match Hugging Face token for token against a full-precision reference}
+    \resumeItem{On one A100 it serves \textbf{1.26$\times$} the throughput of the best static batch (32) and cuts median latency under load from 3.6--9.2\,s to \textbf{0.7\,s} (1.44$\times$ and 1.2\,s on an RTX 4060)}
+    \resumeItem{Wrote fused Triton kernels (FlashAttention-2 prefill, paged-attention decode, add+RMSNorm, RoPE+cache write, SwiGLU) with a float32-reference test harness}
+  \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+% ---------- skills ----------
+\section{Skills}
+\begin{itemize}[leftmargin=0.15in, label={}]
+  \small{\item{
+    \textbf{Languages}: Python, C++, C, CUDA, Triton, SQL, Dafny, Lean 4 \\
+    \textbf{Technical}: PyTorch, Transformers, Diffusion Models, Reinforcement Learning (GRPO), Sparse Autoencoders, Distributed Training, Slurm, Linux, Git, Formal Verification
+  }}
+\end{itemize}
+\vspace{-7.2pt}
+
+% ---------- publications ----------
+\section{Publications \& Invited Talks}
+\small
+$^*$\textit{Equal contribution (shared first author)}
+\begin{itemize}[leftmargin=0.15in, label={}, itemsep=-1pt, topsep=0pt, parsep=0pt]
+  \item \textbf{T. Chen}$^*$, A. Dai$^*$, J. Yang, R. De Santi, et al., M. Al-Shedivat, Y. Yue. \textit{\href{https://arxiv.org/abs/2607.02834}{On the Design Space of Discrete Diffusion Online Adaptation for Molecular Optimization}}. \textbf{NeurIPS 2026}.
+  \item \textbf{T. Chen}, R. Shahbaba. \textit{How Excess Latent Dimensionality Delays Memorization in Diffusion Models}. \textbf{ICLR 2027} (under review).
+  \item \textbf{T. Chen}, R. Shahbaba, K. Peng, A. Garg. \textit{\href{https://icml.cc/virtual/2026/72322}{How Excess Latent Dimensionality Delays Memorization in Diffusion Models}}. \textbf{ICML 2026 Workshop on High-dimensional Learning Dynamics (HiLD)}.
+  \item \textbf{T. Chen}, I. Demler, P. Perona. \textit{Objective Geometry Steers Sparse Autoencoder Vocabularies}. \textbf{CVPR 2027} (under review).
+  \item J. Y. Tang$^*$, \textbf{T. Chen}$^*$, V. L. Kouznetsova, I. F. Tsigelny. \textit{\href{https://doi.org/10.1093/infdis/jiae626}{Anelloviruses and Cancer}}. \textbf{The Journal of Infectious Diseases} 231(2), 2025.
+  \item \textbf{T. Chen}, B. Liu, J. A. McCoy, et al. \textit{\href{https://opg.optica.org/ome/fulltext.cfm?uri=ome-14-5-1336&id=549158}{Development of Broadband High-Efficiency Mid-IR Gratings for High-Energy Ultrafast Lasers}}. \textbf{Optical Materials Express} 14(5), 2024.
+  \item \textbf{T. Chen}, P. S. Hsu. \textit{\href{https://www.spiedigitallibrary.org/conference-proceedings-of-spie/13116/1311609/Enabling-ultra-broadband-high-efficiency-gratings-for-single-cycle-high/10.1117/12.3032561.short}{Enabling Ultra-Broadband High-Efficiency Gratings for Single-Cycle Infrared Lasers}}. \textbf{SPIE Nanoengineering}, 2024.
+  \item P. S. Hsu$^*$, \textbf{T. Chen}$^*$, A. Roy, et al. \textit{\href{https://iopscience.iop.org/article/10.1088/1361-6501/acc048}{A Compact LWIR Borescope Sensor for 2D Engine Component Surface Temperature Measurement}}. \textbf{Measurement Science and Technology} 34(6), 2023.
+  \item A. Roy, P. S. Hsu, A. Zhang, \textbf{T. Chen}, et al. \textit{\href{https://doi.org/10.2514/6.2023-3580}{Development of Compact LWIR Borescope Sensor for Non-contact 2D Engine Component Surface Temperature Measurement}}. \textbf{AIAA AVIATION Forum}, 2023.
+  \item \textbf{T. Chen}, A. Zhang, A. Roy, P. S. Hsu, O. Bibik, S. Adhikari. \textit{\href{https://doi.org/10.1117/12.2672622}{2D High Temperature Sensor Development Using LWIR Borescope}}. \textbf{SPIE Infrared Sensors, Devices, and Applications XIII}, 2023.
+  \item \textbf{T. Chen}, R. Chen, A. You, V. L. Kouznetsova, I. F. Tsigelny. \textit{\href{https://doi.org/10.1016/j.aopr.2023.09.002}{Search of Inhibitors of Aldose Reductase for Treatment of Diabetic Cataracts Using Machine Learning}}. \textbf{Advances in Ophthalmology Practice and Research} 3(4), 2023.
+  \item A. K. Gao, \textbf{T. Chen}, V. L. Kouznetsova, I. F. Tsigelny. \textit{\href{https://doi.org/10.1016/j.aichem.2023.100014}{Machine-Learning-Based Virtual Screening and Ligand Docking Identify Potent HIV-1 Protease Inhibitors}}. \textbf{Artificial Intelligence Chemistry} 1(2), 2023.
+  \item \textbf{T. Chen}, P. S. Hsu. \textit{\href{https://opg.optica.org/abstract.cfm?uri=LACSEA-2022-LM1B.5}{Compact Borescope Design for 2D Long-Wavelength IR Thermal Imaging Sensing}}. \textbf{Optica LACSEA}, 2022.
+\end{itemize}
+\vspace{3pt}\textit{Invited Talks}
+\begin{itemize}[leftmargin=0.15in, label={}, itemsep=-1pt, topsep=0pt, parsep=0pt]
+  \item \textbf{Invited Ethics Speaker}, iGEM Conference.
+  \item \textbf{Invited Researcher}, Leonardo DRS Daylight Solutions Executive Team.
+\end{itemize}
+
+\end{document}
