@@ -68,7 +68,7 @@
     {Founder \& CTO}{San Diego, CA}
   \resumeItemListStart
     \resumeItem{Built custom tooling and internal verifiable-reward environments (RLVR) for long-horizon tasks}
-    \resumeItem{Trained an 8B model on them with \textbf{GRPO}; it beats \textbf{Claude Opus 4.6} and other frontier models on public formal-verification benchmarks}
+    \resumeItem{Trained an 8B model on them with \textbf{GRPO}; it beats \textbf{Claude Opus 4.6} on public formal-verification benchmarks}
     \resumeItem{Built an \textbf{autoformalization} pipeline that translates English requirements into formal specs, checked by Z3 in a counterexample-guided refinement loop}
     \resumeItem{Used it to ship a formally verified payment processor (\textbf{\$25K MRR}) and win a \textbf{DARPA ERIS} contract and other federal work on verified access control for AI agents}
   \resumeItemListEnd
@@ -144,15 +144,19 @@
   \resumeProjectHeading{\textbf{Real-Time CUDA Black Hole Renderer} $|$ \emph{CS 179 GPU Programming}}{Jun. 2026}
   \resumeItemListStart
     \resumeItem{Co-built a CUDA/C++ ray tracer that bends light through curved spacetime per pixel, rendering gravitational lensing, Einstein rings and a Doppler-shifted accretion disk in real time}
-    \resumeItem{Wrote the CUDA rendering and post-processing kernels (bloom, HDR tone mapping) and a browser viewer with live controls and FPS profiling}
-    \resumeItem{Validated against general relativity: light deflection within \textbf{0.44\%} of theory, energy drift \textbf{\textless10$^{-6}$}, a 12-test physics suite and CPU--GPU parity tests}
+    \resumeItem{Wrote the CUDA rendering and post-processing kernels (bloom, HDR tone mapping) and a browser viewer with live controls}
+    \resumeItem{Validated against general relativity: light deflection within \textbf{0.44\%} of theory, energy drift \textbf{\textless10$^{-6}$}, 12-test physics suite}
   \resumeItemListEnd
 
   \resumeProjectHeading{\textbf{LLM Inference Engine from Scratch} $|$ \emph{PyTorch, Triton}}{Oct. 2026}
   \resumeItemListStart
     \resumeItem{Built a vLLM-style serving engine with a paged KV cache, continuous batching and preemption by recomputation; outputs match Hugging Face token for token against a full-precision reference}
     \resumeItem{On one A100 it serves \textbf{1.26$\times$} the throughput of the best static batch (32) and cuts median latency under load from 3.6--9.2\,s to \textbf{0.7\,s} (1.44$\times$ and 1.2\,s on an RTX 4060)}
-    \resumeItem{Wrote fused Triton kernels (FlashAttention-2 prefill, paged-attention decode, add+RMSNorm, RoPE+cache write, SwiGLU) with a float32-reference test harness}
+    \resumeItem{Wrote fused Triton kernels (FlashAttention-2 prefill, paged-attention decode, add+RMSNorm, RoPE+cache write, SwiGLU)}
+  \resumeItemListEnd
+  \resumeProjectHeading{\textbf{Trading on Binary Prediction Markets} $|$ \emph{Independent Project}}{May 2025 -- Aug. 2025}
+  \resumeItemListStart
+    \resumeItem{Built an algorithmic trading system with an RL inventory-control policy (\textbf{30\%} less slippage); arbitrage and hedging returned about \textbf{8\%} a week over 3 months on a \textbf{6$\times$} faster execution API}
   \resumeItemListEnd
 \resumeSubHeadingListEnd
 
