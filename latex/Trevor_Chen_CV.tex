@@ -10,6 +10,7 @@
 \usepackage{ragged2e}
 
 \pagestyle{empty}
+\widowpenalty=10000
 \linespread{1.0302}
 \setlength{\tabcolsep}{0in}
 \setlength{\parindent}{0pt}
@@ -122,9 +123,9 @@ I also studied why extra latent dimensions delay memorization in diffusion model
 \cvEntry{Perona Vision Lab, Caltech}{Jun. 2026 -- Present}
   {Undergraduate Researcher and SURF Fellow, advised by Prof. Pietro Perona}{Pasadena, CA}
 \begin{cvBody}
-I am building a hill-climbable meta-interpretability benchmark and verifiable RL environments for training interpreter agents and activation oracles. Small transformers are trained on procedurally generated rule-based worlds (JAX), so their latent state is known exactly, and backdoors, triggers and shortcuts are planted alongside matched clean controls. Interpreters must recover the mechanism the model actually learned, scored by causal interventions and compared against budget-matched black-box baselines.
+I am building a hill-climbable meta-interpretability benchmark and verifiable RL environments for training interpreter agents and activation oracles. Small transformers learn procedurally generated rule-based worlds (JAX) with known latent state, and backdoors, triggers and shortcuts are planted with clean controls. Interpreters must recover the learned mechanism, scored by causal interventions against black-box baselines.
 
-I found a family of training objectives for sparse autoencoders (SAEs) that choose which features the SAE learns, so that the dictionary can be picked on purpose instead of being left to the random seed. Linear probes, planted-signal recovery and hard-image overlap show that dictionaries from different objectives differ measurably, and combining four objectives in one model costs about 1.3 points of reconstruction (CVPR 2027, under review). Separately, I trained a diffusion transformer from scratch and 36 SAEs with more than 220,000 features on every layer's residual stream and attention and MLP outputs, then ablated features across denoising steps to trace how they drive generation.
+I found a family of training objectives for sparse autoencoders (SAEs) that choose which features the SAE learns, so that the dictionary can be picked on purpose instead of being left to the random seed. Linear probes, planted-signal recovery and hard-image overlap show that dictionaries from different objectives differ measurably, and combining four objectives in one model costs about 1.3 points of reconstruction (CVPR 2027, under review). Separately, I used SAEs to trace how a diffusion transformer uses its residual stream across denoising. Feature effects are high-frequency under DDPM but low-frequency under consistency training, and class information is spread across the middle blocks: ablating the top 100 class features lowers a class-direction metric by 13\% on average and up to 76\%.
 \end{cvBody}
 
 \cvEntry{\href{https://www.sdsc.edu/}{UCSD San Diego Supercomputer Center}}{Oct. 2020 -- May 2025}
