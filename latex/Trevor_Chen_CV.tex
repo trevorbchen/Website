@@ -123,9 +123,9 @@ I also studied why extra latent dimensions delay memorization in diffusion model
 \cvEntry{Perona Vision Lab, Caltech}{Jun. 2026 -- Present}
   {Undergraduate Researcher and SURF Fellow, advised by Prof. Pietro Perona}{Pasadena, CA}
 \begin{cvBody}
-I am building a hill-climbable meta-interpretability benchmark and verifiable RL environments for training interpreter agents and activation oracles. Small transformers learn procedurally generated rule-based worlds (JAX) with known latent state, and backdoors, triggers and shortcuts are planted with clean controls. Interpreters must recover the learned mechanism, scored by causal interventions against black-box baselines.
+I am building a hill-climbable mechanistic interpretability benchmark and verifiable RL environments for training interpreter agents and activation oracles. Small transformers learn procedurally generated rule-based worlds (JAX) with known latent state, and backdoors, triggers and shortcuts are planted with clean controls. Interpreters must recover the learned mechanism, scored by causal interventions against black-box baselines.
 
-I found a family of training objectives for sparse autoencoders (SAEs) that choose which features the SAE learns, so that the dictionary can be picked on purpose instead of being left to the random seed. Linear probes, planted-signal recovery and hard-image overlap show that dictionaries from different objectives differ measurably, and combining four objectives in one model costs about 1.3 points of reconstruction (CVPR 2027, under review). Separately, I built an SAE pipeline on a diffusion transformer to find features that can be switched on and off to steer generation without paired data, along with a GUI for annotating features and ablation tests across denoising steps.
+I found a family of training objectives for sparse autoencoders (SAEs) that choose which features the SAE learns, so that the dictionary can be picked on purpose instead of being left to the random seed. Linear probes, planted-signal recovery and hard-image overlap show that dictionaries from different objectives differ measurably, and combining four objectives in one model costs about 1.3 points of reconstruction (CVPR 2027, under review). Separately, I built an SAE pipeline on a diffusion transformer to find activation steering features that can be switched on and off without paired data, along with a GUI for annotating features and ablation tests across denoising steps.
 \end{cvBody}
 
 \cvEntry{\href{https://www.sdsc.edu/}{UCSD San Diego Supercomputer Center}}{Oct. 2020 -- May 2025}
@@ -240,7 +240,7 @@ I taught programming through a free curriculum that grew from a few students on 
 % ---------- skills ----------
 \section{Skills}
 \cvItem{\textbf{Languages:} Python, C++, C, CUDA, Triton, SQL, Dafny, Lean 4; fluent in Mandarin\\
-\textbf{Technical:} PyTorch, Transformers, Diffusion Models, Reinforcement Learning (GRPO), Sparse Autoencoders, Distributed Training, Slurm, Linux, Git, Formal Verification\\
+\textbf{Technical:} PyTorch, JAX, Mechanistic Interpretability, Sparse Autoencoders, Activation Steering, Benchmark Design, Diffusion Models, Reinforcement Learning (GRPO), Distributed Training, Slurm, Linux, Git, Formal Verification\\
 \textbf{Code:} \href{https://github.com/trevorbchen/DDAMO}{github.com/trevorbchen/DDAMO} (NeurIPS 2026), \href{https://github.com/trevorbchen/CS_179_final}{CS\_179\_final} (black hole renderer), \href{https://github.com/trevorbchen/sae_families}{sae\_families} (SAE objectives)}
 \vspace{10pt}
 
